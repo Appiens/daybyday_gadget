@@ -32,7 +32,7 @@
     	  list-style-type:none;
           cursor:auto;
           list-style: none;
-  	      padding: 0;
+  	      padding: 0 0 0 -15px;
   	      margin: 0;
 	}
 
@@ -142,7 +142,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:51');
+            alert('17:54');
             taskLists = [];
             taskLists = response.data.items;
             for(var i=0; i< taskLists.length; i++) {
