@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+  <ModulePrefs title="Appiens Tasks" scrolling="true" author_email="prevedyolko@gmail.com" height="500">
+    <Require feature="opensocial-0.8" />
+    <Require feature="locked-domain"/>
+      <OAuth>
+      <Service name="google">
+        <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" /> 
+            <Request url="https://www.google.com/accounts/OAuthGetRequestToken?scope=https://www.googleapis.com/auth/tasks" method="GET" /> 
+        <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" /> 
+      </Service>
+    </OAuth>
+  </ModulePrefs>
+  <Content type="html">
+  <![CDATA[ 
+  
+
+  <style>
+  	#main {
+	  margin: 0px;
+	  padding: 0px;
+          font-size: small;
+	}
+	
+	#listId {
+  	  margin: 0;
+  	  padding: 0;
+	}
+
+	.collapsibleList li{
+    	  list-style-image:none; /*url('../images/button-empty.png');*/
+    	  list-style-type:none;
+          cursor:auto;
+	}
+
+        li.collapsibleListOpen{
+           cursor:pointer;
+           background: url('https://raw.githubusercontent.com/LiubovAst/TestGadget/master/button-minus.png') no-repeat top left;
+  	   margin: 0;
+  	   padding: 4px 0 4px 20px;
+  	   list-style: none;
+          }
+
+        li.collapsibleListClosed{
+           cursor:pointer;
+           background: url('https://raw.githubusercontent.com/LiubovAst/TestGadget/master/button-plus.png') no-repeat top left;
+  	   margin: 0;
+  	   padding: 4px 0 4px 20px;
+  	   list-style: none;
+         }
+       
+	ul {
+    		padding: 0; /* Убираем поля */
+    		margin-left: 25px; /* Отступ слева */
+	}
+
+	.myStyle span {
+    		text-indent:25px;
+    		display:inline-block;
+    		cursor:pointer;
+	}
+  </style>
+  <script type="text/javascript" src="https://rawgit.com/LiubovAst/TestGadget/master/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/LiubovAst/TestGadget/master/popup.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/LiubovAst/TestGadget/master/WinFuncs.js"></script>
+  <script type="text/javascript">
+  
+    var taskLists = [];
+    var errorOccured = false;
+
+  // https://www.google.com/calendar/feeds/
+   // Display UI depending on OAuth access state of the gadget (see <divs> above).
+    // If user hasn't approved access to data, provide a "Personalize this gadget" link
+    // that contains the oauthApprovalUrl returned from makeRequest.
+    //
+    // If the user has opened the popup window but hasn't yet approved access, display
+    // text prompting the user to confirm that s/he approved access to data.  The user
+    // may not ever need to click this link, if the gadget is able to automatically
+    // detect when the user has approved access, but showing the link gives users
+    // an option to fetch their data even if the automatic detection fails.
+    //
+    // When the user confirms access, the fetchData() function is invoked again to
+    // obtain and display the user's data.
+    function showOneSection(toshow) {
+      var sections = [ 'main', 'approval', 'waiting' ];
+      for (var i=0; i < sections.length; ++i) {
+        var s = sections[i];
+        var el = document.getElementById(s);
+        if (s === toshow) {
+          el.style.display = "block";
+        } else {
+          el.style.display = "none";
+        }
+      }
+    }
+	
+    function generateList(taskLists) {
+    	var i;
+
+    	var ulMain = document.getElementById('listId');
+
+    	for (i = 0; i < taskLists.length; ++i) {
+        	var li = document.createElement('li');
+        	li.appendChild(document.createTextNode(taskLists[i].title));
+	        li.taskListId = taskLists[i].id;
+        	ulMain.appendChild(li); // create <li>
+        	
+        	 if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
+            		var ul = document.createElement('ul'); // assume + create <ul>
+            		li.appendChild(ul);
+
+            		for (var j=0; j < taskLists[i].tasks.length; j++) {
+                		var liChild = document.createElement('li');
+                		liChild.task =  taskLists[i].tasks[j];
+                		var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
+                		var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
+                		liChild.appendChild(checkBox);
+                		liChild.appendChild(span);
+                		liChild.appendChild(document.createElement("br"));
+
+                		var notesOrig = taskLists[i].tasks[j].notes || '';
+                		var notes = getNotes(taskLists[i].tasks[j]);
+                		var dueTo = getDueTo(taskLists[i].tasks[j]);
+
+
+                		if (canBeConvertedToSubtasks(notesOrig)) {
+                    			var subTasks = convertToSubTasks(notesOrig);
+                    			var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
+                    			span = createColoredTextNode(notes, taskLists[i].tasks[j]);
+                    		        liChild.appendChild(span);
+                    			liChild.appendChild(document.createElement("br"));
+                    			span = createColoredTextNode(dueTo);
+                    		        liChild.appendChild(span);
+                    			liChild.appendChild(ulChild);
+                		}
+                		else
+                		{
+                    			span = createColoredTextNode(notes, taskLists[i].tasks[j]);
+                    			liChild.appendChild(span);
+                    			liChild.appendChild(document.createElement("br"));
+                    			span = createColoredTextNode(dueTo);
+                    			liChild.appendChild(span);
+                		}
+
+                		ul.appendChild(liChild);
+            		} // for j
+        	} // if
+    	} // for i
+    	
+    	return ulMain;
+	}
+	  
+	
+    // Invoke makeRequest() to fetch data from the service provider endpoint.
+    // Depending on the results of makeRequest, decide which version of the UI
+    // to ask showOneSection() to display. If user has approved access to his
+    // or her data, display data.
+    // If the user hasn't approved access yet, response.oauthApprovalUrl contains a
+    // URL that includes a Google-supplied request token. This is presented in the 
+    // gadget as a link that the user clicks to begin the approval process. 
+       
+    function fetchData() {
+      errorOccured = false;
+      var params = {};
+      url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk";
+      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+      params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
+      params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
+      params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
+      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
+
+      gadgets.io.makeRequest(url, function (response) { 
+        if (response.oauthApprovalUrl) {
+          // Create the popup handler. The onOpen function is called when the user
+          // opens the popup window. The onClose function is called when the popup
+          // window is closed.
+          var popup = shindig.oauth.popup({
+            destination: response.oauthApprovalUrl,
+            windowOptions: null,
+            onOpen: function() { showOneSection('waiting'); },
+            onClose: function() { fetchData(); }
+          });
+          // Use the popup handler to attach onclick handlers to UI elements.  The
+          // createOpenerOnClick() function returns an onclick handler to open the
+          // popup window.  The createApprovedOnClick function returns an onclick 
+          // handler that will close the popup window and attempt to fetch the user's
+          // data again.
+          var personalize = document.getElementById('personalize');
+          personalize.onclick = popup.createOpenerOnClick();
+          var approvaldone = document.getElementById('approvaldone');
+          approvaldone.onclick = popup.createApprovedOnClick();
+          showOneSection('approval');
+        } else if (response.data) {
+            alert('11:52');
+
+            taskLists = [];
+            taskLists = response.data.items;
+            for(var i=0; i< taskLists.length; i++) {
+               taskLists[i].isLoading = true;
+               getTasksForTaskList(taskLists[i]);
+            }
+            
+        } else {
+            // The response.oauthError and response.oauthErrorText values may help debug
+            // problems with your gadget.
+            var main = document.getElementById('main');
+            var err = document.createTextNode('OAuth error: ' +
+              response.oauthError + ': ' + response.oauthErrorText);
+            main.appendChild(err);
+            showOneSection('main');
+            errorOccured = true;
+        }
+      }, params);
+    }
+    
+    function getTasksForTaskList(taskList) {
+        if (errorOccured) {
+           return;
+        }
+    
+        var params = {};
+	url = "https://www.googleapis.com/tasks/v1/lists/" + taskList.id + "/tasks?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&showCompleted=true";
+        params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+        params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
+        params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
+        params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
+        params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
+ 
+        gadgets.io.makeRequest(url, function (response) { 
+        if (response.oauthApprovalUrl) {
+          // сюда попадать вообще не должны
+        } else if (response.data) {
+           taskList.isLoading = false;
+           taskList.tasks = response.data.items;
+           
+           if (allTasksLoaded()) {
+              generateList(taskLists);
+              CollapsibleLists.applyTo(document.getElementById('listId'));
+              showOneSection('main');
+              alert('done');
+           }
+            
+        } else {
+            // The response.oauthError and response.oauthErrorText values may help debug
+            // problems with your gadget.
+            var main = document.getElementById('main');
+            var err = document.createTextNode('OAuth error: ' +
+              response.oauthError + ': ' + response.oauthErrorText);
+            main.appendChild(err);
+            showOneSection('main');
+            errorOccured = true;
+        }
+      }, params);
+   
+    }
+    
+    function allTasksLoaded() {
+        var i;
+        for(var i=0; i< taskLists.length; i++) {
+            if (taskLists[i].isLoading) {
+                break;
+            }
+        }
+
+        return i == taskLists.length;
+    }
+	
+
+    
+    // Call fetchData() when gadget loads.
+    gadgets.util.registerOnLoadHandler(fetchData);
+  </script>
+  
+  <div id="main" style="display: none; height: 450; overflow-y: scroll;">
+	<ul id="listId" class="collapsibleList"></ul>
+  </div>
+
+  <div id="approval" style="display: none">
+    <a href="#" id="personalize">Personalize this gadget</a>
+  </div>
+
+  <div id="waiting" style="display: none">
+    Please click
+    <a href="#" id="approvaldone">I've approved access</a>
+    once you've approved access to your data.
+  </div>
+  ]]> 
+  </Content>
+</Module>
