@@ -1,6 +1,5 @@
 function generateList(taskLists) {
     var i;
-
     var ulMain = document.getElementById('listId');
 
     for (i = 0; i < taskLists.length; ++i) {
@@ -49,6 +48,10 @@ function generateList(taskLists) {
                 ul.appendChild(liChild);
             } // for j
         } // if
+        else {
+            var ul = document.createElement('ul'); // assume + create <ul>
+            li.appendChild(ul);
+        }
     } // for i
 
     return ulMain;
