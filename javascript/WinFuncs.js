@@ -1,3 +1,59 @@
+function generateList(taskLists) {
+    var i;
+
+    var ulMain = document.getElementById('listId');
+
+    for (i = 0; i < taskLists.length; ++i) {
+        var li = document.createElement('li');
+        li.appendChild(document.createTextNode(taskLists[i].title));
+        li.taskListId = taskLists[i].id;
+        ulMain.appendChild(li); // create <li>
+
+        if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
+            var ul = document.createElement('ul'); // assume + create <ul>
+            li.appendChild(ul);
+
+            for (var j=0; j < taskLists[i].tasks.length; j++) {
+                var liChild = document.createElement('li');
+                liChild.task =  taskLists[i].tasks[j];
+                var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
+                var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
+                liChild.appendChild(checkBox);
+                liChild.appendChild(span);
+                liChild.appendChild(document.createElement("br"));
+
+                var notesOrig = taskLists[i].tasks[j].notes || '';
+                var notes = getNotes(taskLists[i].tasks[j]);
+                var dueTo = getDueTo(taskLists[i].tasks[j]);
+
+
+                if (canBeConvertedToSubtasks(notesOrig)) {
+                    var subTasks = convertToSubTasks(notesOrig);
+                    var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
+                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
+                    liChild.appendChild(span);
+                    liChild.appendChild(document.createElement("br"));
+                    span = createColoredTextNode(dueTo);
+                    liChild.appendChild(span);
+                    liChild.appendChild(ulChild);
+                }
+                else
+                {
+                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
+                    liChild.appendChild(span);
+                    liChild.appendChild(document.createElement("br"));
+                    span = createColoredTextNode(dueTo);
+                    liChild.appendChild(span);
+                }
+
+                ul.appendChild(liChild);
+            } // for j
+        } // if
+    } // for i
+
+    return ulMain;
+}
+
 
 function getNotes(task) {
     var notes = task.notes || '<Без описания>';

@@ -68,7 +68,6 @@
     var taskLists = [];
     var errorOccured = false;
 
-  // https://www.google.com/calendar/feeds/
    // Display UI depending on OAuth access state of the gadget (see <divs> above).
     // If user hasn't approved access to data, provide a "Personalize this gadget" link
     // that contains the oauthApprovalUrl returned from makeRequest.
@@ -93,64 +92,7 @@
         }
       }
     }
-	
-    function generateList(taskLists) {
-    	var i;
 
-    	var ulMain = document.getElementById('listId');
-
-    	for (i = 0; i < taskLists.length; ++i) {
-        	var li = document.createElement('li');
-        	li.appendChild(document.createTextNode(taskLists[i].title));
-	        li.taskListId = taskLists[i].id;
-        	ulMain.appendChild(li); // create <li>
-        	
-        	 if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
-            		var ul = document.createElement('ul'); // assume + create <ul>
-            		li.appendChild(ul);
-
-            		for (var j=0; j < taskLists[i].tasks.length; j++) {
-                		var liChild = document.createElement('li');
-                		liChild.task =  taskLists[i].tasks[j];
-                		var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
-                		var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
-                		liChild.appendChild(checkBox);
-                		liChild.appendChild(span);
-                		liChild.appendChild(document.createElement("br"));
-
-                		var notesOrig = taskLists[i].tasks[j].notes || '';
-                		var notes = getNotes(taskLists[i].tasks[j]);
-                		var dueTo = getDueTo(taskLists[i].tasks[j]);
-
-
-                		if (canBeConvertedToSubtasks(notesOrig)) {
-                    			var subTasks = convertToSubTasks(notesOrig);
-                    			var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
-                    			span = createColoredTextNode(notes, taskLists[i].tasks[j]);
-                    		        liChild.appendChild(span);
-                    			liChild.appendChild(document.createElement("br"));
-                    			span = createColoredTextNode(dueTo);
-                    		        liChild.appendChild(span);
-                    			liChild.appendChild(ulChild);
-                		}
-                		else
-                		{
-                    			span = createColoredTextNode(notes, taskLists[i].tasks[j]);
-                    			liChild.appendChild(span);
-                    			liChild.appendChild(document.createElement("br"));
-                    			span = createColoredTextNode(dueTo);
-                    			liChild.appendChild(span);
-                		}
-
-                		ul.appendChild(liChild);
-            		} // for j
-        	} // if
-    	} // for i
-    	
-    	return ulMain;
-	}
-	  
-	
     // Invoke makeRequest() to fetch data from the service provider endpoint.
     // Depending on the results of makeRequest, decide which version of the UI
     // to ask showOneSection() to display. If user has approved access to his
@@ -191,7 +133,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('14:33');
+            alert('15:14');
 
             taskLists = [];
             taskLists = response.data.items;
@@ -219,7 +161,7 @@
         }
     
         var params = {};
-	url = "https://www.googleapis.com/tasks/v1/lists/" + taskList.id + "/tasks?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&showCompleted=true";
+	    url = "https://www.googleapis.com/tasks/v1/lists/" + taskList.id + "/tasks?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&showCompleted=true";
         params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
         params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
         params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
