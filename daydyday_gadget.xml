@@ -36,23 +36,21 @@
         li.collapsibleListOpen{
            cursor:pointer;
            background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png'); <!--no-repeat top left;-->
-           background-position: left bottom;
+           background-position: 0 5px;
            background-size: 12px 12px;
            background-repeat: no-repeat;
-  	       margin: 0;
-  	       padding: 4px 0 4px 20px;
-  	       list-style: none;
+  	   margin: 0;
+  	   list-style: none;
           }
 
         li.collapsibleListClosed{
            cursor:pointer;
            background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png'); <!--no-repeat top left;-->
-           background-position: left bottom;
+           background-position: 0 5px;
            background-size: 12px 12px;
            background-repeat: no-repeat;
-  	       margin: 0;
-  	       padding: 4px 0 4px 20px;
-  	       list-style: none;
+  	   margin: 0;
+  	   list-style: none;
          }
        
 	ul {
@@ -139,7 +137,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('16:19');
+            alert('16:29');
 
             taskLists = [];
             taskLists = response.data.items;
