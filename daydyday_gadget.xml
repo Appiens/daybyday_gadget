@@ -60,9 +60,9 @@
     		cursor:pointer;
 	}
   </style>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/blob/master/javascript/CollapsibleLists.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/blob/master/javascript/shindig.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/blob/master/javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/WinFuncs.js"></script>
   <script type="text/javascript">
   
     var taskLists = [];
@@ -191,7 +191,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('11:52');
+            alert('14:30');
 
             taskLists = [];
             taskLists = response.data.items;
