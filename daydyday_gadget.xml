@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <Module>
-  <ModulePrefs title="Appiens Tasks" scrolling="true" author_email="prevedyolko@gmail.com" height="500">
+  <ModulePrefs title="Appiens Tasks" scrolling="true" author_email="info@appiens.com" height="500">
     <Require feature="opensocial-0.8" />
     <Require feature="locked-domain"/>
       <OAuth>
@@ -28,7 +28,7 @@
 	}
 
 	.collapsibleList li{
-    	  list-style-image:none; /*url('../images/button-empty.png');*/
+    	  list-style-image:none; 
     	  list-style-type:none;
           cursor:auto;
 	}
