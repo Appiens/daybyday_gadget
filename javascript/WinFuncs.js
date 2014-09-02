@@ -50,6 +50,9 @@ function generateList(taskLists) {
         } // if
         else {
             var ul = document.createElement('ul'); // assume + create <ul>
+            var liChild = document.createElement('li');
+            liChild.appendChild(document.createTextNode('<no tasks>'));
+            ul.appendChild(liChild);
             li.appendChild(ul);
         }
     } // for i
