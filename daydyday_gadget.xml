@@ -41,6 +41,7 @@
            background-repeat: no-repeat;
   	   margin: 0;
   	   list-style: none;
+  	   padding: 4px 0 4px 0;
           }
 
         li.collapsibleListClosed{
@@ -51,6 +52,7 @@
            background-repeat: no-repeat;
   	   margin: 0;
   	   list-style: none;
+  	   padding: 4px 0 4px 0;
          }
        
 	ul {
@@ -137,7 +139,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('16:29');
+            alert('16:36');
 
             taskLists = [];
             taskLists = response.data.items;
