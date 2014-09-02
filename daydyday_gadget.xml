@@ -32,7 +32,7 @@
     	  list-style-type:none;
           cursor:auto;
           list-style: none;
-  	      padding: 0 0 0 -15px;
+  	      padding: 0;
   	      margin: 0;
 	}
 
@@ -60,7 +60,7 @@
        
 	ul {
     		padding: 0; /* Убираем поля */
-    		margin-left: 10px; /* Отступ слева */
+    		margin-left: 5px; /* Отступ слева */
 	}
 
 	.myStyle span {
@@ -142,7 +142,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:59');
+            alert('18:04');
             taskLists = [];
             taskLists = response.data.items;
             for(var i=0; i< taskLists.length; i++) {
