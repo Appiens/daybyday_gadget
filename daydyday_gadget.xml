@@ -31,8 +31,9 @@
     	  list-style-image:none; 
     	  list-style-type:none;
           cursor:auto;
-           list-style: none;
-  	       padding: 0 0 0 15px;
+          list-style: none;
+  	      padding: 0;
+  	      margin: 0;
 	}
 
         li.collapsibleListOpen{
@@ -141,8 +142,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:36');
-
+            alert('17:51');
             taskLists = [];
             taskLists = response.data.items;
             for(var i=0; i< taskLists.length; i++) {
