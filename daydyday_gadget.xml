@@ -37,7 +37,7 @@
            cursor:pointer;
            background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png'); <!--no-repeat top left;-->
            background-position: left bottom;
-           background-size: 16px 16px;
+           background-size: 12px 12px;
            background-repeat: no-repeat;
   	       margin: 0;
   	       padding: 4px 0 4px 20px;
@@ -48,7 +48,7 @@
            cursor:pointer;
            background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png'); <!--no-repeat top left;-->
            background-position: left bottom;
-           background-size: 16px 16px;
+           background-size: 12px 12px;
            background-repeat: no-repeat;
   	       margin: 0;
   	       padding: 4px 0 4px 20px;
@@ -139,7 +139,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('16:12');
+            alert('16:19');
 
             taskLists = [];
             taskLists = response.data.items;
