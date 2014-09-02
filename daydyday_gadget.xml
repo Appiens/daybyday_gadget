@@ -33,37 +33,25 @@
           cursor:auto;
 	}
 
-	li.collapsibleListOpen : before {
-        background:url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png') no-repeat top left;
-        width:8px;
-        height:8px;
-        display:block;
-        position:absolute;
-        content: " ";
-    }
-
-    li.collapsibleListClosed : before {
-        background:url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png') no-repeat top left;
-        width:8px;
-        height:8px;
-        display:block;
-        position:absolute;
-        content: " ";
-    }
-
         li.collapsibleListOpen{
            cursor:pointer;
-           <!--background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png') no-repeat top left width:##px;height:##px;;-->
-  	       <!--margin: 0;-->
-  	       <!--padding: 4px 0 4px 20px;-->
+           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png'); <!--no-repeat top left;-->
+           background-position: left top;
+           background-size: 50% 50%;
+           background-repeat: no-repeat;
+  	       margin: 0;
+  	       padding: 4px 0 4px 20px;
   	       list-style: none;
           }
 
         li.collapsibleListClosed{
            cursor:pointer;
-           <!--background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png') no-repeat top left;-->
-  	       <!--margin: 0;-->
-  	       <!--padding: 4px 0 4px 20px;-->
+           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png'); <!--no-repeat top left;-->
+           background-position: left top;
+           background-size: 50% 50%;
+           background-repeat: no-repeat;
+  	       margin: 0;
+  	       padding: 4px 0 4px 20px;
   	       list-style: none;
          }
        
@@ -151,7 +139,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('15:54');
+            alert('16:01');
 
             taskLists = [];
             taskLists = response.data.items;
