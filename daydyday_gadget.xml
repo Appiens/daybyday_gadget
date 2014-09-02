@@ -35,7 +35,7 @@
 
         li.collapsibleListOpen{
            cursor:pointer;
-           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/blob/master/images/button-minus.png') no-repeat top left;
+           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png') no-repeat top left;
   	   margin: 0;
   	   padding: 4px 0 4px 20px;
   	   list-style: none;
@@ -43,7 +43,7 @@
 
         li.collapsibleListClosed{
            cursor:pointer;
-           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/blob/master/images/button-plus.png') no-repeat top left;
+           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png') no-repeat top left;
   	   margin: 0;
   	   padding: 4px 0 4px 20px;
   	   list-style: none;
