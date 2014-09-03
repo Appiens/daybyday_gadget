@@ -117,7 +117,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:09');
+            alert('17:21');
             init();
             taskLists = [];
             taskLists = response.data.items;
@@ -125,7 +125,6 @@
                taskLists[i].isLoading = true;
                getTasksForTaskList(taskLists[i]);
             }
-            
         } else {
             // The response.oauthError and response.oauthErrorText values may help debug
             // problems with your gadget.

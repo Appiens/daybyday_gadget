@@ -33,13 +33,14 @@ function generateList(taskLists) {
 
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
-                    //   var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
+                    //var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
+                    drawSubTasks_new(liChild, subTasks, taskLists[i].tasks[j].id);
                     span = createColoredTextNode(notes, taskLists[i].tasks[j]);
                     liChild.appendChild(span);
                     liChild.appendChild(document.createElement("br"));
                     span = createColoredTextNode(dueTo);
                     liChild.appendChild(span);
-                    //  liChild.appendChild(ulChild);
+                   // liChild.appendChild(ulChild);
                 }
                 else
                 {
@@ -177,7 +178,7 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
     checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
-    checkBox.addEventListener('change', function(e) {
+ /*   checkBox.addEventListener('change', function(e) {
         var targ;
 
         if (!e) var e = window.event;
@@ -208,7 +209,7 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
         alert(newNotes);
         task.notes = newNotes;
       //  backGround.loader.changeSubTaskStatus(taskListId, m_taskId, newNotes);
-    });
+    });*/
 
     //var span = createColoredTextNode(text);
     li.appendChild(checkBox);
@@ -254,6 +255,17 @@ function drawSubTasks(subTasks, taskId) {
     }
 
     return ul;
+}
+
+function drawSubTasks_new(li, subTasks, taskId) {
+    for (var k = 0; k< subTasks.length; k++) {
+        if (subTasks[k].trim() == '') {
+            continue;
+        }
+
+        drawSubTask(li, subTasks[k], taskId, k);
+        li.appendChild(document.createElement("br"));
+    }
 }
 
 function canBeConvertedToSubtasks(text) {
