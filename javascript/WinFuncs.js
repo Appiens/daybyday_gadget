@@ -177,6 +177,8 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     var text = subTask.substring(1);
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
+    checkBox.style.textIndent = '25px';
+    checkBox.style.display = 'inline-block';
     checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
  /*   checkBox.addEventListener('change', function(e) {
         var targ;
