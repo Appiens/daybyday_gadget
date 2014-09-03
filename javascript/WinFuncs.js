@@ -34,11 +34,11 @@ function generateList(taskLists) {
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
                     //var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
-                    drawSubTasks_new(liChild, subTasks, taskLists[i].tasks[j].id);
                     span = createColoredTextNode(notes, taskLists[i].tasks[j]);
                     liChild.appendChild(span);
                     liChild.appendChild(document.createElement("br"));
                     span = createColoredTextNode(dueTo);
+                    drawSubTasks_new(span, subTasks, taskLists[i].tasks[j].id);
                     liChild.appendChild(span);
                    // liChild.appendChild(ulChild);
                 }
@@ -177,8 +177,6 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     var text = subTask.substring(1);
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
-    checkBox.style.textIndent = '25px';
-    checkBox.style.display = 'inline-block';
     checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
  /*   checkBox.addEventListener('change', function(e) {
         var targ;
