@@ -106,7 +106,7 @@ function createColoredTextNode(text, task) {
         document.getElementById('label-name').innerText = targ.task.title;
         document.getElementById('label-due-to').innerText = targ.task.due;
         document.getElementById('label-notes').innerText = targ.task.notes;
-        offsetY = window.pageYOffset;
+        // offsetY = window.pageYOffset;
         showOneSection('watch');
     });
     return span;
@@ -277,4 +277,29 @@ function convertFromSubTasks(arr) {
     str = str.split('^&^F').join('[ ]');
     str = str.split('^&^T').join('[x]');
     return str;
+}
+
+// Display UI depending on OAuth access state of the gadget (see <divs> above).
+// If user hasn't approved access to data, provide a "Personalize this gadget" link
+// that contains the oauthApprovalUrl returned from makeRequest.
+//
+// If the user has opened the popup window but hasn't yet approved access, display
+// text prompting the user to confirm that s/he approved access to data.  The user
+// may not ever need to click this link, if the gadget is able to automatically
+// detect when the user has approved access, but showing the link gives users
+// an option to fetch their data even if the automatic detection fails.
+//
+// When the user confirms access, the fetchData() function is invoked again to
+// obtain and display the user's data.
+function showOneSection(toshow) {
+    var sections = [ 'main', 'approval', 'waiting', 'watch' ];
+    for (var i=0; i < sections.length; ++i) {
+        var s = sections[i];
+        var el = document.getElementById(s);
+        if (s === toshow) {
+            el.style.display = "block";
+        } else {
+            el.style.display = "none";
+        }
+    }
 }
