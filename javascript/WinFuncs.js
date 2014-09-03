@@ -268,7 +268,6 @@ function drawSubTasks_new(li, subTasks, taskId) {
         }
 
         drawSubTask(li, subTasks[k], taskId, k);
-        li.appendChild(document.createElement("br"));
     }
 }
 
