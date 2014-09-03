@@ -33,13 +33,13 @@ function generateList(taskLists) {
 
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
-                    var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
+                    //   var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
                     span = createColoredTextNode(notes, taskLists[i].tasks[j]);
                     liChild.appendChild(span);
                     liChild.appendChild(document.createElement("br"));
                     span = createColoredTextNode(dueTo);
                     liChild.appendChild(span);
-                    liChild.appendChild(ulChild);
+                    //  liChild.appendChild(ulChild);
                 }
                 else
                 {
