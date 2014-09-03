@@ -1,3 +1,8 @@
+function init() {
+    var backToList = document.getElementById('href-back');
+    backToList.onclick = returnToList;
+}
+
 function generateList(taskLists) {
     var i;
     var ulMain = document.getElementById('listId');
@@ -302,4 +307,10 @@ function showOneSection(toshow) {
             el.style.display = "none";
         }
     }
+}
+
+function returnToList() {
+    var taskId = document.getElementById('label-id').innerText;
+    showOneSection('main');
+   // setTimeout( function() {window.scrollBy(0, offsetY);}, 40);
 }
