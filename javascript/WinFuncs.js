@@ -173,11 +173,13 @@ function createCheckBoxForTask(task) {
 
 
 function drawSubTask(li, subTask, taskId, subTaskNum) {
+    var span = document.createElement('div');
+    span.style.paddingLeft = '25px';
+
     var isDone = subTask.substring(0,1) == 'T';
     var text = subTask.substring(1);
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
-    checkBox.style.paddingLeft = '30px';
     checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
  /*   checkBox.addEventListener('change', function(e) {
         var targ;
@@ -213,8 +215,9 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     });*/
 
     //var span = createColoredTextNode(text);
-    li.appendChild(checkBox);
-    li.appendChild(/*document.createTextNode(text)*/ createSimpleTextNode(text, 't_' + taskId + "_" + subTaskNum));
+    span.appendChild(checkBox);
+    span.appendChild(/*document.createTextNode(text)*/ createSimpleTextNode(text, 't_' + taskId + "_" + subTaskNum));
+    li.appendChild(span);
 
     if (isDone) {
         checkBox.checked = true;
