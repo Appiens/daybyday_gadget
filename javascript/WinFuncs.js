@@ -21,8 +21,8 @@ function generateList(taskLists) {
                 var liChild = document.createElement('li');
                 var taskDiv = document.createElement('div');
                 taskDiv.task = taskLists[i].tasks[j];
-                taskDiv.addEventListener("mouseover", OnTaskDivMouseOver, false);
-                taskDiv.addEventListener("mouseout", OnTaskDivMouseOut, false);
+                taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
+                taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
 //                taskDiv.onmouseover = OnTaskDivMouseOver;
 //                taskDiv.onmouseout = OnTaskDivMouseOut;
                 //liChild.task =  taskLists[i].tasks[j];
