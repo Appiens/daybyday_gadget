@@ -95,11 +95,9 @@ function getDueTo(task) {
 
 function createSimpleTextNode(text, id) {
     var span = document.createElement('span');
-    var textNode = document.createTextNode(text);
-    span.appendChild(textNode);
+    span.appendChild(document.createTextNode(text));
     span.setAttribute("id", id);
     span.style.backgroundColor = 'inherit';
-    textNode.style.backgroundColor = 'inherit';
     return span;
 }
 
