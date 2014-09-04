@@ -118,7 +118,7 @@
           showOneSection('approval');
         } else if (response.data) {
             alert('17:00');
-            init();
+            init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
             for(var i=0; i< taskLists.length; i++) {
