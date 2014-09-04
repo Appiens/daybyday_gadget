@@ -374,10 +374,10 @@ function returnToList() {
 }
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
-        url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&status=completed';
+        url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId;
         var status = isCompleted ? 'completed':'needsAction';
         
-         var data =  isCompleted? '{"status":"' + status + '"}' : '{"status":"' + status + '", "completed": null}';
+         var data =  isCompleted? '{"status":"' + status + '", "key": "AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk"}' : '{"status":"' + status + '", "completed": null, "key": "AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk"}';
         makePOSTRequest(url, data); 
    }
 
