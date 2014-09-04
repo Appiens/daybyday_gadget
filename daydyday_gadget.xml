@@ -193,6 +193,7 @@
    function makePOSTRequest(url, postdata) {
    	var params = {};
    	postdata = gadgets.io.encodeValues(postdata);
+   	alert(postdata);
    	params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
    	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.PUT;
    	params[gadgets.io.RequestParameters.POST_DATA]= postdata;
