@@ -370,31 +370,6 @@ function returnToList() {
    // setTimeout( function() {window.scrollBy(0, offsetY);}, 40);
 }
 
-function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
-        url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&fields=id%2Cstatus';
-        var status = isCompleted ? 'completed':'needsAction';
-        
-         var data =  isCompleted? '{"status":"' + status + '"}' : '{"status":"' + status + '", "completed": null}';
-        makePOSTRequest(url, data); 
 
-}
-
-function makePOSTRequest(url, postdata) {
-   var params = {};
-   postdata = gadgets.io.encodeValues(postdata);
-   params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
-   params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
-   params[gadgets.io.RequestParameters.POST_DATA]= postdata;
-   params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
-   params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
-   params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
-   gadgets.io.makeRequest(url, response, params); 
-};
-
-function response(obj) {
-   alert(obj.text); 
-    alert(obj.data); 
-    alert(obj.errors);
-};
 
 
