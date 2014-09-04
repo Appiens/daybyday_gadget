@@ -393,6 +393,8 @@ function makePOSTRequest(url, postdata) {
 
 function response(obj) {
    alert(obj.text); 
+    alert(obj.data); 
+    alert(obj.errors);
 };
 
 
