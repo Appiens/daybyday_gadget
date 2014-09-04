@@ -1,6 +1,9 @@
-function init() {
+var makePOSTRequest = null;
+
+function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
     backToList.onclick = returnToList;
+    makePOSTRequest = makePostRequestFunc;
 }
 
 function generateList(taskLists) {
@@ -178,8 +181,10 @@ function createCheckBoxForTask(task) {
         var m_taskId = targ.id.substring('ch_'.length);
         var taskListId = li? li.taskListId: '';
         task.status = targ.checked ? 'completed' : 'needsAction';
-        alert(task.title + " " + taskListId);
+
         //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
+        changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
+        alert(task.title + " " + taskListId);
     });
 
     if (task.status == 'completed') {
@@ -347,3 +352,15 @@ function returnToList() {
     showOneSection('main');
    // setTimeout( function() {window.scrollBy(0, offsetY);}, 40);
 }
+
+function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
+        url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
+        var status = isCompleted ? 'completed':'needsAction';
+        
+         var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
+        makePOSTRequest(url, data); 
+   }
+
+
+
+
