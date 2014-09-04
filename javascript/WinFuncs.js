@@ -382,6 +382,7 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
 function makePOSTRequest(url, postdata) {
    var params = {};
    postdata = gadgets.io.encodeValues(postdata);
+   params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
    params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.POST;
    params[gadgets.io.RequestParameters.POST_DATA]= postdata;
    params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
