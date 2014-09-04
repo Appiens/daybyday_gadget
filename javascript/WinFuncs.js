@@ -198,7 +198,8 @@ function createCheckBoxForTask(task) {
         var m_taskId = targ.id.substring('ch_'.length);
         var taskListId = li? li.taskListId: '';
         task.status = targ.checked ? 'completed' : 'needsAction';
-        backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
+        //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
+         alert(task.title + " " + taskListId);
 
     });
 
