@@ -21,6 +21,10 @@ function generateList(taskLists) {
                 var liChild = document.createElement('li');
                 var taskDiv = document.createElement('div');
                 taskDiv.task = taskLists[i].tasks[j];
+                taskDiv.addEventListener("mouseover", OnTaskDivMouseOver, false);
+                taskDiv.addEventListener("mouseout", OnTaskDivMouseOut, false);
+//                taskDiv.onmouseover = OnTaskDivMouseOver;
+//                taskDiv.onmouseout = OnTaskDivMouseOut;
                 //liChild.task =  taskLists[i].tasks[j];
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
@@ -119,6 +123,24 @@ function createColoredTextNode(text, task) {
         showOneSection('watch');
     });
     return span;
+}
+
+function OnTaskDivMouseOver(e) {
+    var targ;
+    if (!e) var e = window.event;
+    if (e.target) targ = e.target;
+    else if (e.srcElement) targ = e.srcElement;
+
+    targ.style.background='gray';
+}
+
+function OnTaskDivMouseOut(e) {
+    var targ;
+    if (!e) var e = window.event;
+    if (e.target) targ = e.target;
+    else if (e.srcElement) targ = e.srcElement;
+
+    targ.style.background='white';
 }
 
 function createButtonShowTask(taskId) {
