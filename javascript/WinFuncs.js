@@ -156,26 +156,6 @@ function OnTaskDivClick(e) {
     showOneSection('watch');
 }
 
-function createButtonShowTask(taskId) {
-    var button = document.createElement("button");
-    button.setAttribute("id", taskId);
-    button.innerText = "Подробнее...";
-    button.type = 'button';
-    button.addEventListener('click', function(e) {
-        var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        var isHidden = targ.innerText == "Подробнее...";
-        targ.innerText = isHidden ? "Скрыть" : "Подробнее...";
-        backGround.LogMsg(targ.id);
-        document.getElementById('div_' + targ.id).style.display = isHidden? '': 'none';
-    });
-
-    return button;
-}
-
 function createCheckBoxForTask(task) {
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
@@ -198,8 +178,8 @@ function createCheckBoxForTask(task) {
         var m_taskId = targ.id.substring('ch_'.length);
         var taskListId = li? li.taskListId: '';
         task.status = targ.checked ? 'completed' : 'needsAction';
-        backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
-
+        alert(task.title + " " + taskListId);
+        //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
     });
 
     if (task.status == 'completed') {
