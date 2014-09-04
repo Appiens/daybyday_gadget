@@ -19,36 +19,39 @@ function generateList(taskLists) {
 
             for (var j=0; j < taskLists[i].tasks.length; j++) {
                 var liChild = document.createElement('li');
-                liChild.task =  taskLists[i].tasks[j];
+                var taskDiv = document.createElement('div');
+                taskDiv.task = taskLists[i].tasks[j];
+                //liChild.task =  taskLists[i].tasks[j];
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
-                liChild.appendChild(checkBox);
-                liChild.appendChild(span);
-                liChild.appendChild(document.createElement("br"));
+                taskDiv.appendChild(checkBox);
+                taskDiv.appendChild(span);
+                liChild.appendChild(taskDiv);
+                //liChild.appendChild(document.createElement("br"));
 
                 var notesOrig = taskLists[i].tasks[j].notes || '';
-                var notes = getNotes(taskLists[i].tasks[j]);
-                var dueTo = getDueTo(taskLists[i].tasks[j]);
+//                var notes = getNotes(taskLists[i].tasks[j]);
+//                var dueTo = getDueTo(taskLists[i].tasks[j]);
 
 
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
                     //var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
-                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
-                    liChild.appendChild(span);
-                    liChild.appendChild(document.createElement("br"));
-                    span = createColoredTextNode(dueTo);
-                    liChild.appendChild(span);
-                    drawSubTasks_new(liChild, subTasks, taskLists[i].tasks[j].id);
+//                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
+//                    liChild.appendChild(span);
+//                    liChild.appendChild(document.createElement("br"));
+//                    span = createColoredTextNode(dueTo);
+//                    liChild.appendChild(span);
+                    drawSubTasks_new(taskDiv, subTasks, taskLists[i].tasks[j].id);
                    // liChild.appendChild(ulChild);
                 }
                 else
                 {
-                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
-                    liChild.appendChild(span);
-                    liChild.appendChild(document.createElement("br"));
-                    span = createColoredTextNode(dueTo);
-                    liChild.appendChild(span);
+//                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
+//                    liChild.appendChild(span);
+//                    liChild.appendChild(document.createElement("br"));
+//                    span = createColoredTextNode(dueTo);
+//                    liChild.appendChild(span);
                 }
 
                 ul.appendChild(liChild);

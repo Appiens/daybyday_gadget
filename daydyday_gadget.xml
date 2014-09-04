@@ -117,7 +117,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('18:28');
+            alert('13:26');
             init();
             taskLists = [];
             taskLists = response.data.items;
