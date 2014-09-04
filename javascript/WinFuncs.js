@@ -374,7 +374,7 @@ function returnToList() {
 }
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
-        url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&fields=id%2Cstatus';
+        url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk&status=completed&fields=id%2Cstatus';
         var status = isCompleted ? 'completed':'needsAction';
         
          var data =  isCompleted? '{"status":"' + status + '"}' : '{"status":"' + status + '", "completed": null}';
