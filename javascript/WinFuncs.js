@@ -212,7 +212,6 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
 
         var li = targ;
 
-
         while (li != null && li.task == undefined) li = li.parentNode;
         var m_taskId = li ? li.task.id : '';
         var oldNotes = li ? li.task.notes : '';
@@ -232,11 +231,11 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
         var newNotes = convertFromSubTasks(arr);
         alert("newNotes = " + newNotes);
         task.notes = newNotes;
+        changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
     });
 
-    //var span = createColoredTextNode(text);
     span.appendChild(checkBox);
-    span.appendChild(/*document.createTextNode(text)*/ createSimpleTextNode(text, 't_' + taskId + "_" + subTaskNum));
+    span.appendChild(createSimpleTextNode(text, 't_' + taskId + "_" + subTaskNum));
     li.appendChild(span);
 
     if (isDone) {
@@ -352,8 +351,14 @@ function returnToList() {
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
     var status = isCompleted ? 'completed':'needsAction';
-    url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
+    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
     var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
+    makePOSTRequest(url, data, OnChangeTaskStatus);
+}
+
+function changeSubTaskStatusRequest(taskListId, taskId, notes) {
+    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
+    var data =  '{"notes":"' + notes + '", "id": "'+ taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
