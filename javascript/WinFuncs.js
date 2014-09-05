@@ -29,31 +29,13 @@ function generateList(taskLists) {
                 taskDiv.appendChild(checkBox);
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
-                //liChild.appendChild(document.createElement("br"));
 
                 var notesOrig = taskLists[i].tasks[j].notes || '';
-//                var notes = getNotes(taskLists[i].tasks[j]);
-//                var dueTo = getDueTo(taskLists[i].tasks[j]);
-
 
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
-                    //var ulChild = drawSubTasks(subTasks, taskLists[i].tasks[j].id);
-//                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
-//                    liChild.appendChild(span);
-//                    liChild.appendChild(document.createElement("br"));
-//                    span = createColoredTextNode(dueTo);
-//                    liChild.appendChild(span);
-                    drawSubTasks_new(taskDiv, subTasks, taskLists[i].tasks[j].id);
-                   // liChild.appendChild(ulChild);
-                }
-                else
-                {
-//                    span = createColoredTextNode(notes, taskLists[i].tasks[j]);
-//                    liChild.appendChild(span);
-//                    liChild.appendChild(document.createElement("br"));
-//                    span = createColoredTextNode(dueTo);
-//                    liChild.appendChild(span);
+                    taskDiv.subTasks = subTasks;
+                    drawSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks);
                 }
 
                 ul.appendChild(liChild);
@@ -69,6 +51,13 @@ function generateList(taskLists) {
     } // for i
 
     return ulMain;
+}
+
+function drawSubTasksDiv(taskDiv, task, subTasks) {
+    var subTasksDiv = document.createElement('div');
+    subTasksDiv.setAttribute("id", 'divsub_' + task.id);
+    drawSubTasks_new(subTasksDiv, subTasks, task.id);
+    taskDiv.appendChild(subTasksDiv);
 }
 
 
@@ -213,7 +202,7 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
     checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
- /*   checkBox.addEventListener('change', function(e) {
+    checkBox.addEventListener('change', function(e) {
         var targ;
 
         if (!e) var e = window.event;
@@ -228,23 +217,22 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
         var m_taskId = li ? li.task.id : '';
         var oldNotes = li ? li.task.notes : '';
         var task = li.task;
-        alert(JSON.stringify(li.task));
+        alert("task = " + JSON.stringify(li.task));
 
         while (li != null && li.taskListId == undefined) li = li.parentNode;
 
 
         var taskListId = li? li.taskListId: '';
-        alert(taskListId);
+        alert("taskListId = " + taskListId);
         var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
-        alert(subTaskId);
-       // var oldNotes = document.getElementById(m_taskId).task.notes;
+        alert("subTaskId = " + subTaskId);
+
         var arr = convertToSubTasks(oldNotes);
         arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
         var newNotes = convertFromSubTasks(arr);
-        alert(newNotes);
+        alert("newNotes = " + newNotes);
         task.notes = newNotes;
-      //  backGround.loader.changeSubTaskStatus(taskListId, m_taskId, newNotes);
-    });*/
+    });
 
     //var span = createColoredTextNode(text);
     span.appendChild(checkBox);
@@ -371,22 +359,36 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
 
 function OnChangeTaskStatus(obj) {
     if (obj.text) {
-        var objj = JSON.parse(obj.text);
+        var taskFromServer = JSON.parse(obj.text);
 
-        if (objj) {
-            var isCompleted = objj.status == "completed";
-            var checkBox = document.getElementById("ch_" + objj.id);
+        if (taskFromServer) {
+            var isCompleted = taskFromServer.status == "completed";
+            var checkBox = document.getElementById("ch_" + taskFromServer.id);
             if (checkBox.checked != isCompleted) {
                 checkBox.checked = isCompleted;
             }
 
-            // если отличаеется дескрипшн и это сабтаски, то нужно вызвать generateList()
+            var taskDiv = document.getElementById("div_" + taskFromServer.id);
 
-            var taskDiv = document.getElementById("div_" + objj.id);
-            taskDiv.task = objj;
-            var taskSpan = document.getElementById('t_' + objj.id);
-            alert(taskSpan.innerText);
-            taskSpan.innerText = objj.title;
+            var taskSpan = document.getElementById('t_' + taskFromServer.id);
+            taskSpan.innerText = taskFromServer.title;
+
+            if (taskFromServer.notes != taskDiv.task.notes) {
+                if (canBeConvertedToSubtasks(taskFromServer.notes)) {
+                    var subTasks = convertToSubTasks(taskFromServer.notes);
+                    var subTaskDiv = document.getElementById('divsub_' + taskFromServer.id);
+
+                    if (subTaskDiv) {
+                        subTaskDiv.parentNode.removeChild(subTaskDiv);
+                    }
+
+                    drawSubTasksDiv(taskDiv, taskFromServer, subTasks);
+                    // перерисовать узел subTasks
+                    taskDiv.subTasks = subTasks;
+                }
+            }
+
+            taskDiv.task = taskFromServer;
         }
     }
 
