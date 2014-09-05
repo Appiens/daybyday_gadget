@@ -153,11 +153,11 @@ function OnTaskDivClick(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
-    document.getElementById('label-id').innerText = targ.task.id;
+  /*  document.getElementById('label-id').innerText = targ.task.id;
     document.getElementById('label-name').innerText = targ.task.title;
     document.getElementById('label-due-to').innerText = targ.task.due;
     document.getElementById('label-notes').innerText = targ.task.notes;
-    showOneSection('watch');
+    showOneSection('watch');*/
 }
 
 function createCheckBoxForTask(task) {
