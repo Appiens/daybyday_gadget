@@ -374,6 +374,8 @@ function OnChangeTaskStatus(obj) {
                 alert('Ok');
             }
         }
+
+        alert(obj.text);
     }
 
     if (obj.error) {
