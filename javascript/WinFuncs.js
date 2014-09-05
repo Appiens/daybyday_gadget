@@ -23,12 +23,7 @@ function generateList(taskLists) {
 
             for (var j=0; j < taskLists[i].tasks.length; j++) {
                 var liChild = document.createElement('li');
-                var taskDiv = document.createElement('div');
-                taskDiv.task = taskLists[i].tasks[j];
-                taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
-                taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
-                taskDiv.addEventListener("click", OnTaskDivClick);
-                taskDiv.style.cursor = 'pointer';
+                var taskDiv = createTaskDiv(taskLists[i].tasks[j]);
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
@@ -153,11 +148,26 @@ function OnTaskDivClick(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
-  /*  document.getElementById('label-id').innerText = targ.task.id;
+    if (targ.type != 'div') {
+        return;
+    }
+
+    document.getElementById('label-id').innerText = targ.task.id;
     document.getElementById('label-name').innerText = targ.task.title;
     document.getElementById('label-due-to').innerText = targ.task.due;
     document.getElementById('label-notes').innerText = targ.task.notes;
-    showOneSection('watch');*/
+    showOneSection('watch');
+}
+
+function createTaskDiv(task) {
+    var taskDiv = document.createElement('div');
+    taskDiv.setAttribute("id", "div_" + task.id);
+    taskDiv.task = task;
+    taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
+    taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
+    taskDiv.addEventListener("click", OnTaskDivClick);
+    taskDiv.style.cursor = 'pointer';
+    return taskDiv;
 }
 
 function createCheckBoxForTask(task) {
@@ -364,21 +374,20 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
 function OnChangeTaskStatus(obj) {
     if (obj.text) {
         var objj = JSON.parse(obj.text);
-        alert(JSON.stringify(objj));
-        if (objj.status) {
-            alert(objj.status);
+
+        if (objj) {
             var isCompleted = objj.status == "completed";
             var checkBox = document.getElementById("ch_" + objj.id);
             if (checkBox.checked != isCompleted) {
                 checkBox.checked = isCompleted;
             }
-            else
-            {
-                alert('Ok');
-            }
-        }
 
-        alert(objj.id);
+            var taskDiv = document.getElementById("div_" + objj.id);
+            taskDiv.task = objj;
+            var taskSpan = document.getElementById('t_' + objj.id);
+            alert(taskSpan.children[0].innerText);
+            taskSpan.children[0].innerText = objj.title;
+        }
     }
 
     if (obj.error) {
