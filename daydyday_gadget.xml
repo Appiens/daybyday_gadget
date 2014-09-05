@@ -117,8 +117,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-
-            alert('11:23');
+            alert('11:46');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -193,10 +192,10 @@
     
    function makePOSTRequest(url, postdata) {
    	var params = {};
-   	var postdata_ = gadgets.io.encodeValues(postdata);
+   	var postdata_ = postdata; //gadgets.io.encodeValues(postdata);
    	params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
    	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.PUT;
-    // params[gadgets.io.RequestParameters.POST_DATA]= postdata_;
+    params[gadgets.io.RequestParameters.POST_DATA]= postdata_;
    	params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
    	params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
    	params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
