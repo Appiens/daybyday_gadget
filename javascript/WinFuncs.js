@@ -352,19 +352,19 @@ function returnToList() {
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
     var status = isCompleted ? 'completed':'needsAction';
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-    var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '", "notes": "lalalal"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '", "notes": "lalalal"}';
+    var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
 function changeSubTaskStatusRequest(taskListId, taskId, notes) {
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-    var data =  '{"notes": "' + notes + '", "id": "'+ taskId + '"}';
+    var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
 function OnChangeTaskStatus(obj) {
-    if (obj.errors) {
-        alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors));
+    if (obj.errors.length > 0) {
+        alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
         return;
     }
 
@@ -403,6 +403,18 @@ function OnChangeTaskStatus(obj) {
     }
 
 
+}
+
+function filterSpecialChar(data) {
+    if (data) {
+        data = data.replace(/"/g, "\\\"");
+        data = data.replace(/\n/g, "\\n");
+        data = data.replace(/\//g, "\\/");
+        data = data.replace(/\r/g, "\\r");
+        data = data.replace(/\t/g, "\\t");
+    }
+
+    return data;
 }
 
 
