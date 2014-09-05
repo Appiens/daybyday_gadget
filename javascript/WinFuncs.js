@@ -1,4 +1,5 @@
 var makePOSTRequest = null;
+var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 
 function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
@@ -355,9 +356,29 @@ function returnToList() {
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
     var status = isCompleted ? 'completed':'needsAction';
-    url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
+    url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
     var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
-    makePOSTRequest(url, data);
+    makePOSTRequest(url, data, OnChangeTaskStatus);
+}
+
+function OnChangeTaskStatus(obj) {
+    if (obj.text) {
+        if (obj.text.status) {
+            var isCompleted = obj.text.status == "completed";
+            var checkBox = document.getElementById("ch_" + obj.text.id);
+            if (checkBox.checked != isCompleted) {
+                checkBox.checked = isCompleted;
+            }
+            else
+            {
+                alert('Ok');
+            }
+        }
+    }
+
+    if (obj.error) {
+        alert('Sorry! Some error occured!');
+    }
 }
 
 
