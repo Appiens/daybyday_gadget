@@ -1,6 +1,66 @@
 var makePOSTRequest = null;
 var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 
+
+// структура дерева
+//   <ul id="listId">
+//   <li> (содержит ссылку taskListId) Название списка задач
+//   <ul>
+//   <li>
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask) ===> Нажатие на DIV вызывает окно редактирования таска
+//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox> ===> Нажатие на CHECKBOX объявляет задачу выполненной/невыполненной (отправляет запрос PUT status)
+//   <span id = "t_" + taskId> Название задачи </span>
+//   <div id = "divsub_" + taskId> (содержит подзадачи)
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
+//   ...
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   </div> // div sub
+//   </div> // div task
+//   </li>
+//   ...
+//   <li>
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask)
+//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
+//   <span id = "t_" + taskId> Название задачи </span>
+//   <div id = "divsub_" + taskId> (содержит подзадачи)
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   ...
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   </div> // div sub
+//   </div> // div task
+//   </li>
+//   </ul> // tasks
+//   </li>
+//   ...
+//   <li> (содержит ссылку taskListId) Название списка задач
+//   <ul>
+//   <li>
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask)
+//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
+//   <span id = "t_" + taskId> Название задачи </span>
+//   <div id = "divsub_" + taskId> (содержит подзадачи)
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   ...
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   </div> // div sub
+//   </div> // div task
+//   </li>
+//   ...
+//   <li>
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask)
+//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
+//   <span id = "t_" + taskId> Название задачи </span>
+//   <div id = "divsub_" + taskId> (содержит подзадачи)
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   ...
+//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//   </div> // div sub
+//   </div> // div task
+//   </li>
+//   </ul> // tasks
+//   </li>
+//   </ul>  // списки задач
+
 function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
     backToList.onclick = returnToList;
@@ -243,7 +303,6 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
         setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
 
     }
-
 }
 
 function OnChangeTaskStatusCB(targ) {
@@ -344,9 +403,7 @@ function showOneSection(toshow) {
 }
 
 function returnToList() {
-    var taskId = document.getElementById('label-id').innerText;
     showOneSection('main');
-   // setTimeout( function() {window.scrollBy(0, offsetY);}, 40);
 }
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
@@ -401,8 +458,6 @@ function OnChangeTaskStatus(obj) {
             taskDiv.task = taskFromServer;
         }
     }
-
-
 }
 
 function filterSpecialChar(data) {
