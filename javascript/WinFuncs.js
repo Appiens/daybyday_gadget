@@ -358,11 +358,17 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
 
 function changeSubTaskStatusRequest(taskListId, taskId, notes) {
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
+    alert(url);
     var data =  '{"notes":"' + notes + '", "id": "'+ taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
 function OnChangeTaskStatus(obj) {
+    if (obj.error) {
+        alert('Sorry! Some error occured! ' + obj.error);
+        return;
+    }
+
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
 
@@ -397,9 +403,7 @@ function OnChangeTaskStatus(obj) {
         }
     }
 
-    if (obj.error) {
-        alert('Sorry! Some error occured!');
-    }
+
 }
 
 
