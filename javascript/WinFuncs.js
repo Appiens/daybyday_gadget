@@ -364,6 +364,7 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
 function OnChangeTaskStatus(obj) {
     if (obj.text) {
         if (obj.text.status) {
+            alert(obj.text.status);
             var isCompleted = obj.text.status == "completed";
             var checkBox = document.getElementById("ch_" + obj.text.id);
             if (checkBox.checked != isCompleted) {
@@ -375,7 +376,7 @@ function OnChangeTaskStatus(obj) {
             }
         }
 
-        alert(obj.text);
+        alert(obj.text.id);
     }
 
     if (obj.error) {
