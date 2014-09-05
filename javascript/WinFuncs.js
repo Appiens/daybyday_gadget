@@ -148,15 +148,13 @@ function OnTaskDivClick(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
-    if (targ.type != 'div') {
-        return;
+    if (targ.task) {
+        document.getElementById('label-id').innerText = targ.task.id;
+        document.getElementById('label-name').innerText = targ.task.title;
+        document.getElementById('label-due-to').innerText = targ.task.due;
+        document.getElementById('label-notes').innerText = targ.task.notes;
+        showOneSection('watch');
     }
-
-    document.getElementById('label-id').innerText = targ.task.id;
-    document.getElementById('label-name').innerText = targ.task.title;
-    document.getElementById('label-due-to').innerText = targ.task.due;
-    document.getElementById('label-notes').innerText = targ.task.notes;
-    showOneSection('watch');
 }
 
 function createTaskDiv(task) {
@@ -381,6 +379,8 @@ function OnChangeTaskStatus(obj) {
             if (checkBox.checked != isCompleted) {
                 checkBox.checked = isCompleted;
             }
+
+            // если отличаеется дескрипшн и это сабтаски, то нужно вызвать generateList()
 
             var taskDiv = document.getElementById("div_" + objj.id);
             taskDiv.task = objj;
