@@ -358,8 +358,7 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
 
 function changeSubTaskStatusRequest(taskListId, taskId, notes) {
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-    alert(url);
-    var data =  '{"notes":"' + notes + '", "id": "'+ taskId + '"}';
+    var data =  '{"notes":"[ ]подзадача 1\n[ ]подзадача 2\n[x]подзадача 3", "id": "'+ taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
