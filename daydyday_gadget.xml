@@ -117,7 +117,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('13:17');
+            alert('13:19');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -199,7 +199,7 @@
    	params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
    	params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
    	params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
-   	gadgets.io.makeRequest(url, response, params); 
+   	gadgets.io.makeRequest(url, callback, params);
 };
 
     // Call fetchData() when gadget loads.
