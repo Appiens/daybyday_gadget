@@ -385,8 +385,8 @@ function OnChangeTaskStatus(obj) {
             var taskDiv = document.getElementById("div_" + objj.id);
             taskDiv.task = objj;
             var taskSpan = document.getElementById('t_' + objj.id);
-            alert(taskSpan.children[0].innerText);
-            taskSpan.children[0].innerText = objj.title;
+            alert(taskSpan.innerText);
+            taskSpan.innerText = objj.title;
         }
     }
 
