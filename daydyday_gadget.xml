@@ -69,7 +69,7 @@
     		cursor:pointer;
 	}
 
-    .new-select-style-wpandyou select, textarea, input {
+    .new-select-style-wpandyou select, textarea, input[type=text], input[type=date] {
             font-family: Arial;
             width:87%;
             min-height:20px;
@@ -133,7 +133,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('16:27');
+            alert('16:39');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
