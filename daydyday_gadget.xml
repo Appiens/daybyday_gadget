@@ -133,7 +133,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:04');
+            alert('17:20');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -242,10 +242,10 @@ textarea {
 
     <table cellpadding=1 width=97%>
         <tr>
-            <td style="width: 80%; text-align:left; vertical-align:middle;">
+            <td style="width: 70%; text-align:left; vertical-align:middle;">
                     <input type="date" id="input-task-date" name="input-task-date" required>
             </td>
-            <td style="text-align:center;font-size : large">
+            <td style="width: 30%; text-align:center;font-size : large">
                     <a href = "#" id="div-event-remind-1-close">
                          &times;
                     </a>
