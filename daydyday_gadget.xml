@@ -69,21 +69,9 @@
     		cursor:pointer;
 	}
 
-	.check-box-style input {
-            min-height:10px;
-            display:inline;
-            horizontal-align:right;
-            vertical-align:middle;
-            margin:0px;
-            margin-bottom:5px;
-            margin-top:5px;
-            outline: none;
-            initial:content-box;
-    }
-
     .new-select-style-wpandyou select, textarea, input {
             font-family: Arial;
-            width:97%;
+            width:87%;
             min-height:20px;
             display:block;
             margin-bottom:15px;
@@ -145,7 +133,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('16:22');
+            alert('16:27');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -253,12 +241,12 @@ textarea {
     Name:<br><input type="text" id="input-task-name" name="input-task-name"/><br>
     <table cellpadding=1 width=97%>
         <tr>
-            <td style="width: 7%; text-align:left; vertical-align:middle;">
+            <td style="width: 20%; text-align:left; vertical-align:middle;">
                <div class="check-box-style">
                     <input type="checkbox" id="checkbox-with-date" name="checkbox-with-date" checked="true" title="">
                 </div>
             </td>
-           <td style="width: 93%; text-align:left; vertical-align:middle;">
+           <td style="width: 80%; text-align:left; vertical-align:middle;">
                <label id="label-task-date"></label>
            </td>
        </tr>
