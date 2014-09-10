@@ -133,7 +133,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:47');
+            alert('17:50');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -240,7 +240,7 @@ textarea {
 
     <input type="text" id="input-task-name" name="input-task-name" placeholder="name"/>
 
-    <table cellpadding=0 width= 87%>
+    <table cellpadding=0 width= 80%>
         <tr>
             <td style="width: 50%; text-align:left; vertical-align:middle;">
                     <input type="date" id="input-task-date" name="input-task-date" required>
