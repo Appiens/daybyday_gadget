@@ -198,10 +198,12 @@ function OnTaskDivClick(e) {
     else if (e.srcElement) targ = e.srcElement;
 
     if (targ.task) {
-        document.getElementById('label-id').innerText = targ.task.id;
-        document.getElementById('label-name').innerText = targ.task.title;
-        document.getElementById('label-due-to').innerText = targ.task.due;
-        document.getElementById('label-notes').innerText = targ.task.notes;
+        // TODO show task fields in edit boxes
+
+        // document.getElementById('label-id').innerText = targ.task.id;
+        // document.getElementById('label-name').innerText = targ.task.title;
+        // document.getElementById('label-due-to').innerText = targ.task.due;
+         // document.getElementById('label-notes').innerText = targ.task.notes;
         showOneSection('watch');
     }
 }

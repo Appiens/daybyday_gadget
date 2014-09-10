@@ -68,6 +68,34 @@
     		display:inline-block;
     		cursor:pointer;
 	}
+
+	.check-box-style input {
+            min-height:10px;
+            display:inline;
+            horizontal-align:right;
+            vertical-align:middle;
+            margin:0px;
+            margin-bottom:5px;
+            margin-top:5px;
+            outline: none;
+            initial:content-box;
+    }
+
+    .new-select-style-wpandyou select, textarea, input {
+            font-family: Arial;
+            width:97%;
+            min-height:20px;
+            display:block;
+            margin-bottom:15px;
+            margin-top:5px;
+            padding-left:5px;
+            outline: none;
+            box-sizing:content-box;
+    }
+
+textarea {
+    resize: vertical;
+}
   </style>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
@@ -117,7 +145,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:23');
+            alert('16:22');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -222,9 +250,25 @@
 
   <div id="watch" style="display: none">
     Id: <label id="label-id"></label><br><br>
-    Name: <label id="label-name"></label><br><br>
-    Due to: <label id="label-due-to"></label><br><br>
-    Notes: <label id="label-notes"></label><br><br>
+    Name:<br><input type="text" id="input-task-name" name="input-task-name"/><br>
+    <table cellpadding=1 width=97%>
+        <tr>
+            <td style="width: 7%; text-align:left; vertical-align:middle;">
+               <div class="check-box-style">
+                    <input type="checkbox" id="checkbox-with-date" name="checkbox-with-date" checked="true" title="">
+                </div>
+            </td>
+           <td style="width: 93%; text-align:left; vertical-align:middle;">
+               <label id="label-task-date"></label>
+           </td>
+       </tr>
+    </table>
+    Due to:<br><input type="date" id="input-task-date" name="input-task-date" required><br>
+    Notes:<br>
+    <div class="new-select-style-wpandyou">
+    <textarea name="input-task-comment" id="input-task-comment"  rows="2"></textarea>
+    </div>
+    <br><br>
     <a href="#" id="href-back">Back to list</a>
   </div>
   ]]> 
