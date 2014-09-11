@@ -154,7 +154,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('13:30');
+            alert('16:36');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -264,26 +264,26 @@ textarea {
                          <input type="checkbox" id="checkbox-task-completed" name="checkbox-task-completed" checked="true" title="">
                     </td>
                     <td style="width: 93%; text-align:left; vertical-align:middle;font-size: small;">
-                        <label id="label-task-completed">__MSG_red__</label>
+                        <label id="label-task-completed">__MSG_completed__</label>
                     </td>
                 </tr>
     </table>
-    <input type="text" id="input-task-name" name="input-task-name" placeholder="__MSG_blue__"/>
+    <input type="text" id="input-task-name" name="input-task-name" placeholder="__MSG_title_default__"/>
     <table cellpadding=0 width=87%>
                 <tr>
                     <td style="width: 7%; text-align:left; vertical-align:middle;">
                             <input type="checkbox" id="checkbox-with-date" name="checkbox-with-date" checked="true" title="">
                     </td>
                     <td style="width: 93%; text-align:left; vertical-align:middle;font-size: small;">
-                        <label id="label-task-date">__MSG_gray__</label>
+                        <label id="label-task-date">__MSG_due_date__</label>
                     </td>
                 </tr>
     </table>
     <input type="date" id="input-task-date" name="input-task-date" required>
     <div class="new-select-style-wpandyou">
-    <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_hello_world__"></textarea>
+    <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
-    <a href="#" id="href-back">&#x25C1 __MSG_red__</a>
+    <a href="#" id="href-back">&#x25C1 __MSG_action_back_to_list__</a>
   </div>
   ]]> 
   </Content>

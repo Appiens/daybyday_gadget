@@ -9,4 +9,9 @@
     <msg name="gray">Серый</msg>
     <msg name="purple">Пурпурный</msg>
     <msg name="black">Черный</msg>
+    <msg name="completed">Выполнено</msg>
+    <msg name="due_date">Дата выполнения</msg>
+    <msg name="title_default">Заголовок</msg>
+    <msg name="notes_default">Описание</msg>
+    <msg name="action_back_to_list">К списку задач</msg>
 </messagebundle>

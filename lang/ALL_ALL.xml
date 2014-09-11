@@ -9,4 +9,9 @@
     <msg name="gray">Gray</msg>
     <msg name="purple">Purple</msg>
     <msg name="black">Black</msg>
+    <msg name="completed">Completed</msg>
+    <msg name="due_date">Due date</msg>
+    <msg name="title_default">Untitled task</msg>
+    <msg name="notes_default">Note</msg>
+    <msg name="action_back_to_list">Back to list</msg>
 </messagebundle>
