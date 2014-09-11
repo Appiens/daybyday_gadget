@@ -110,12 +110,12 @@
         font-weight:normal;
         font-style:normal;
         height:16px;
-        line-height:25px;
+        line-height:16px;
         text-decoration:none;
         text-align:center;
         vertical-align:top;
-        margin-bottom:5px;
-        margin-top:5px;
+        margin-bottom:0px;
+        margin-top:0px;
     }
 
     input[type=button]:hover {
@@ -180,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:58');
+            alert('18:04');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
