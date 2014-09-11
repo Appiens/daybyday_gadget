@@ -145,7 +145,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('10:48');
+            alert('11:02');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -249,10 +249,29 @@ textarea {
   </div>
 
   <div id="watch" style="display: none">
-
+     <table cellpadding=0 width=87%>
+                <tr>
+                    <td style="width: 7%; text-align:left; vertical-align:middle;">
+                         <input type="checkbox" id="checkbox-task-completed" name="checkbox-task-completed" checked="true" title="">
+                    </td>
+                    <td style="width: 93%; text-align:left; vertical-align:middle;">
+                        <label id="label-task-completed"></label>
+                    </td>
+                </tr>
+    </table>
     <input type="text" id="input-task-name" name="input-task-name" placeholder="name"/>
+    <table cellpadding=0 width=87%>
+                <tr>
+                    <td style="width: 7%; text-align:left; vertical-align:middle;">
+                            <input type="checkbox" id="checkbox-with-date" name="checkbox-with-date" checked="true" title="">
+                    </td>
+                    <td style="width: 93%; text-align:left; vertical-align:middle;">
+                        <label id="label-task-date"></label>
+                    </td>
+                </tr>
+    </table>
     <input type="date" id="input-task-date" name="input-task-date" required>
-    <img src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-close.png" alt="Mountain View" style="float: left; padding: 3px 3px 0px 0px;width:14px;height:14px">
+    <!--<img src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-close.png" alt="Mountain View" style="float: left; padding: 3px 3px 0px 0px;width:14px;height:14px">-->
     <div class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="notes"></textarea>
     </div>
