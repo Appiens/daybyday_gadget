@@ -1,14 +1,4 @@
 <messagebundle>
-    <msg name="hello_world">
-        Привет, мир.
-    </msg>
-    <msg name="color">Цвет</msg>
-    <msg name="red">Красный</msg>
-    <msg name="green">Зеленый</msg>
-    <msg name="blue">Синий</msg>
-    <msg name="gray">Серый</msg>
-    <msg name="purple">Пурпурный</msg>
-    <msg name="black">Черный</msg>
     <msg name="completed">Выполнено</msg>
     <msg name="due_date">Дата выполнения</msg>
     <msg name="title_default">Заголовок</msg>
