@@ -69,9 +69,21 @@
     		cursor:pointer;
 	}
 
-    .new-select-style-wpandyou select, textarea, input[type=text] {
+    .new-select-style-wpandyou select, textarea, input[type=text], input[type=date] {
             font-family: Arial;
             width:87%;
+            min-height:20px;
+            display:block;
+            margin-bottom:15px;
+            margin-top:5px;
+            padding-left:5px;
+            outline: none;
+            box-sizing:content-box;
+    }
+
+    .new-select-style-wpandyou  input[type=date] {
+            font-family: Arial;
+            width:75%;
             min-height:20px;
             display:block;
             margin-bottom:15px;
@@ -133,7 +145,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('09:51');
+            alert('09:55');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
