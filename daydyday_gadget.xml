@@ -153,7 +153,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('11:58');
+            alert('12:04');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -262,7 +262,7 @@ textarea {
                     <td style="width: 7%; text-align:left; vertical-align:middle;">
                          <input type="checkbox" id="checkbox-task-completed" name="checkbox-task-completed" checked="true" title="">
                     </td>
-                    <td style="width: 93%; text-align:left; vertical-align:middle;">
+                    <td style="width: 93%; text-align:left; vertical-align:middle;font-size: small;">
                         <label id="label-task-completed">__MSG_red__</label>
                     </td>
                 </tr>
@@ -273,7 +273,7 @@ textarea {
                     <td style="width: 7%; text-align:left; vertical-align:middle;">
                             <input type="checkbox" id="checkbox-with-date" name="checkbox-with-date" checked="true" title="">
                     </td>
-                    <td style="width: 93%; text-align:left; vertical-align:middle;">
+                    <td style="width: 93%; text-align:left; vertical-align:middle;font-size: small;">
                         <label id="label-task-date">__MSG_gray__</label>
                     </td>
                 </tr>
@@ -283,7 +283,7 @@ textarea {
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_hello_world__"></textarea>
     </div>
     <br><br>
-    <a href="#" id="href-back">&#x25C1Back to list</a>
+    <a href="#" id="href-back">&#x25C1 Back to list</a>
   </div>
   ]]> 
   </Content>
