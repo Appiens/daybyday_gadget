@@ -154,7 +154,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('16:59');
+            alert('17:15');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -261,7 +261,7 @@ textarea {
      <table cellpadding=0 width=87%>
                 <tr>
                     <td style="width: 7%; text-align:left; vertical-align:middle;">
-                         <input type="checkbox" id="checkbox-task-completed" name="checkbox-task-completed" checked="true" title="">
+                         <input type="checkbox" id="checkbox-task-completed" name="checkbox-task-completed" checked="false" title="">
                     </td>
                     <td style="width: 93%; text-align:left; vertical-align:middle;font-size: small;">
                         <label id="label-task-completed">__MSG_completed__</label>

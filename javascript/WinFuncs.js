@@ -150,30 +150,6 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
-function createColoredTextNode(text, task) {
-    var span = document.createElement('span');
-    span.style.fontSize = "10px";
-    span.style.color = '#666666';
-    span.style.textIndent = '25px';
-    span.style.display = 'inline-block';
-    span.style.cursor = 'pointer';
-    span.appendChild(document.createTextNode(text));
-    span.task = task;
-    span.addEventListener('click', function(e) {
-        var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        document.getElementById('label-id').innerText = targ.task.id;
-        document.getElementById('label-name').innerText = targ.task.title;
-        document.getElementById('label-due-to').innerText = targ.task.due;
-        document.getElementById('label-notes').innerText = targ.task.notes;
-        // offsetY = window.pageYOffset;
-        showOneSection('watch');
-    });
-    return span;
-}
 
 function OnTaskDivMouseOver(e) {
     var targ;
@@ -204,6 +180,7 @@ function OnTaskDivClick(e) {
 
     if (targ.task) {
         // TODO show task fields in edit boxes
+        $('checkbox-task-completed').checked = task.status == 'completed';
         $('input-task-name').value = targ.task.title;
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
         $('input-task-comment').value = targ.task.notes != undefined ? targ.task.notes : '';
