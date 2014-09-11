@@ -82,7 +82,7 @@
             width:87%;
             min-height:20px;
             display:block;
-            margin-bottom:15px;
+            margin-bottom:8px;
             margin-top:5px;
             padding-left:5px;
             outline: none;
@@ -91,7 +91,7 @@
 
     .new-select-style-wpandyou  input[type=date] {
             font-family: Arial;
-            margin-bottom:15px;
+            margin-bottom:8px;
             margin-top:5px;
             padding-left:5px;
             padding-right: 0px;
@@ -153,7 +153,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('12:04');
+            alert('12:09');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -282,8 +282,7 @@ textarea {
     <div class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_hello_world__"></textarea>
     </div>
-    <br><br>
-    <a href="#" id="href-back">&#x25C1 Back to list</a>
+    <a href="#" id="href-back">&#x25C1 __MSG_red__</a>
   </div>
   ]]> 
   </Content>
