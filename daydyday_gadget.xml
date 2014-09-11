@@ -108,6 +108,7 @@ textarea {
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
     var taskLists = [];
@@ -153,7 +154,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('12:09');
+            alert('12:49');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;

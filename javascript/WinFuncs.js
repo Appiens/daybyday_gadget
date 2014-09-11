@@ -65,6 +65,8 @@ function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
     backToList.onclick = returnToList;
     makePOSTRequest = makePostRequestFunc;
+
+    $('checkbox-with-date').addEventListener('change', OnNoDateCheckChanged);
 }
 
 function generateList(taskLists) {
@@ -197,13 +199,16 @@ function OnTaskDivClick(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
+    var myDate = new MyDate();
+    myDate.setStartNextHour();
+
     if (targ.task) {
         // TODO show task fields in edit boxes
-
-        // document.getElementById('label-id').innerText = targ.task.id;
-        // document.getElementById('label-name').innerText = targ.task.title;
-        // document.getElementById('label-due-to').innerText = targ.task.due;
-         // document.getElementById('label-notes').innerText = targ.task.notes;
+        $('input-task-name').value = targ.task.title;
+        $('input-task-date').value = targ.task.due != null ? (new MyDate(targ.task.due)).toInputValue() : myDate.toInputValue();
+        $('input-task-comment').value = targ.task.notes;
+        $('checkbox-with-date').checked = targ.task.due != null;
+        $('input-task-date').style.display = targ.task.due != null ? '': 'none';
         showOneSection('watch');
     }
 }
@@ -472,6 +477,18 @@ function filterSpecialChar(data) {
     }
 
     return data;
+}
+
+/* string id
+ returns object by its id*/
+function $(id) {
+    return document.getElementById(id);
+}
+
+/*  No date checkbox event handler
+ Hides input-task-date if checkbox not checked, shows otherwise */
+function OnNoDateCheckChanged() {
+    $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
 }
 
 
