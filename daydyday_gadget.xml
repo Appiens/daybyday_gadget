@@ -113,6 +113,7 @@
         line-height:25px;
         text-decoration:none;
         text-align:center;
+        vertical-align:top;
         margin-bottom:5px;
         margin-top:5px;
     }
@@ -179,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:49');
+            alert('17:58');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -308,12 +309,12 @@
     <div class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
-       <table cellpadding=0 width=87%>
+       <table cellpadding=0 width=30%>
                 <tr>
-                    <td style="width: 10%; text-align:left; vertical-align:middle;">
+                    <td style="width: 50%; text-align:left; vertical-align:middle;">
                         <input type="button" id="button-1" name="button-1" value="&#x25C1"/>
                     </td>
-                    <td style="width: 10%; text-align:left; vertical-align:middle;">
+                    <td style="width: 50%; text-align:left; vertical-align:middle;">
                         <input type="button" id="button-2" name="button-2" value="&#x2714"/>
                     </td>
                 </tr>
