@@ -21,7 +21,13 @@
   	#main {
 	  margin: 0px;
 	  padding: 0px;
-          font-size: small;
+      font-size: small;
+	}
+
+	#watch {
+	  margin: 0px;
+	  padding: 0px;
+      font-size: small;
 	}
 	
 	#listId {
@@ -147,7 +153,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('11:50');
+            alert('11:58');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -277,7 +283,7 @@ textarea {
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_hello_world__"></textarea>
     </div>
     <br><br>
-    <a href="#" id="href-back">Back to list</a>
+    <a href="#" id="href-back">&#x25C1Back to list</a>
   </div>
   ]]> 
   </Content>
