@@ -1,0 +1,12 @@
+<messagebundle>
+    <msg name="hello_world">
+        Привет, мир.
+    </msg>
+    <msg name="color">Цвет</msg>
+    <msg name="red">Красный</msg>
+    <msg name="green">Зеленый</msg>
+    <msg name="blue">Синий</msg>
+    <msg name="gray">Серый</msg>
+    <msg name="purple">Пурпурный</msg>
+    <msg name="black">Черный</msg>
+</messagebundle>
