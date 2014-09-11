@@ -91,6 +91,7 @@
             padding-right: 0px;
             outline: none;
             box-sizing:content-box;
+            display:block;
     }
 
 textarea {
@@ -145,7 +146,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('10:24');
+            alert('10:31');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -256,7 +257,7 @@ textarea {
         <tr>
             <td style="width: 80%; text-align:left; vertical-align:middle;">
                     <input type="date" id="input-task-date" name="input-task-date" required>
-                    <img src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-close.png" alt="Mountain View" style="float: left; padding: 3px 3px 0px 0px;width:10px;height:10px">
+                    <img src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-close.png" alt="Mountain View" style="float: left; padding: 3px 3px 0px 0px;width:16px;height:16px">
             </td>
             <td style="width: 20%; text-align:left; vertical-align:middle">
 
