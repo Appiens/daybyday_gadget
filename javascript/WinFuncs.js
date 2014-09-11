@@ -205,7 +205,7 @@ function OnTaskDivClick(e) {
     if (targ.task) {
         // TODO show task fields in edit boxes
         $('input-task-name').value = targ.task.title;
-        $('input-task-date').value = targ.task.due != null ? (new MyDate(targ.task.due)).toInputValue() : myDate.toInputValue();
+        $('input-task-date').value = targ.task.due != null ? targ.task.due : myDate.toInputValue();
         $('input-task-comment').value = targ.task.notes;
         $('checkbox-with-date').checked = targ.task.due != null;
         $('input-task-date').style.display = targ.task.due != null ? '': 'none';
