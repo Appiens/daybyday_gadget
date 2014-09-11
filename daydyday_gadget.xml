@@ -101,9 +101,34 @@
             display:block;
     }
 
-textarea {
-    resize: vertical;
-}
+    input[type=button] {
+        background-color: #DFEEFF;
+        text-indent:0px;
+        border:1px solid #0099CC;
+        display:inline-block;
+        color:#14396a;
+        font-weight:normal;
+        font-style:normal;
+        height:16px;
+        line-height:25px;
+        text-decoration:none;
+        text-align:center;
+        margin-bottom:5px;
+        margin-top:5px;
+    }
+
+    input[type=button]:hover {
+        background-color:#33B5E5;
+    }
+
+    input[type=button]:active {
+        position:relative;
+        top:1px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
   </style>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
@@ -154,7 +179,7 @@ textarea {
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('17:17');
+            alert('17:49');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -283,6 +308,17 @@ textarea {
     <div class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
+       <table cellpadding=0 width=87%>
+                <tr>
+                    <td style="width: 10%; text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-1" name="button-1" value="&#x25C1"/>
+                    </td>
+                    <td style="width: 10%; text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-2" name="button-2" value="&#x2714"/>
+                    </td>
+                </tr>
+    </table>
+
     <a href="#" id="href-back">&#x25C1 __MSG_action_back_to_list__</a>
   </div>
   ]]> 
