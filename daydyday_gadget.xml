@@ -107,10 +107,11 @@
         border:1px solid #0099CC;
         display:inline-block;
         color:#14396a;
-        font-weight:normal;
+        font-weight:bold;
         font-style:normal;
-        height:16px;
-        line-height:16px;
+        font-size: large;
+        height:20px;
+        line-height:20px;
         text-decoration:none;
         text-align:center;
         vertical-align:top;
@@ -180,7 +181,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('18:04');
+            alert('10:39');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
