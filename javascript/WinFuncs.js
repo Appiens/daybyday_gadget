@@ -184,7 +184,7 @@ function OnTaskDivClick(e) {
 
     if (targ.task && targ.taskListId) {
         $('watch').task = targ.task;
-        $('watch').taskListId = targ.task;
+        $('watch').taskListId = targ.taskListId;
         $('checkbox-task-completed').checked = targ.task.status == 'completed';
         $('input-task-name').value = targ.task.title;
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
