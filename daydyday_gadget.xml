@@ -181,7 +181,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('10:52');
+            alert('11:23');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -310,13 +310,19 @@
     <div class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
-       <table cellpadding=0 width=30%>
+       <table cellpadding=0 width=60%>
                 <tr>
-                    <td style="width: 50%; text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-1" name="button-1" value="&#x25C1"/>
+                    <td style="width: 25%; text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-1" name="button-1" value="&#x25C1" title="__MSG_action_back_to_list__"/>
                     </td>
-                    <td style="width: 50%; text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-2" name="button-2" value="&#x2714"/>
+                    <td style="width: 25%; text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-2" name="button-2" value="&#x2714" title="__MSG_action_save_task__"/>
+                    </td>
+                    <td style="width: 25%; text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-3" name="button-3" value="&#x2261" title="__MSG_action_to_subtasks__"/>
+                    </td>
+                    <td style="width: 25%; text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-4" name="button-4" value="&#x2715" title="__MSG_action_discard__"/>
                     </td>
                 </tr>
     </table>
