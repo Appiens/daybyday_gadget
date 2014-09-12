@@ -450,7 +450,7 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
     var hasChanges = false;
 
     if (task.status != status) {
-        data += isCompleted? ',"status":"' + status + '"' : ',"status":"' + status + '"';
+        data += isCompleted? ',"status":"' + status + '"' : '{"status":"' + status + '", "completed": null';
         hasChanges = true;
     }
 
@@ -471,7 +471,8 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
            dueDate = dueDate.toJSON();
         }
 
-        data += ',"due":"' + dueDate + '"';
+
+        data += dueDate != '' ? ',"due":"' + dueDate + '"' : ',"due": null' ;
         hasChanges = true;
     }
 
