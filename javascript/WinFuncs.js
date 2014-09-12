@@ -447,19 +447,23 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
     var data = '{"id": "'+ task.id + '"';
     var status = isCompleted ? 'completed':'needsAction';
+    var hasChanges = false;
 
     if (task.status != status) {
         data += isCompleted? ',"status":"' + status + '"' : ',"status":"' + status + '"';
+        hasChanges = true;
     }
 
     if (task.title != title) {
         title = filterSpecialChar(title);
         data +=  ',"title":"' + title + '"';
+        hasChanges = true;
     }
 
     if ((task.notes == undefined && notes != '') || (task.notes != undefined && task.notes != notes)) {
         notes = filterSpecialChar(notes);
         data += ',"notes":"' + notes + '"';
+        hasChanges = true;
     }
 
     if ((task.due == undefined && dueDate != '' ) || (task.due != undefined && dueDate != task.due)) {
@@ -468,12 +472,14 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
         }
 
         data += ',"due":"' + dueDate + '"';
+        hasChanges = true;
     }
 
     data += '}';
 
-    alert(data);
-   // makePOSTRequest(url, data, OnChangeTaskStatus);
+    if (hasChanges) {
+        makePOSTRequest(url, data, OnChangeTaskStatus);
+    }
 }
 
 function OnChangeTaskStatus(obj) {
