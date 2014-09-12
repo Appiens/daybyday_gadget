@@ -4,7 +4,7 @@
     <msg name="title_default">Untitled task</msg>
     <msg name="notes_default">Note</msg>
     <msg name="action_back_to_list">Back to list</msg>
-    <msg name="save_task">Save changes</msg>
+    <msg name="action_save_task">Save changes</msg>
     <msg name="action_to_subtasks">Convert to subtasks</msg>
     <msg name="action_discard">Cancel changes</msg>
 </messagebundle>

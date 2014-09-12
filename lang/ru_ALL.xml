@@ -4,7 +4,7 @@
     <msg name="title_default">Заголовок</msg>
     <msg name="notes_default">Описание</msg>
     <msg name="action_back_to_list">К списку задач</msg>
-    <msg name="save_task">Сохранить изменения</msg>
+    <msg name="action_save_task">Сохранить изменения</msg>
     <msg name="action_to_subtasks">Преобразовать в подзадачи</msg>
     <msg name="action_discard">Отменить изменения</msg>
 </messagebundle>
