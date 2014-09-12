@@ -44,61 +44,61 @@
   	      margin: 0;
 	}
 
-        li.collapsibleListOpen{
-           cursor:pointer;
-           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png'); <!--no-repeat top left;-->
-           background-position: 0 5px;
-           background-size: 12px 12px;
-           background-repeat: no-repeat;
-  	       margin: 0;
-  	       list-style: none;
-  	       padding: 0 0 0 15px;
-          }
+    li.collapsibleListOpen{
+         cursor:pointer;
+         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png'); <!--no-repeat top left;-->
+         background-position: 0 5px;
+         background-size: 12px 12px;
+         background-repeat: no-repeat;
+  	     margin: 0;
+  	     list-style: none;
+  	     padding: 0 0 0 15px;
+    }
 
-        li.collapsibleListClosed{
-           cursor:pointer;
-           background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png'); <!--no-repeat top left;-->
-           background-position: 0 5px;
-           background-size: 12px 12px;
-           background-repeat: no-repeat;
-  	       margin: 0;
-  	       list-style: none;
-  	       padding: 0 0 0 15px;
-         }
+    li.collapsibleListClosed{
+         cursor:pointer;
+         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png'); <!--no-repeat top left;-->
+         background-position: 0 5px;
+         background-size: 12px 12px;
+         background-repeat: no-repeat;
+  	     margin: 0;
+  	     list-style: none;
+  	     padding: 0 0 0 15px;
+    }
        
 	ul {
-    		padding: 0; /* Убираем поля */
-    		margin-left: 5px; /* Отступ слева */
+    padding: 0; /* Убираем поля */
+    	margin-left: 5px; /* Отступ слева */
 	}
 
 	.myStyle span {
-    		text-indent:25px;
-    		display:inline-block;
-    		cursor:pointer;
+    	text-indent:25px;
+        display:inline-block;
+    	cursor:pointer;
 	}
 
     .new-select-style-wpandyou select, textarea, input[type=text], input[type=date] {
-            font-family: Arial;
-            width:87%;
-            min-height:20px;
-            display:block;
-            margin-bottom:8px;
-            margin-top:5px;
-            padding-left:5px;
-            outline: none;
-            box-sizing:content-box;
+        font-family: Arial;
+        width:87%;
+        min-height:20px;
+        display:block;
+        margin-bottom:8px;
+        margin-top:5px;
+        padding-left:5px;
+        outline: none;
+        box-sizing:content-box;
     }
 
     .new-select-style-wpandyou  input[type=date] {
-            font-family: Arial;
-            margin-bottom:8px;
-            margin-top:5px;
-            padding-left:5px;
-            padding-right: 0px;
-            outline: none;
-            outline-width: thin;
-            box-sizing:content-box;
-            display:block;
+        font-family: Arial;
+        margin-bottom:8px;
+        margin-top:5px;
+        padding-left:5px;
+        padding-right: 0px;
+        outline: none;
+        outline-width: thin;
+        box-sizing:content-box;
+        display:block;
     }
 
     input[type=button] {
@@ -181,7 +181,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('14:04');
+            alert('14:32');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;

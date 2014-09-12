@@ -452,6 +452,7 @@ function OnChangeTaskStatus(obj) {
             var checkBox = document.getElementById("ch_" + taskFromServer.id);
             if (checkBox.checked != isCompleted) {
                 checkBox.checked = isCompleted;
+                OnChangeTaskStatusCB(checkBox);
             }
 
             var taskDiv = document.getElementById("div_" + taskFromServer.id);
