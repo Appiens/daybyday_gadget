@@ -63,10 +63,14 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 
 function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
-    backToList.onclick = returnToList;
+    backToList.onclick = ActionBackToList;
     makePOSTRequest = makePostRequestFunc;
 
     $('checkbox-with-date').addEventListener('change', OnNoDateCheckChanged);
+    $('button-back-to-list').addEventListener('click', ActionBackToList);
+    $('button-save_task').addEventListener('click', ActionSaveTask);
+    $('button-to-subtasks').addEventListener('click', ActionToSubtasks);
+    $('button-discard').addEventListener('click', ActionDiscard);
 }
 
 function generateList(taskLists) {
@@ -386,8 +390,20 @@ function showOneSection(toshow) {
     }
 }
 
-function returnToList() {
+function ActionBackToList() {
     showOneSection('main');
+}
+
+function ActionSaveTask() {
+    alert('Save task');
+}
+
+function ActionToSubtasks() {
+    alert('To subtasks');
+}
+
+function ActionDiscard() {
+    alert('Discard!');
 }
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
