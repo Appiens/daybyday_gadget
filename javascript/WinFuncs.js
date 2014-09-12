@@ -427,6 +427,8 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
     var status = isCompleted ? 'completed':'needsAction';
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
     var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
+    alert(url);
+    alert(data);
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
