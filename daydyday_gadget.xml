@@ -107,7 +107,7 @@
         border:1px solid #0099CC;
         display:inline-block;
         color:#14396a;
-        font-weight:bold;
+        font-weight:normal;
         font-style:normal;
         font-size: medium;
         height:20px;
@@ -181,7 +181,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('10:43');
+            alert('10:52');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
