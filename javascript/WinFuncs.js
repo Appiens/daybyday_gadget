@@ -457,12 +457,12 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
         data +=  ',"title":"' + title + '"';
     }
 
-    if (task.notes != notes) {
+    if ((task.notes == undefined && notes != '') || (task.notes != undefined && task.notes != notes)) {
         notes = filterSpecialChar(notes);
-        data += ',"notes":"' + title + '"';
+        data += ',"notes":"' + notes + '"';
     }
 
-    if (task.due != dueDate) {
+    if ((task.due == undefined && dueDate != '' ) || (task.due != undefined && dueDate != task.due)) {
         data += ',"due":"' + dueDate + '"';
     }
 
