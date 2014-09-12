@@ -400,7 +400,14 @@ function ActionSaveTask() {
     if ($('watch').task != undefined && $('watch').taskListId != undefined) {
         var task = $('watch').task;
         var taskListId = $('watch').taskListId;
-        changeTaskStatusRequest(taskListId, task.id, $('checkbox-task-completed').checked);
+
+        var date = "";
+        if ($('checkbox-with-date').checked) {
+            date = new MyDate();
+            date.setFromInputValue( $('input-task-date').value);
+        }
+
+        changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, $('input-task-comment').value);
     }
 }
 
@@ -427,8 +434,6 @@ function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
     var status = isCompleted ? 'completed':'needsAction';
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
     var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
-    alert(url);
-    alert(data);
     makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
@@ -436,6 +441,35 @@ function changeSubTaskStatusRequest(taskListId, taskId, notes) {
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
     var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
+}
+
+function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes) {
+    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
+    var data = '{"id": "'+ task.id + '"';
+    var status = isCompleted ? 'completed':'needsAction';
+
+    if (task.status != status) {
+        data += isCompleted? ',"status":"' + status + '"' : ',"status":"' + status + '"';
+    }
+
+    if (task.title != title) {
+        title = filterSpecialChar(title);
+        data +=  ',"title":"' + title + '"';
+    }
+
+    if (task.notes != notes) {
+        notes = filterSpecialChar(notes);
+        data += ',"notes":"' + title + '"';
+    }
+
+    if (task.due != dueDate) {
+        data += ',"due":"' + dueDate + '"';
+    }
+
+    data += '}';
+
+    alert(data);
+   // makePOSTRequest(url, data, OnChangeTaskStatus);
 }
 
 function OnChangeTaskStatus(obj) {
