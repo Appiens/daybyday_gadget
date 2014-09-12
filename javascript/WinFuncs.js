@@ -463,6 +463,10 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
     }
 
     if ((task.due == undefined && dueDate != '' ) || (task.due != undefined && dueDate != task.due)) {
+        if (dueDate != '') {
+           dueDate = dueDate.toJSON();
+        }
+
         data += ',"due":"' + dueDate + '"';
     }
 
