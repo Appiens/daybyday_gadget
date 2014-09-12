@@ -7,7 +7,7 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 //   <li> (содержит ссылку taskListId) Название списка задач
 //   <ul>
 //   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask) ===> Нажатие на DIV вызывает окно редактирования таска
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId) ===> Нажатие на DIV вызывает окно редактирования таска
 //   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox> ===> Нажатие на CHECKBOX объявляет задачу выполненной/невыполненной (отправляет запрос PUT status)
 //   <span id = "t_" + taskId> Название задачи </span>
 //   <div id = "divsub_" + taskId> (содержит подзадачи)
@@ -19,7 +19,7 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 //   </li>
 //   ...
 //   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask)
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
 //   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
 //   <span id = "t_" + taskId> Название задачи </span>
 //   <div id = "divsub_" + taskId> (содержит подзадачи)
@@ -35,7 +35,7 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 //   <li> (содержит ссылку taskListId) Название списка задач
 //   <ul>
 //   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask)
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
 //   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
 //   <span id = "t_" + taskId> Название задачи </span>
 //   <div id = "divsub_" + taskId> (содержит подзадачи)
@@ -47,7 +47,7 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 //   </li>
 //   ...
 //   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask)
+//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
 //   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
 //   <span id = "t_" + taskId> Название задачи </span>
 //   <div id = "divsub_" + taskId> (содержит подзадачи)
@@ -89,7 +89,7 @@ function generateList(taskLists) {
 
             for (var j=0; j < taskLists[i].tasks.length; j++) {
                 var liChild = document.createElement('li');
-                var taskDiv = createTaskDiv(taskLists[i].tasks[j]);
+                var taskDiv = createTaskDiv(taskLists[i].tasks[j], taskLists[i].id);
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
@@ -182,8 +182,9 @@ function OnTaskDivClick(e) {
     var myDate = new MyDate();
     myDate.setStartNextHour();
 
-    if (targ.task) {
-        // TODO show task fields in edit boxes
+    if (targ.task && targ.taskListId) {
+        $('watch').task = targ.task;
+        $('watch').taskListId = targ.task;
         $('checkbox-task-completed').checked = targ.task.status == 'completed';
         $('input-task-name').value = targ.task.title;
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
@@ -194,10 +195,11 @@ function OnTaskDivClick(e) {
     }
 }
 
-function createTaskDiv(task) {
+function createTaskDiv(task, taskListId) {
     var taskDiv = document.createElement('div');
     taskDiv.setAttribute("id", "div_" + task.id);
     taskDiv.task = task;
+    taskDiv.taskListId = taskListId;
     taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
     taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
     taskDiv.addEventListener("click", OnTaskDivClick);
@@ -395,7 +397,11 @@ function ActionBackToList() {
 }
 
 function ActionSaveTask() {
-    alert('Save task');
+    if ($('watch').task != undefined && $('watch').taskListId != undefined) {
+        var task = $('watch').task;
+        var taskListId = $('watch').taskListId;
+        changeTaskStatusRequest(taskListId, task.id, $('checkbox-task-completed').checked);
+    }
 }
 
 function ActionToSubtasks() {
@@ -403,7 +409,18 @@ function ActionToSubtasks() {
 }
 
 function ActionDiscard() {
-    alert('Discard!');
+    if ($('watch').task != undefined) {
+        var myDate = new MyDate();
+        myDate.setStartNextHour();
+        var task = $('watch').task;
+        $('checkbox-task-completed').checked = task.status == 'completed';
+        $('input-task-name').value = task.title;
+        $('input-task-date').value = task.due != null ? new MyDate(new Date(task.due)).toInputValue() : myDate.toInputValue();
+        $('input-task-comment').value = task.notes != undefined ? task.notes : '';
+        $('checkbox-with-date').checked = task.due != null;
+        $('input-task-date').style.display = task.due != null ? '': 'none';
+    }
+
 }
 
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
