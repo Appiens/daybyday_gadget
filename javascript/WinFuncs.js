@@ -226,8 +226,9 @@ function changeNotesState(showSubTasks) {
         }
     }
     else {
-        removeSubTasksDivFromWatch();
+
         var subTasks = getSubTasksArrFromWatchDiv();
+        removeSubTasksDivFromWatch();
         $('input-task-comment').value = subTasks.join('\n');
         $('input-task-comment').style.display = '';
     }
@@ -250,6 +251,7 @@ function addSubTasksDivToWatch(notesOrig) {
 
 function getSubTasksArrFromWatchDiv() {
     var subTasksDiv = $('divsubwatch_' + $('watch').task.id);
+
 
     var num = subTasksDiv.children.length;
     var subTasks = [];
