@@ -385,11 +385,11 @@ function convertToSubTasks(text) {
 
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
-        if (tmp.substring(3) == '[ ]') {
-            tmp = 'F' + tmp.substring(3, tmp.length - 3);
+        if (tmp.substring(0, 3) == '[ ]') {
+            tmp = 'F' + tmp.substring(3);
         }
-        else if (tmp.substring(3) == '[x]') {
-            tmp = 'T' + tmp.substring(3, tmp.length - 3);
+        else if (tmp.substring(0, 3) == '[x]') {
+            tmp = 'T' + tmp.substring(3);
         }
 
         subTasksList.push(tmp);
