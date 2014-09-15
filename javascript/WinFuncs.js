@@ -249,7 +249,18 @@ function addSubTasksDivToWatch(notesOrig) {
 }
 
 function getSubTasksArrFromWatchDiv() {
+    var subTasksDiv = $('divsubwatch_' + $('watch').task.id);
 
+    var num = subTasksDiv.children.length;
+    var subTasks = [];
+
+    for (var i=0; i<num; i++) {
+        var checkBox = $("ch_w_" + $('watch').task.id + "_" + i);
+        var textNode = $("t_w_" + $('watch').task.id + "_" + i);
+
+        var subTask = checkBox.checked ? '[x]':'[ ]' + textNode.innerText;
+        subTasks.push(subTask);
+    }
 
     return subTasks;
 }
