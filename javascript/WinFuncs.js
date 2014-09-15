@@ -219,14 +219,11 @@ function changeNotesState(showSubTasks) {
         // если у подзадачи есть [x] - это значит выполненная подзадача
         // если есть [] - это удаляется из описания (пока не будем делать этого)
         var notesOrig = $('input-task-comment').value;
-        var subTasksArr = notesOrig.split('\n');
-
-        for (var i=0; i < subTasksArr.length; i++) {
-            alert(subTasksArr[i]);
-        }
+        var subTasks = convertToSubTasks(notesOrig);
+        drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
+        $('input-task-comment').style.display = 'none';
     }
     else {
-
         var subTasks = getSubTasksArrFromWatchDiv();
         removeSubTasksDivFromWatch();
         $('input-task-comment').value = subTasks.join('\n');
@@ -260,7 +257,8 @@ function getSubTasksArrFromWatchDiv() {
         var checkBox = $("ch_w_" + $('watch').task.id + "_" + i);
         var textNode = $("t_w_" + $('watch').task.id + "_" + i);
 
-        var subTask = checkBox.checked ? '[x]':'[ ]' + textNode.innerText;
+        var subTask = checkBox.checked ? '[x]':'[ ]';
+        subTask = subTask + textNode.innerText;
         subTasks.push(subTask);
     }
 
