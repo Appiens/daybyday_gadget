@@ -219,7 +219,8 @@ function changeNotesState(showSubTasks) {
         // если у подзадачи есть [x] - это значит выполненная подзадача
         // если есть [] - это удаляется из описания (пока не будем делать этого)
         var notesOrig = $('input-task-comment').value;
-        var subTasks = convertToSubTasks(notesOrig);
+        var subTasks = convertToSubTasksLight(notesOrig);
+
         drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
         $('input-task-comment').style.display = 'none';
     }
@@ -462,6 +463,36 @@ function convertToSubTasks(text) {
 
    //var subTasksList = textCpy.split('^&^');
    return subTasksList;
+}
+
+function convertToSubTasksLight(text) {
+
+    var textCpy = text;
+    var mas = textCpy.split('\n');
+    var subTasksList = [];
+    var tmp;
+
+    for (var i=0; i < mas.length; i++) {
+        tmp = mas[i].trim();
+        if (tmp.substring(0, 3) == '[ ]') {
+            tmp = 'F' + tmp.substring(3);
+        }
+        else
+         if (tmp.substring(0, 3) == '[x]') {
+            tmp = 'T' + tmp.substring(3);
+        }
+        else {
+             tmp = 'F' + tmp;
+        }
+
+        subTasksList.push(tmp);
+    }
+
+    // textCpy =  textCpy.split('[ ]').join('^&^F');
+    // textCpy =  textCpy.split('[x]').join('^&^T');
+
+    //var subTasksList = textCpy.split('^&^');
+    return subTasksList;
 }
 
 function convertFromSubTasks(arr) {
