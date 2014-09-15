@@ -183,6 +183,15 @@ function OnTaskDivClick(e) {
     myDate.setStartNextHour();
 
     if (targ.task && targ.taskListId) {
+        // removing previous divSubWatch
+        if ($('watch').task) {
+            var subTaskDiv = document.getElementById('divsubwatch_' + $('watch').task.id);
+
+            if (subTaskDiv) {
+                subTaskDiv.parentNode.removeChild(subTaskDiv);
+            }
+        }
+
         $('watch').task = targ.task;
         $('watch').taskListId = targ.taskListId;
         $('checkbox-task-completed').checked = targ.task.status == 'completed';
