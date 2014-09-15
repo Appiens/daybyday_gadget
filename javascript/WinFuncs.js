@@ -101,7 +101,7 @@ function generateList(taskLists) {
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
                     taskDiv.subTasks = subTasks;
-                    drawSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_');
+                    drawSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_', true);
                 }
 
                 ul.appendChild(liChild);
@@ -119,10 +119,12 @@ function generateList(taskLists) {
     return ulMain;
 }
 
-function drawSubTasksDiv(taskDiv, task, subTasks, divNamePrefix) {
+// bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
+//                 false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
+function drawSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
     var subTasksDiv = document.createElement('div');
     subTasksDiv.setAttribute("id", divNamePrefix + task.id);
-    drawSubTasks_new(subTasksDiv, subTasks, task.id);
+    drawSubTasks_new(subTasksDiv, subTasks, task.id, forMain);
     taskDiv.appendChild(subTasksDiv);
 }
 
@@ -190,6 +192,8 @@ function OnTaskDivClick(e) {
 
         $('watch').task = targ.task;
         $('watch').taskListId = targ.taskListId;
+
+        // TODO convert this code to a function
         $('checkbox-task-completed').checked = targ.task.status == 'completed';
         $('input-task-name').value = targ.task.title;
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
@@ -216,9 +220,16 @@ function changeNotesState(showSubTasks) {
         // если есть [] - это удаляется из описания (пока не будем делать этого)
         var notesOrig = $('input-task-comment').value;
         var subTasksArr = notesOrig.split('\n');
+
+        for (var i=0; i < subTasksArr.length; i++) {
+            alert(subTasksArr[i]);
+        }
     }
     else {
-
+        removeSubTasksDivFromWatch();
+        var subTasks = getSubTasksArrFromWatchDiv();
+        $('input-task-comment').value = subTasks.join('\n');
+        $('input-task-comment').style.display = '';
     }
 }
 
@@ -233,8 +244,14 @@ function removeSubTasksDivFromWatch() {
 function addSubTasksDivToWatch(notesOrig) {
     var subTasks = convertToSubTasks(notesOrig);
     $('watch').subTasks = subTasks;
-    drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_');
+    drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
     $('input-task-comment').style.display = 'none';
+}
+
+function getSubTasksArrFromWatchDiv() {
+
+
+    return subTasks;
 }
 
 function createTaskDiv(task, taskListId) {
@@ -282,6 +299,32 @@ function createCheckBoxForTask(task) {
         setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
     }
     return checkBox;
+}
+
+function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
+    var span = document.createElement('div');
+    var isDone = subTask.substring(0,1) == 'T';
+    var text = subTask.substring(1);
+    var checkBox = document.createElement("input");
+    checkBox.type = 'checkbox';
+    checkBox.setAttribute("id", "ch_w_" + taskId + "_" + subTaskNum);
+    checkBox.addEventListener('change', function(e) {
+        var targ;
+
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        OnChangeSubTaskStatusCB(targ);
+    });
+
+    span.appendChild(checkBox);
+    span.appendChild(createSimpleTextNode(text, 't_w_' + taskId + "_" + subTaskNum));
+    li.appendChild(span);
+
+    if (isDone) {
+        checkBox.checked = true;
+        setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
+    }
 }
 
 
@@ -355,13 +398,21 @@ function OnChangeSubTaskStatusCB(targ) {
     document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
 }
 
-function drawSubTasks_new(li, subTasks, taskId) {
+// bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
+//                 false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
+function drawSubTasks_new(li, subTasks, taskId, forMain) {
     for (var k = 0; k< subTasks.length; k++) {
         if (subTasks[k].trim() == '') {
             continue;
         }
 
-        drawSubTask(li, subTasks[k], taskId, k);
+        if (forMain) {
+            drawSubTask(li, subTasks[k], taskId, k);
+        }
+        else {
+            drawSubTaskWatch(li, subTasks[k], taskId, k);
+        }
+
     }
 }
 
@@ -385,7 +436,6 @@ function convertToSubTasks(text) {
 
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
-        alert(tmp.substring(0, 3));
         if (tmp.substring(0, 3) == '[ ]') {
             tmp = 'F' + tmp.substring(3);
         }
@@ -455,20 +505,33 @@ function ActionSaveTask() {
 }
 
 function ActionToSubtasks() {
-    alert('To subtasks');
+    changeNotesState($('input-task-comment').style.display == '');
 }
 
 function ActionDiscard() {
-    if ($('watch').task != undefined) {
+    if ($('watch').task != undefined && $('watch').taskListId != undefined) {
         var myDate = new MyDate();
         myDate.setStartNextHour();
         var task = $('watch').task;
+
+        // TODO convert this code to a function
+        if ($('watch').task) {
+            removeSubTasksDivFromWatch();
+        }
+
         $('checkbox-task-completed').checked = task.status == 'completed';
         $('input-task-name').value = task.title;
         $('input-task-date').value = task.due != null ? new MyDate(new Date(task.due)).toInputValue() : myDate.toInputValue();
-        $('input-task-comment').value = task.notes != undefined ? task.notes : '';
+        var notesOrig = targ.task.notes != undefined ? task.notes : '';
+        $('input-task-comment').value = notesOrig;
+        $('input-task-comment').style.display = '';
         $('checkbox-with-date').checked = task.due != null;
         $('input-task-date').style.display = task.due != null ? '': 'none';
+
+        // show subtasks and hide notes
+        if (canBeConvertedToSubtasks(notesOrig)) {
+            addSubTasksDivToWatch(notesOrig);
+        }
     }
 
 }
@@ -532,6 +595,7 @@ function OnChangeTaskStatus(obj) {
         return;
     }
 
+    // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
 
@@ -557,7 +621,7 @@ function OnChangeTaskStatus(obj) {
                         subTaskDiv.parentNode.removeChild(subTaskDiv);
                     }
 
-                    drawSubTasksDiv(taskDiv, taskFromServer, subTasks);
+                    drawSubTasksDiv(taskDiv, taskFromServer, subTasks, true);
                     // перерисовать узел subTasks
                     taskDiv.subTasks = subTasks;
                 }
