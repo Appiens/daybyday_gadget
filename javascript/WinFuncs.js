@@ -199,7 +199,7 @@ function OnTaskDivClick(e) {
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
         var notesOrig = targ.task.notes != undefined ? targ.task.notes : '';
         $('input-task-comment').value = notesOrig;
-        $('input-task-comment').style.display = 'visible';
+        $('input-task-comment').style.display = '';
         $('checkbox-with-date').checked = targ.task.due != null;
         $('input-task-date').style.display = targ.task.due != null ? '': 'none';
 
