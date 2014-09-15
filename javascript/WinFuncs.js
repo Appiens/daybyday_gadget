@@ -101,7 +101,7 @@ function generateList(taskLists) {
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
                     taskDiv.subTasks = subTasks;
-                    drawSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks);
+                    drawSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_');
                 }
 
                 ul.appendChild(liChild);
@@ -119,9 +119,9 @@ function generateList(taskLists) {
     return ulMain;
 }
 
-function drawSubTasksDiv(taskDiv, task, subTasks) {
+function drawSubTasksDiv(taskDiv, task, subTasks, divNamePrefix) {
     var subTasksDiv = document.createElement('div');
-    subTasksDiv.setAttribute("id", 'divsub_' + task.id);
+    subTasksDiv.setAttribute("id", divNamePrefix + task.id);
     drawSubTasks_new(subTasksDiv, subTasks, task.id);
     taskDiv.appendChild(subTasksDiv);
 }
@@ -188,9 +188,19 @@ function OnTaskDivClick(e) {
         $('checkbox-task-completed').checked = targ.task.status == 'completed';
         $('input-task-name').value = targ.task.title;
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
-        $('input-task-comment').value = targ.task.notes != undefined ? targ.task.notes : '';
+        var notesOrig = targ.task.notes != undefined ? targ.task.notes : '';
+        $('input-task-comment').value = notesOrig;
         $('checkbox-with-date').checked = targ.task.due != null;
         $('input-task-date').style.display = targ.task.due != null ? '': 'none';
+
+        // show subtasks and hide notes
+        if (canBeConvertedToSubtasks(notesOrig)) {
+            var subTasks = convertToSubTasks(notesOrig);
+            $('watch').subTasks = subTasks;
+            drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_');
+            $('input-task-comment').style.display = 'none';
+        }
+
         showOneSection('watch');
     }
 }

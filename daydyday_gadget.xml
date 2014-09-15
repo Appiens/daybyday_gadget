@@ -181,7 +181,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('15:58');
+            alert('11:22');
             init(makePOSTRequest);
             taskLists = [];
             taskLists = response.data.items;
@@ -307,7 +307,7 @@
                 </tr>
     </table>
     <input type="date" id="input-task-date" name="input-task-date" required>
-    <div class="new-select-style-wpandyou">
+    <div id="div-notes" class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
        <table cellpadding=0 width=50%>
