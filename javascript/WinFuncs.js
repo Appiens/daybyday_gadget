@@ -185,11 +185,7 @@ function OnTaskDivClick(e) {
     if (targ.task && targ.taskListId) {
         // removing previous divSubWatch
         if ($('watch').task) {
-            var subTaskDiv = document.getElementById('divsubwatch_' + $('watch').task.id);
-
-            if (subTaskDiv) {
-                subTaskDiv.parentNode.removeChild(subTaskDiv);
-            }
+            removeSubTasksDivFromWatch();
         }
 
         $('watch').task = targ.task;
@@ -205,14 +201,40 @@ function OnTaskDivClick(e) {
 
         // show subtasks and hide notes
         if (canBeConvertedToSubtasks(notesOrig)) {
-            var subTasks = convertToSubTasks(notesOrig);
-            $('watch').subTasks = subTasks;
-            drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_');
-            $('input-task-comment').style.display = 'none';
+            addSubTasksDivToWatch(notesOrig);
         }
 
         showOneSection('watch');
     }
+}
+
+function changeNotesState(showSubTasks) {
+    if (showSubTasks) {
+        // проанализировать содержимое поля комментария
+        // кол-во строк там = кол-ву подзадач
+        // если у подзадачи есть [x] - это значит выполненная подзадача
+        // если есть [] - это удаляется из описания (пока не будем делать этого)
+        var notesOrig = $('input-task-comment').value;
+        var subTasksArr = notesOrig.split('\n');
+    }
+    else {
+
+    }
+}
+
+function removeSubTasksDivFromWatch() {
+    var subTaskDiv = document.getElementById('divsubwatch_' + $('watch').task.id);
+
+    if (subTaskDiv) {
+        subTaskDiv.parentNode.removeChild(subTaskDiv);
+    }
+}
+
+function addSubTasksDivToWatch(notesOrig) {
+    var subTasks = convertToSubTasks(notesOrig);
+    $('watch').subTasks = subTasks;
+    drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_');
+    $('input-task-comment').style.display = 'none';
 }
 
 function createTaskDiv(task, taskListId) {
@@ -333,22 +355,6 @@ function OnChangeSubTaskStatusCB(targ) {
     document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
 }
 
-function drawSubTasks(subTasks, taskId) {
-    var ul = document.createElement('ul');
-
-    for (var k = 0; k< subTasks.length; k++) {
-        if (subTasks[k].trim() == '') {
-            continue;
-        }
-
-        var li = document.createElement('li');
-        drawSubTask(li, subTasks[k], taskId, k);
-        ul.appendChild(li);
-    }
-
-    return ul;
-}
-
 function drawSubTasks_new(li, subTasks, taskId) {
     for (var k = 0; k< subTasks.length; k++) {
         if (subTasks[k].trim() == '') {
@@ -373,15 +379,31 @@ function convertToSubTasks(text) {
        return null;
    }
     var textCpy = text;
-    textCpy =  textCpy.split('[ ]').join('^&^F');
-    textCpy =  textCpy.split('[x]').join('^&^T');
+    var mas = textCpy.split('\n');
+    var subTasksList = [];
+    var tmp;
 
-   var subTasksList = textCpy.split('^&^');
+    for (var i=0; i < mas.length; i++) {
+        tmp = mas[i].trim();
+        if (tmp.substring(3) == '[ ]') {
+            tmp = 'F' + tmp.substring(3, tmp.length - 3);
+        }
+        else if (tmp.substring(3) == '[x]') {
+            tmp = 'T' + tmp.substring(3, tmp.length - 3);
+        }
+
+        subTasksList.push(tmp);
+    }
+
+   // textCpy =  textCpy.split('[ ]').join('^&^F');
+   // textCpy =  textCpy.split('[x]').join('^&^T');
+
+   //var subTasksList = textCpy.split('^&^');
    return subTasksList;
 }
 
 function convertFromSubTasks(arr) {
-    var str = arr.join('^&^');
+    var str = arr.join('\n^&^');
     str = str.split('^&^F').join('[ ]');
     str = str.split('^&^T').join('[x]');
     return str;
