@@ -110,21 +110,32 @@ function generateList(taskLists) {
                     }
                 }
 
-                // append img alarm light
-                if (true) {
-                    var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png');
-                    taskDiv.appendChild(imgAlarm);
+                if (additionalSectionExist(taskLists[i].tasks[j])) {
+                    var additionalSection = getAdditionalSection(taskLists[i].tasks[j]);
+
+                    // append img alarm light
+                    if (isAlarmedTask(additionalSection)) {
+                        var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png');
+                        taskDiv.appendChild(imgAlarm);
+                    }
+
+                    if (isRepeatableTask(additionalSection)) {
+                        var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png');
+                        taskDiv.appendChild(imgRepeat);
+                    }
+
+                    if (isHighPriorityTask(additionalSection)) {
+                        var imgPriority = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png');
+                        taskDiv.appendChild(imgPriority);
+                    }
+
+                    if (isLowPriorityTask(additionalSection)) {
+                        var imgPriority = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png');
+                        taskDiv.appendChild(imgPriority);
+                    }
                 }
 
-                if (true) {
-                    var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png');
-                    taskDiv.appendChild(imgRepeat);
-                }
 
-                if (true) {
-                    var imgPriority = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png');
-                    taskDiv.appendChild(imgPriority);
-                }
 
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
@@ -756,6 +767,38 @@ function $(id) {
 }
 
 // </editor-fold>
+
+function additionalSectionExist(task) {
+    var text = task.notes;
+
+    return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('\n=!>') > text.indexOf('\n<!=\n'));
+}
+
+function getAdditionalSection(task) {
+    if (!additionalSectionExist(task)) {
+        return '';
+    }
+
+    var text = task.notes;
+    var index = text.indexOf('\n<!=\n');
+    return text.substring(index);
+}
+
+function isLowPriorityTask(additionalSection) {
+    return additionalSection.indexOf('PRIORITY:-1') > 0;
+}
+
+function isHighPriorityTask(additionalSection) {
+    return additionalSection.indexOf('PRIORITY:1') > 0;
+}
+
+function isRepeatableTask(additionalSection) {
+    return additionalSection.indexOf('DTSTART:') > 0 && additionalSection.indexOf('RRULE:') > 0;
+}
+
+function isAlarmedTask(additionalSection) {
+    return additionalSection.indexOf('REMINDER:') > 0;
+}
 
 
 
