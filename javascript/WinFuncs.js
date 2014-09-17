@@ -95,9 +95,12 @@ function generateList(taskLists) {
             for (var j=0; j < taskLists[i].tasks.length; j++) {
                 var liChild = document.createElement('li');
                 var taskDiv = createTaskDiv(taskLists[i].tasks[j], taskLists[i].id);
+                var signsDiv = createSignsDiv(taskLists[i].tasks[j]);
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
+                // TODO add all images
+                taskDiv.appendChild(signsDiv);
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
 
@@ -153,6 +156,19 @@ function createTaskDiv(task, taskListId) {
     taskDiv.addEventListener("click", OnTaskDivClick);
     taskDiv.style.cursor = 'pointer';
     return taskDiv;
+}
+
+function createSignsDiv(task) {
+    var signsDiv = document.createElement('div');
+    signsDiv.setAttribute("id", "div_signs_" + task.id);
+
+    var img = document.createElement('img');
+    img.src = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png';
+    img.alt = 'Some Text';
+    img.width = 12;
+    img.height = 12;
+    signsDiv.appendChild(img);
+    return signsDiv;
 }
 
 function createCheckBoxForTask(task) {
