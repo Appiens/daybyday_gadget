@@ -685,7 +685,7 @@ function OnChangeTaskStatus(obj) {
                         subTaskDiv.parentNode.removeChild(subTaskDiv);
                     }
 
-                    createSubTasksDiv(taskDiv, taskFromServer, subTasks, true);
+                    createSubTasksDiv(taskDiv, taskFromServer, subTasks, 'divsub_', true);
                     // перерисовать узел subTasks
                     taskDiv.subTasks = subTasks;
                 }
