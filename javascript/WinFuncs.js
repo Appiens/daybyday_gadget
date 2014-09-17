@@ -729,7 +729,7 @@ function OnChangeTaskStatus(obj) {
 
             if (taskFromServer.notes != taskDiv.task.notes) {
 
-                var notesSection = getNotesSection(taskFromServer.notes);
+                var notesSection = getNotesSection(taskFromServer);
 
                 if (additionalSectionExist(taskFromServer)) {
                     var additionalSection = getAdditionalSection(taskFromServer);
