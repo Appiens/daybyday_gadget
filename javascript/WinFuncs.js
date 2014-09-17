@@ -99,7 +99,7 @@ function generateList(taskLists) {
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
-                // TODO add all images
+                // append img overdue
                 if (taskLists[i].tasks[j].due && taskLists[i].tasks[j].status == "needsAction") {
                     var today = new Date();
                     var due = new Date(taskLists[i].tasks[j].due);
@@ -108,6 +108,22 @@ function generateList(taskLists) {
                         var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png');
                         taskDiv.appendChild(imgOverdue);
                     }
+                }
+
+                // append img alarm light
+                if (true) {
+                    var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png');
+                    taskDiv.appendChild(imgAlarm);
+                }
+
+                if (true) {
+                    var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png');
+                    taskDiv.appendChild(imgRepeat);
+                }
+
+                if (true) {
+                    var imgPriority = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png');
+                    taskDiv.appendChild(imgPriority);
                 }
 
                 taskDiv.appendChild(span);
