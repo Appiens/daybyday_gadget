@@ -99,14 +99,24 @@ function generateList(taskLists) {
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
+                var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png');
+                taskDiv.appendChild(imgOverdue);
+                var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png');
+                taskDiv.appendChild(imgAlarm);
+                var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png');
+                taskDiv.appendChild(imgRepeat);
+                var imgPriorityHigh = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png');
+                taskDiv.appendChild(imgPriorityHigh);
+                var imgPriorityLow = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png');
+                taskDiv.appendChild(imgPriorityLow);
+
                 // append img overdue
                 if (taskLists[i].tasks[j].due && taskLists[i].tasks[j].status == "needsAction") {
                     var today = new Date();
                     var due = new Date(taskLists[i].tasks[j].due);
 
                     if (today - due > 0) {
-                        var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png');
-                        taskDiv.appendChild(imgOverdue);
+                        imgOverdue.style.display = '';
                     }
                 }
 
@@ -115,23 +125,19 @@ function generateList(taskLists) {
 
                     // append img alarm light
                     if (isAlarmedTask(additionalSection)) {
-                        var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png');
-                        taskDiv.appendChild(imgAlarm);
+                        imgAlarm.style.display = '';
                     }
 
                     if (isRepeatableTask(additionalSection)) {
-                        var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png');
-                        taskDiv.appendChild(imgRepeat);
+                        imgRepeat.style.display = '';
                     }
 
                     if (isHighPriorityTask(additionalSection)) {
-                        var imgPriority = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png');
-                        taskDiv.appendChild(imgPriority);
+                        imgPriorityHigh.style.display = '';
                     }
 
                     if (isLowPriorityTask(additionalSection)) {
-                        var imgPriority = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png');
-                        taskDiv.appendChild(imgPriority);
+                        imgPriorityLow.style.display = '';
                     }
                 }
 
@@ -197,9 +203,9 @@ function createTaskDiv(task, taskListId) {
 function createTaskStatusImg(url) {
     var img = document.createElement('img');
     img.src = url;
-    img.alt = 'Some Text';
     img.width = 12;
     img.height = 12;
+    img.style.display = 'none';
     return img;
 }
 
@@ -554,6 +560,7 @@ function ActionSaveTask() {
         }
 
         var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
+        notes += getAdditionalSection($('watch').task);
         changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
     }
 }
