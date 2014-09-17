@@ -99,25 +99,20 @@ function generateList(taskLists) {
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
-                var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png');
+                var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png', taskLists[i].tasks[j], "img_ovr_");
                 taskDiv.appendChild(imgOverdue);
-                var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png');
+                var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png', taskLists[i].tasks[j], "img_alm_");
                 taskDiv.appendChild(imgAlarm);
-                var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png');
+                var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png', taskLists[i].tasks[j], "img_rpt_");
                 taskDiv.appendChild(imgRepeat);
-                var imgPriorityHigh = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png');
+                var imgPriorityHigh = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png', taskLists[i].tasks[j], "img_phi_");
                 taskDiv.appendChild(imgPriorityHigh);
-                var imgPriorityLow = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png');
+                var imgPriorityLow = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png', taskLists[i].tasks[j], "img_plo_");
                 taskDiv.appendChild(imgPriorityLow);
 
                 // append img overdue
-                if (taskLists[i].tasks[j].due && taskLists[i].tasks[j].status == "needsAction") {
-                    var today = new Date();
-                    var due = new Date(taskLists[i].tasks[j].due);
-
-                    if (today - due > 0) {
+                if (isOverdueTask(taskLists[i].tasks[j])) {
                         imgOverdue.style.display = '';
-                    }
                 }
 
                 if (additionalSectionExist(taskLists[i].tasks[j])) {
@@ -200,8 +195,9 @@ function createTaskDiv(task, taskListId) {
     return taskDiv;
 }
 
-function createTaskStatusImg(url) {
+function createTaskStatusImg(url, task, prefix) {
     var img = document.createElement('img');
+    img.setAttribute("id", prefix + task.id);
     img.src = url;
     img.width = 12;
     img.height = 12;
@@ -732,8 +728,21 @@ function OnChangeTaskStatus(obj) {
             taskSpan.innerText = taskFromServer.title;
 
             if (taskFromServer.notes != taskDiv.task.notes) {
-                if (canBeConvertedToSubtasks(taskFromServer.notes)) {
-                    var subTasks = convertToSubTasks(taskFromServer.notes);
+
+                var notesSection = getNotesSection(taskFromServer.notes);
+
+                if (additionalSectionExist(taskFromServer)) {
+                    var additionalSection = getAdditionalSection(taskFromServer);
+                    $("img_ovr_" + taskFromServer.id).style.display = isOverdueTask(taskFromServer) ? '': 'none';
+                    $("img_alm_" + taskFromServer.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
+                    $("img_rpt_" + taskFromServer.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
+                    $("img_phi_" + taskFromServer.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
+                    $("img_plo_" + taskFromServer.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
+
+                }
+
+                if (canBeConvertedToSubtasks(/*taskFromServer.notes*/ notesSection)) {
+                    var subTasks = convertToSubTasks(/*taskFromServer.notes*/ notesSection);
                     var subTaskDiv = document.getElementById('divsub_' + taskFromServer.id);
 
                     if (subTaskDiv) {
@@ -819,6 +828,19 @@ function isRepeatableTask(additionalSection) {
 
 function isAlarmedTask(additionalSection) {
     return additionalSection.indexOf('REMINDER:') > 0;
+}
+
+function isOverdueTask(task) {
+    if (task.due && task.status == "needsAction") {
+        var today = new Date();
+        var due = new Date(task.due);
+
+        if (today - due > 0) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
