@@ -505,7 +505,8 @@ function ActionSaveTask() {
             date.setFromInputValue( $('input-task-date').value);
         }
 
-        changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, $('input-task-comment').value);
+        var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
+        changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
     }
 }
 
