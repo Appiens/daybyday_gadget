@@ -61,6 +61,11 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 //   </li>
 //   </ul>  // списки задач
 
+
+// структура секции Watch
+//
+// TODO написать структуру секции
+
 function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
     backToList.onclick = ActionBackToList;
@@ -101,14 +106,14 @@ function generateList(taskLists) {
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
                     taskDiv.subTasks = subTasks;
-                    drawSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_', true);
+                    createSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_', true);
                 }
 
                 ul.appendChild(liChild);
             } // for j
         } // if
         else {
-            var ul = document.createElement('ul'); // assume + create <ul>
+            var ul = document.createElement('ul');
             var liChild = document.createElement('li');
             liChild.appendChild(document.createTextNode('<no tasks>'));
             ul.appendChild(liChild);
@@ -119,33 +124,15 @@ function generateList(taskLists) {
     return ulMain;
 }
 
+// <editor-fold desc="Creating elements for a MAIN div">
+
 // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
 //                 false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
-function drawSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
+function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
     var subTasksDiv = document.createElement('div');
     subTasksDiv.setAttribute("id", divNamePrefix + task.id);
     drawSubTasks_new(subTasksDiv, subTasks, task.id, forMain);
     taskDiv.appendChild(subTasksDiv);
-}
-
-
-function getNotes(task) {
-    var notes = task.notes || '<Без описания>';
-
-    if (canBeConvertedToSubtasks(notes)) {
-        notes = '<Без описания>';
-    }
-
-    return notes;
-}
-
-function getDueTo(task) {
-    if (task.due) {
-        var d = new Date(task.due);
-        return d.toDateString();
-    }
-
-    return '<Без даты>';
 }
 
 function createSimpleTextNode(text, id) {
@@ -156,6 +143,56 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
+function createTaskDiv(task, taskListId) {
+    var taskDiv = document.createElement('div');
+    taskDiv.setAttribute("id", "div_" + task.id);
+    taskDiv.task = task;
+    taskDiv.taskListId = taskListId;
+    taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
+    taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
+    taskDiv.addEventListener("click", OnTaskDivClick);
+    taskDiv.style.cursor = 'pointer';
+    return taskDiv;
+}
+
+function createCheckBoxForTask(task) {
+    var checkBox = document.createElement("input");
+    checkBox.type = 'checkbox';
+    checkBox.setAttribute("id", "ch_" + task.id);
+
+    checkBox.addEventListener('change', function(e) {
+        var targ;
+
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        OnChangeTaskStatusCB(targ);
+
+        var li = targ;
+        while (li != null && li.task == undefined) li = li.parentNode;
+        var task = li.task;
+
+        while (li != null && li.taskListId == undefined) li = li.parentNode;
+
+        var m_taskId = targ.id.substring('ch_'.length);
+        var taskListId = li? li.taskListId: '';
+        task.status = targ.checked ? 'completed' : 'needsAction';
+
+        //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
+        changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
+        alert(task.title + " " + taskListId);
+    });
+
+    if (task.status == 'completed') {
+        checkBox.checked = true;
+        setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
+    }
+    return checkBox;
+}
+
+// </editor-fold>
+
+// <editor-fold desc="Task Div event handlers for a MAIN div">
 
 function OnTaskDivMouseOver(e) {
     var targ;
@@ -212,25 +249,36 @@ function OnTaskDivClick(e) {
     }
 }
 
-function changeNotesState(showSubTasks) {
-    if (showSubTasks) {
-        // проанализировать содержимое поля комментария
-        // кол-во строк там = кол-ву подзадач
-        // если у подзадачи есть [x] - это значит выполненная подзадача
-        // если есть [] - это удаляется из описания (пока не будем делать этого)
-        var notesOrig = $('input-task-comment').value;
-        var subTasks = convertToSubTasksLight(notesOrig);
+// </editor-fold>
 
-        drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
-        $('input-task-comment').style.display = 'none';
-    }
-    else {
-        var subTasks = getSubTasksArrFromWatchDiv();
-        removeSubTasksDivFromWatch();
-        $('input-task-comment').value = subTasks.join('\n');
-        $('input-task-comment').style.display = '';
-    }
+// <editor-fold desc="Common event handlers">
+function OnChangeTaskStatusCB(targ) {
+    var taskId = targ.id.substring('ch_'.length);
+    var spanId = 't_' + taskId;
+
+    document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
 }
+
+function OnChangeSubTaskStatusCB(targ) {
+    var taskId = targ.id.substring('ch_'.length);
+    var spanId = 't_' + taskId;
+
+    var li = targ;
+    while (li != null && li.taskListId == undefined) li = li.parentNode;
+
+
+    document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
+}
+
+/*  No date checkbox event handler
+ Hides input-task-date if checkbox not checked, shows otherwise */
+function OnNoDateCheckChanged() {
+    $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
+}
+
+// </editor-fold>
+
+// <editor-fold desc="Actions (add/remove) for a subTasks div in Watch div">
 
 function removeSubTasksDivFromWatch() {
     var subTaskDiv = document.getElementById('divsubwatch_' + $('watch').task.id);
@@ -243,9 +291,11 @@ function removeSubTasksDivFromWatch() {
 function addSubTasksDivToWatch(notesOrig) {
     var subTasks = convertToSubTasks(notesOrig);
     $('watch').subTasks = subTasks;
-    drawSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
+    createSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
     $('input-task-comment').style.display = 'none';
 }
+
+// </editor-fold>
 
 function getSubTasksArrFromWatchDiv() {
     var subTasksDiv = $('divsubwatch_' + $('watch').task.id);
@@ -264,79 +314,6 @@ function getSubTasksArrFromWatchDiv() {
     }
 
     return subTasks;
-}
-
-function createTaskDiv(task, taskListId) {
-    var taskDiv = document.createElement('div');
-    taskDiv.setAttribute("id", "div_" + task.id);
-    taskDiv.task = task;
-    taskDiv.taskListId = taskListId;
-    taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
-    taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
-    taskDiv.addEventListener("click", OnTaskDivClick);
-    taskDiv.style.cursor = 'pointer';
-    return taskDiv;
-}
-
-function createCheckBoxForTask(task) {
-    var checkBox = document.createElement("input");
-    checkBox.type = 'checkbox';
-    checkBox.setAttribute("id", "ch_" + task.id);
-
-    checkBox.addEventListener('change', function(e) {
-        var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        OnChangeTaskStatusCB(targ);
-
-        var li = targ;
-        while (li != null && li.task == undefined) li = li.parentNode;
-        var task = li.task;
-
-        while (li != null && li.taskListId == undefined) li = li.parentNode;
-
-        var m_taskId = targ.id.substring('ch_'.length);
-        var taskListId = li? li.taskListId: '';
-        task.status = targ.checked ? 'completed' : 'needsAction';
-
-        //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
-        changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
-        alert(task.title + " " + taskListId);
-    });
-
-    if (task.status == 'completed') {
-        checkBox.checked = true;
-        setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
-    }
-    return checkBox;
-}
-
-function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
-    var span = document.createElement('div');
-    var isDone = subTask.substring(0,1) == 'T';
-    var text = subTask.substring(1);
-    var checkBox = document.createElement("input");
-    checkBox.type = 'checkbox';
-    checkBox.setAttribute("id", "ch_w_" + taskId + "_" + subTaskNum);
-    checkBox.addEventListener('change', function(e) {
-        var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        OnChangeSubTaskStatusCB(targ);
-    });
-
-    span.appendChild(checkBox);
-    span.appendChild(createSimpleTextNode(text, 't_w_' + taskId + "_" + subTaskNum));
-    li.appendChild(span);
-
-    if (isDone) {
-        checkBox.checked = true;
-        setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
-    }
 }
 
 
@@ -392,23 +369,6 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     }
 }
 
-function OnChangeTaskStatusCB(targ) {
-    var taskId = targ.id.substring('ch_'.length);
-    var spanId = 't_' + taskId;
-
-    document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
-}
-
-function OnChangeSubTaskStatusCB(targ) {
-    var taskId = targ.id.substring('ch_'.length);
-    var spanId = 't_' + taskId;
-
-    var li = targ;
-    while (li != null && li.taskListId == undefined) li = li.parentNode;
-
-
-    document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
-}
 
 // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
 //                 false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
@@ -428,6 +388,8 @@ function drawSubTasks_new(li, subTasks, taskId, forMain) {
     }
 }
 
+// <editor-fold desc="Convert text to subTasks and SubTasks To Text">
+
 function canBeConvertedToSubtasks(text) {
     text = text.trim();
     if (text.indexOf('[ ]') != 0 && text.indexOf('[x]') != 0) {
@@ -437,6 +399,8 @@ function canBeConvertedToSubtasks(text) {
     return true;
 }
 
+// returns a subTasks array from task notes (text)
+// each line must start from [ ] or [x]
 function convertToSubTasks(text) {
    if (!canBeConvertedToSubtasks(text)) {
        return null;
@@ -458,13 +422,12 @@ function convertToSubTasks(text) {
         subTasksList.push(tmp);
     }
 
-   // textCpy =  textCpy.split('[ ]').join('^&^F');
-   // textCpy =  textCpy.split('[x]').join('^&^T');
-
-   //var subTasksList = textCpy.split('^&^');
    return subTasksList;
 }
 
+// returns a subTasks array from a multiline text
+// each line becomes a task with a status = require action
+// each line started with [x] becomes a task with a status = completed
 function convertToSubTasksLight(text) {
 
     var textCpy = text;
@@ -488,10 +451,6 @@ function convertToSubTasksLight(text) {
         subTasksList.push(tmp);
     }
 
-    // textCpy =  textCpy.split('[ ]').join('^&^F');
-    // textCpy =  textCpy.split('[x]').join('^&^T');
-
-    //var subTasksList = textCpy.split('^&^');
     return subTasksList;
 }
 
@@ -501,6 +460,8 @@ function convertFromSubTasks(arr) {
     str = str.split('^&^T').join('[x]');
     return str;
 }
+
+// </editor-fold>
 
 // Display UI depending on OAuth access state of the gadget (see <divs> above).
 // If user hasn't approved access to data, provide a "Personalize this gadget" link
@@ -526,6 +487,8 @@ function showOneSection(toshow) {
         }
     }
 }
+
+// <editor-fold desc="Actions for a Watch section">
 
 function ActionBackToList() {
     showOneSection('main');
@@ -575,9 +538,66 @@ function ActionDiscard() {
             addSubTasksDivToWatch(notesOrig);
         }
     }
-
 }
 
+function changeNotesState(showSubTasks) {
+    if (showSubTasks) {
+        // проанализировать содержимое поля комментария
+        // кол-во строк там = кол-ву подзадач
+        // если у подзадачи есть [x] - это значит выполненная подзадача
+        // если есть [] - это удаляется из описания (пока не будем делать этого)
+        var notesOrig = $('input-task-comment').value;
+        var subTasks = convertToSubTasksLight(notesOrig);
+
+        createSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
+        $('input-task-comment').style.display = 'none';
+    }
+    else {
+        var subTasks = getSubTasksArrFromWatchDiv();
+        for (var i=0; i < subTasks.length; i++) {
+            if (subTasks[i].substring(0, 3) == '[ ]') {
+                subTasks[i] = subTasks[i].substring(3);
+            }
+        }
+
+        removeSubTasksDivFromWatch();
+        $('input-task-comment').value = subTasks.join('\n');
+        $('input-task-comment').style.display = '';
+    }
+}
+
+// </editor-fold>
+
+// <editor-fold desc="Drawing in a Watch section">
+function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
+    var span = document.createElement('div');
+    var isDone = subTask.substring(0,1) == 'T';
+    var text = subTask.substring(1);
+    var checkBox = document.createElement("input");
+    checkBox.type = 'checkbox';
+    checkBox.setAttribute("id", "ch_w_" + taskId + "_" + subTaskNum);
+    checkBox.addEventListener('change', function(e) {
+        var targ;
+
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        OnChangeSubTaskStatusCB(targ);
+    });
+
+    span.appendChild(checkBox);
+    span.appendChild(createSimpleTextNode(text, 't_w_' + taskId + "_" + subTaskNum));
+    li.appendChild(span);
+
+    if (isDone) {
+        checkBox.checked = true;
+        setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
+    }
+}
+
+// </editor-fold>
+
+// <editor-fold desc="Change task requests">
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
     var status = isCompleted ? 'completed':'needsAction';
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
@@ -631,6 +651,7 @@ function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes)
     }
 }
 
+// calback function for a change task request
 function OnChangeTaskStatus(obj) {
     if (obj.errors.length > 0) {
         alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
@@ -663,7 +684,7 @@ function OnChangeTaskStatus(obj) {
                         subTaskDiv.parentNode.removeChild(subTaskDiv);
                     }
 
-                    drawSubTasksDiv(taskDiv, taskFromServer, subTasks, true);
+                    createSubTasksDiv(taskDiv, taskFromServer, subTasks, true);
                     // перерисовать узел subTasks
                     taskDiv.subTasks = subTasks;
                 }
@@ -674,6 +695,10 @@ function OnChangeTaskStatus(obj) {
     }
 }
 
+
+// </editor-fold>
+
+// <editor-fold desc="Utils">
 function filterSpecialChar(data) {
     if (data) {
         data = data.replace(/"/g, "\\\"");
@@ -692,11 +717,9 @@ function $(id) {
     return document.getElementById(id);
 }
 
-/*  No date checkbox event handler
- Hides input-task-date if checkbox not checked, shows otherwise */
-function OnNoDateCheckChanged() {
-    $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
-}
+// </editor-fold>
+
+
 
 
 
