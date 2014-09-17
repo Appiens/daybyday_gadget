@@ -730,10 +730,10 @@ function OnChangeTaskStatus(obj) {
             if (taskFromServer.notes != taskDiv.task.notes) {
 
                 var notesSection = getNotesSection(taskFromServer);
+                $("img_ovr_" + taskFromServer.id).style.display = isOverdueTask(taskFromServer) ? '': 'none';
 
                 if (additionalSectionExist(taskFromServer)) {
                     var additionalSection = getAdditionalSection(taskFromServer);
-                    $("img_ovr_" + taskFromServer.id).style.display = isOverdueTask(taskFromServer) ? '': 'none';
                     $("img_alm_" + taskFromServer.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
                     $("img_rpt_" + taskFromServer.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
                     $("img_phi_" + taskFromServer.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
