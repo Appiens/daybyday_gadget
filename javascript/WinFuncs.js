@@ -95,12 +95,21 @@ function generateList(taskLists) {
             for (var j=0; j < taskLists[i].tasks.length; j++) {
                 var liChild = document.createElement('li');
                 var taskDiv = createTaskDiv(taskLists[i].tasks[j], taskLists[i].id);
-                var imgOverdue = createSignsImg(taskLists[i].tasks[j]);
+
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
                 // TODO add all images
-                taskDiv.appendChild(imgOverdue);
+                if (taskLists[i].tasks[j].due && taskLists[i].tasks[j].status == "needsAction") {
+                    var today = new Date();
+                    var due = new Date(taskLists[i].tasks[j].due);
+
+                    if (today - due > 0) {
+                        var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png');
+                        taskDiv.appendChild(imgOverdue);
+                    }
+                }
+
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
 
@@ -158,16 +167,12 @@ function createTaskDiv(task, taskListId) {
     return taskDiv;
 }
 
-function createSignsImg(task) {
-//    var signsDiv = document.createElement('div');
-//    signsDiv.setAttribute("id", "div_signs_" + task.id);
-
+function createTaskStatusImg(url) {
     var img = document.createElement('img');
-    img.src = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png';
+    img.src = url;
     img.alt = 'Some Text';
     img.width = 12;
     img.height = 12;
-    // signsDiv.appendChild(img);
     return img;
 }
 
