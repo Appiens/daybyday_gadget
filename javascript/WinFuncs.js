@@ -140,7 +140,7 @@ function generateList(taskLists) {
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
 
-                var notesOrig = taskLists[i].tasks[j].notes || '';
+                var notesOrig = getNotesSection(taskLists[i].tasks[j]) || '';
 
                 if (canBeConvertedToSubtasks(notesOrig)) {
                     var subTasks = convertToSubTasks(notesOrig);
@@ -282,7 +282,7 @@ function OnTaskDivClick(e) {
         $('checkbox-task-completed').checked = targ.task.status == 'completed';
         $('input-task-name').value = targ.task.title;
         $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
-        var notesOrig = targ.task.notes != undefined ? targ.task.notes : '';
+        var notesOrig = targ.task.notes != undefined ? /*targ.task.notes*/ getNotesSection($('watch').task) : '';
         $('input-task-comment').value = notesOrig;
         $('input-task-comment').style.display = '';
         $('checkbox-with-date').checked = targ.task.due != null;
@@ -786,6 +786,16 @@ function getAdditionalSection(task) {
     var text = task.notes;
     var index = text.indexOf('\n<!=\n');
     return text.substring(index);
+}
+
+function getNotesSection(task) {
+    if (!additionalSectionExist(task)) {
+        return task.notes;
+    }
+
+    var text = task.notes;
+    var index = text.indexOf('\n<!=\n');
+    return text.substring(0, index);
 }
 
 function isLowPriorityTask(additionalSection) {
