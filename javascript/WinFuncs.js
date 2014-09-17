@@ -726,11 +726,12 @@ function OnChangeTaskStatus(obj) {
 
             var taskSpan = document.getElementById('t_' + taskFromServer.id);
             taskSpan.innerText = taskFromServer.title;
+            $("img_ovr_" + taskFromServer.id).style.display = isOverdueTask(taskFromServer) ? '': 'none';
 
             if (taskFromServer.notes != taskDiv.task.notes) {
 
                 var notesSection = getNotesSection(taskFromServer);
-                $("img_ovr_" + taskFromServer.id).style.display = isOverdueTask(taskFromServer) ? '': 'none';
+
 
                 if (additionalSectionExist(taskFromServer)) {
                     var additionalSection = getAdditionalSection(taskFromServer);
