@@ -771,6 +771,10 @@ function $(id) {
 function additionalSectionExist(task) {
     var text = task.notes;
 
+    if (text == undefined) {
+        return false;
+    }
+
     return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('\n=!>') > text.indexOf('\n<!=\n'));
 }
 
