@@ -844,6 +844,10 @@ function getAdditionalSection(task) {
 }
 
 function getNotesSection(task) {
+    if (task.notes == undefined) {
+        return '';
+    }
+
     if (!additionalSectionExist(task)) {
         return task.notes;
     }
