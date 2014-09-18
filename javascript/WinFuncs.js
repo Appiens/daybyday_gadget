@@ -389,7 +389,7 @@ function removeSubTasksDivFromWatch() {
         return;
     }
 
-    var subTaskDiv = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id);
+    var subTaskDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
 
     if (subTaskDiv) {
         subTaskDiv.parentNode.removeChild(subTaskDiv);
@@ -399,14 +399,14 @@ function removeSubTasksDivFromWatch() {
 function addSubTasksDivToWatch(notesOrig) {
     var subTasks = convertToSubTasks(notesOrig);
     // $('watch').subTasks = subTasks;
-    createSubTasksDiv($("div-notes"), $('watch').task , subTasks, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE, false);
+    createSubTasksDiv($("div-notes"), $('watch').task , subTasks, WatchSectionPrefixes.PREFIX_DIV_SUBTASK, false);
     $('input-task-comment').style.display = 'none';
 }
 
 // </editor-fold>
 
 function getSubTasksArrFromWatchDiv() {
-    var subTasksDiv = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id);
+    var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
 
 
     var num = subTasksDiv.children.length;
