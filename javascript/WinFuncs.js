@@ -667,7 +667,7 @@ function SetWatchFieldsFromTask(task) {
     $('checkbox-task-completed').checked = task.status == TaskStatuses.COMPLETED;
     $('input-task-name').value = task.title;
     $('input-task-date').value = task.due != null ? new MyDate(new Date(task.due)).toInputValue() : myDate.toInputValue();
-    var notesOrig = targ.task.notes != undefined ? getNotesSection(task) : '';
+    var notesOrig = task.notes != undefined ? getNotesSection(task) : '';
     $('input-task-comment').value = notesOrig;
     $('input-task-comment').style.display = '';
     $('checkbox-with-date').checked = task.due != null;
