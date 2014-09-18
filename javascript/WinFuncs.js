@@ -181,7 +181,7 @@ function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
 
 function createSimpleTextNode(text, id) {
     var span = document.createElement('span');
-    span.appendChild(document.createTextNode(''));
+    span.appendChild(document.createTextNode(text));
     span.setAttribute("id", id);
     span.style.backgroundColor = 'inherit';
     return span;
@@ -470,7 +470,7 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     span.appendChild(checkBox);
     span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
-    SetSubTaskTitle(taskId, subTaskNum, text);
+    //SetSubTaskTitle(taskId, subTaskNum, text);
 
     if (isDone) {
         checkBox.checked = true;
@@ -701,7 +701,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     span.appendChild(checkBox);
     span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
-    SetSubTaskTitleWatch(taskId, subTaskNum, text);
+    // SetSubTaskTitleWatch(taskId, subTaskNum, text);
 
     if (isDone) {
         checkBox.checked = true;
