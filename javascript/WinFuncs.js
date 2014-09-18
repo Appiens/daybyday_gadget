@@ -1,6 +1,37 @@
 var makePOSTRequest = null;
 var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 
+var StatusImagesNames = (function() {
+    var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
+    var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
+    var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
+    var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
+    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
+    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png.png";
+
+    return {
+        PREFIX_ALARM : "img_alm_",
+        PREFIX_REPEAT: "img_rpt_",
+        PREFIX_OVERDUE: "img_ovr_",
+        PREFIX_PRIORITY_HIGH: "img_phi_",
+        PREFIX_PRIORITY_LOW: "img_plo",
+        URL_ALARM: urlAlarm,
+        URL_OVERDUE: urlOverdue,
+        URL_REPEAT: urlRepeat,
+        URL_PRIORITY_HIGH: urlPriorityHigh,
+        URL_PRIORITY_LOW: urlPriorityLow
+    };})();
+
+/*img_ovr_");
+taskDiv.appendChild(imgOverdue);
+var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png', task, "img_alm_");
+taskDiv.appendChild(imgAlarm);
+var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png', task, "img_rpt_");
+taskDiv.appendChild(imgRepeat);
+var imgPriorityHigh = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png', task, "img_phi_");
+taskDiv.appendChild(imgPriorityHigh);
+var imgPriorityLow = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png', task, "img_plo_");*/
+
 
 // структура дерева
 //   <ul id="listId">
@@ -99,47 +130,12 @@ function generateList(taskLists) {
                 var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
-                var imgOverdue = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_overdue_light.png', taskLists[i].tasks[j], "img_ovr_");
-                taskDiv.appendChild(imgOverdue);
-                var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png', taskLists[i].tasks[j], "img_alm_");
-                taskDiv.appendChild(imgAlarm);
-                var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png', taskLists[i].tasks[j], "img_rpt_");
-                taskDiv.appendChild(imgRepeat);
-                var imgPriorityHigh = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png', taskLists[i].tasks[j], "img_phi_");
-                taskDiv.appendChild(imgPriorityHigh);
-                var imgPriorityLow = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png', taskLists[i].tasks[j], "img_plo_");
-                taskDiv.appendChild(imgPriorityLow);
-
-                // append img overdue
-                if (isOverdueTask(taskLists[i].tasks[j])) {
-                        imgOverdue.style.display = '';
-                }
-
-                if (additionalSectionExist(taskLists[i].tasks[j])) {
-                    var additionalSection = getAdditionalSection(taskLists[i].tasks[j]);
-
-                    // append img alarm light
-                    if (isAlarmedTask(additionalSection)) {
-                        imgAlarm.style.display = '';
-                    }
-
-                    if (isRepeatableTask(additionalSection)) {
-                        imgRepeat.style.display = '';
-                    }
-
-                    if (isHighPriorityTask(additionalSection)) {
-                        imgPriorityHigh.style.display = '';
-                    }
-
-                    if (isLowPriorityTask(additionalSection)) {
-                        imgPriorityLow.style.display = '';
-                    }
-                }
-
-
-
+                createTaskStatusImages(taskDiv, taskLists[i].tasks[j]);
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
+
+                SetDisplayTaskStatusAddImages(taskLists[i].tasks[j]);
+                SetDisplayStatusOverdue(taskLists[i].tasks[j]);
 
                 var notesOrig = getNotesSection(taskLists[i].tasks[j]) || '';
 
@@ -177,6 +173,8 @@ function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
 
 function createSimpleTextNode(text, id) {
     var span = document.createElement('span');
+
+    // TODO move this line to a setTaskTitle function
     span.appendChild(document.createTextNode(text));
     span.setAttribute("id", id);
     span.style.backgroundColor = 'inherit';
@@ -193,6 +191,19 @@ function createTaskDiv(task, taskListId) {
     taskDiv.addEventListener("click", OnTaskDivClick);
     taskDiv.style.cursor = 'pointer';
     return taskDiv;
+}
+
+function createTaskStatusImages(taskDiv, task) {
+    var imgOverdue = createTaskStatusImg(StatusImagesNames.URL_OVERDUE, task, StatusImagesNames.PREFIX_OVERDUE);
+    taskDiv.appendChild(imgOverdue);
+    var imgAlarm = createTaskStatusImg(StatusImagesNames.URL_ALARM, task, StatusImagesNames.PREFIX_ALARM);
+    taskDiv.appendChild(imgAlarm);
+    var imgRepeat = createTaskStatusImg(StatusImagesNames.URL_REPEAT, task, StatusImagesNames.PREFIX_REPEAT);
+    taskDiv.appendChild(imgRepeat);
+    var imgPriorityHigh = createTaskStatusImg(StatusImagesNames.PREFIX_PRIORITY_HIGH, task, StatusImagesNames.PREFIX_PRIORITY_HIGH);
+    taskDiv.appendChild(imgPriorityHigh);
+    var imgPriorityLow = createTaskStatusImg(StatusImagesNames.PREFIX_PRIORITY_LOW, task, StatusImagesNames.PREFIX_PRIORITY_LOW);
+    taskDiv.appendChild(imgPriorityLow);
 }
 
 function createTaskStatusImg(url, task, prefix) {
@@ -233,11 +244,31 @@ function createCheckBoxForTask(task) {
         alert(task.title + " " + taskListId);
     });
 
+    // TODO move this to setCheckbox
     if (task.status == 'completed') {
         checkBox.checked = true;
         setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
     }
     return checkBox;
+}
+
+// </editor-fold>
+
+//  <editor-fold desc="Setting elements states for a MAIN div">
+
+// shows / hides images prioriry, repeat, alarm in MAIN section
+function SetDisplayTaskStatusAddImages(task) {
+    if (additionalSectionExist(task)) {
+        var additionalSection = getAdditionalSection(task);
+        $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
+        $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
+    }
+}
+
+function SetDisplayStatusOverdue(task) {
+     $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
 }
 
 // </editor-fold>
@@ -726,21 +757,24 @@ function OnChangeTaskStatus(obj) {
 
             var taskSpan = document.getElementById('t_' + taskFromServer.id);
             taskSpan.innerText = taskFromServer.title;
-            $("img_ovr_" + taskFromServer.id).style.display = isOverdueTask(taskFromServer) ? '': 'none';
+
+            SetDisplayStatusOverdue(taskFromServer);
 
             if (taskFromServer.notes != taskDiv.task.notes) {
 
                 var notesSection = getNotesSection(taskFromServer);
 
 
-                if (additionalSectionExist(taskFromServer)) {
-                    var additionalSection = getAdditionalSection(taskFromServer);
-                    $("img_alm_" + taskFromServer.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
-                    $("img_rpt_" + taskFromServer.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
-                    $("img_phi_" + taskFromServer.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
-                    $("img_plo_" + taskFromServer.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
+//                if (additionalSectionExist(taskFromServer)) {
+//                    var additionalSection = getAdditionalSection(taskFromServer);
+//                    $("img_alm_" + taskFromServer.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
+//                    $("img_rpt_" + taskFromServer.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
+//                    $("img_phi_" + taskFromServer.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
+//                    $("img_plo_" + taskFromServer.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
+//
+//                }
 
-                }
+                SetDisplayTaskStatusAddImages(taskFromServer);
 
                 if (canBeConvertedToSubtasks(/*taskFromServer.notes*/ notesSection)) {
                     var subTasks = convertToSubTasks(/*taskFromServer.notes*/ notesSection);
