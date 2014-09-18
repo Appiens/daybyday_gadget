@@ -123,9 +123,6 @@ function generateList(taskLists) {
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
 
-                SetDisplayTaskStatusAddImages(taskLists[i].tasks[j]);
-                SetDisplayStatusOverdue(taskLists[i].tasks[j]);
-
                 var notesOrig = getNotesSection(taskLists[i].tasks[j]) || '';
 
                 if (canBeConvertedToSubtasks(notesOrig)) {
@@ -135,6 +132,10 @@ function generateList(taskLists) {
                 }
 
                 ul.appendChild(liChild);
+
+                // set task statuses
+                SetDisplayTaskStatusAddImages(taskLists[i].tasks[j]);
+                SetDisplayStatusOverdue(taskLists[i].tasks[j]);
             } // for j
         } // if
         else {
@@ -257,7 +258,7 @@ function SetDisplayTaskStatusAddImages(task) {
 }
 
 function SetDisplayStatusOverdue(task) {
-    // $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
+    $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
 }
 
 // </editor-fold>
