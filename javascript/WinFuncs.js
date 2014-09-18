@@ -32,6 +32,13 @@ var MainSectionPrefixes = (function() {
         PREFIX_SPAN_SUBTASK_TITLE: "t_"
     };})();
 
+var WatchSectionPrefixes = (function() {
+    return {
+        PREFIX_DIV_SUBTASK: "divsubwatch_",
+        PREFIX_CB_SUBTASK_COMPLETED: "ch_w_",
+        PREFIX_SPAN_SUBTASK_TITLE: "t_w_"
+    };})();
+
 var TaskStatuses = (function() {
     return {
         COMPLETED: "completed",
@@ -100,7 +107,7 @@ var TaskStatuses = (function() {
 
 // структура секции Watch
 //
-// TODO написать структуру секции
+// TODO написать структуру секции Watch
 
 function init(makePostRequestFunc) {
     var backToList = document.getElementById('href-back');
@@ -139,16 +146,7 @@ function generateList(taskLists) {
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
 
-//                var notesOrig = getNotesSection(taskLists[i].tasks[j]) || '';
-//
-//                if (canBeConvertedToSubtasks(notesOrig)) {
-//                    var subTasks = convertToSubTasks(notesOrig);
-//                    taskDiv.subTasks = subTasks;
-//                    createSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_', true);
-//                }
-
                 refreshSubTasksSectionMain(taskDiv, taskLists[i].tasks[j]);
-
                 ul.appendChild(liChild);
 
                 // set task statuses
@@ -245,7 +243,7 @@ function createCheckBoxForTask(task) {
 
         var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
         var taskListId = li? li.taskListId: '';
-        task.status = targ.checked ? 'completed' : 'needsAction';
+        task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
 
         //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
         changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
@@ -267,7 +265,6 @@ function refreshSubTasksSectionMain(taskDiv, task) {
         }
 
         createSubTasksDiv(taskDiv, task, subTasks, MainSectionPrefixes.PREFIX_DIV_SUBTASK, true);
-        // перерисовать узел subTasks
         taskDiv.subTasks = subTasks;
     }
 }
@@ -294,18 +291,30 @@ function SetDisplayStatusOverdue(task) {
 function SetTaskStatusCheckbox(task) {
     var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
-    if (checkBox.checked != task.status == 'completed') {
-        checkBox.checked = task.status == 'completed';
+    if (checkBox.checked != task.status == TaskStatuses.COMPLETED) {
+        checkBox.checked = task.status == TaskStatuses.COMPLETED;
         setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
     }
 }
 
 function SetTaskTitle(task) {
-    var taskSpan = document.getElementById(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
+    var taskSpan = $(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
     taskSpan.innerText = task.title;
 }
 
+function SetSubTaskTitle(taskId, subTaskNum, text) {
+    var subTaskSpan = $(MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
+    subTaskSpan.innerText = text;
+}
+
 // </editor-fold>
+function SetSubTaskTitleWatch(taskId, subTaskNum, text) {
+    var subTaskSpan = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
+    subTaskSpan.innerText = text;
+}
+//  <editor-fold desc="Setting elements states for a WATCH div">
+
+//  </editor-fold>
 
 // <editor-fold desc="Task Div event handlers for a MAIN div">
 
@@ -333,33 +342,13 @@ function OnTaskDivClick(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
-    var myDate = new MyDate();
-    myDate.setStartNextHour();
-
     if (targ.task && targ.taskListId) {
         // removing previous divSubWatch
-        if ($('watch').task) {
-            removeSubTasksDivFromWatch();
-        }
 
         $('watch').task = targ.task;
         $('watch').taskListId = targ.taskListId;
 
-        // TODO convert this code to a function
-        $('checkbox-task-completed').checked = targ.task.status == 'completed';
-        $('input-task-name').value = targ.task.title;
-        $('input-task-date').value = targ.task.due != null ? new MyDate(new Date(targ.task.due)).toInputValue() : myDate.toInputValue();
-        var notesOrig = targ.task.notes != undefined ? /*targ.task.notes*/ getNotesSection($('watch').task) : '';
-        $('input-task-comment').value = notesOrig;
-        $('input-task-comment').style.display = '';
-        $('checkbox-with-date').checked = targ.task.due != null;
-        $('input-task-date').style.display = targ.task.due != null ? '': 'none';
-
-        // show subtasks and hide notes
-        if (canBeConvertedToSubtasks(notesOrig)) {
-            addSubTasksDivToWatch(notesOrig);
-        }
-
+        SetWatchFieldsFromTask($('watch').task);
         showOneSection('watch');
     }
 }
@@ -396,7 +385,11 @@ function OnNoDateCheckChanged() {
 // <editor-fold desc="Actions (add/remove) for a subTasks div in Watch div">
 
 function removeSubTasksDivFromWatch() {
-    var subTaskDiv = document.getElementById('divsubwatch_' + $('watch').task.id);
+    if ($('watch').task == undefined) {
+        return;
+    }
+
+    var subTaskDiv = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id);
 
     if (subTaskDiv) {
         subTaskDiv.parentNode.removeChild(subTaskDiv);
@@ -405,23 +398,23 @@ function removeSubTasksDivFromWatch() {
 
 function addSubTasksDivToWatch(notesOrig) {
     var subTasks = convertToSubTasks(notesOrig);
-    $('watch').subTasks = subTasks;
-    createSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
+    // $('watch').subTasks = subTasks;
+    createSubTasksDiv($("div-notes"), $('watch').task , subTasks, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE, false);
     $('input-task-comment').style.display = 'none';
 }
 
 // </editor-fold>
 
 function getSubTasksArrFromWatchDiv() {
-    var subTasksDiv = $('divsubwatch_' + $('watch').task.id);
+    var subTasksDiv = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id);
 
 
     var num = subTasksDiv.children.length;
     var subTasks = [];
 
     for (var i=0; i<num; i++) {
-        var checkBox = $("ch_w_" + $('watch').task.id + "_" + i);
-        var textNode = $("t_w_" + $('watch').task.id + "_" + i);
+        var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + i);
+        var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
 
         var subTask = checkBox.checked ? '[x]':'[ ]';
         subTask = subTask + textNode.innerText;
@@ -441,6 +434,7 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
     checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
+
     checkBox.addEventListener('change', function(e) {
         var targ;
 
@@ -455,26 +449,27 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
         var m_taskId = li ? li.task.id : '';
         var oldNotes = li ? li.task.notes : '';
         var task = li.task;
-        alert("task = " + JSON.stringify(li.task));
+        // alert("task = " + JSON.stringify(li.task));
 
         while (li != null && li.taskListId == undefined) li = li.parentNode;
 
 
         var taskListId = li? li.taskListId: '';
-        alert("taskListId = " + taskListId);
+         // alert("taskListId = " + taskListId);
         var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
-        alert("subTaskId = " + subTaskId);
+        // alert("subTaskId = " + subTaskId);
 
         var arr = convertToSubTasks(oldNotes);
         arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
         var newNotes = convertFromSubTasks(arr);
-        alert("newNotes = " + newNotes);
+        // alert("newNotes = " + newNotes);
         task.notes = newNotes;
         changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
     });
 
     span.appendChild(checkBox);
-    span.appendChild(createSimpleTextNode(text, 't_' + taskId + "_" + subTaskNum));
+    span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
+    SetSubTaskTitle(taskId, subTaskNum, text);
     li.appendChild(span);
 
     if (isDone) {
@@ -606,6 +601,7 @@ function showOneSection(toshow) {
 // <editor-fold desc="Actions for a Watch section">
 
 function ActionBackToList() {
+    removeSubTasksDivFromWatch();
     showOneSection('main');
 }
 
@@ -632,28 +628,8 @@ function ActionToSubtasks() {
 
 function ActionDiscard() {
     if ($('watch').task != undefined && $('watch').taskListId != undefined) {
-        var myDate = new MyDate();
-        myDate.setStartNextHour();
-        var task = $('watch').task;
-
-        // TODO convert this code to a function
-        if ($('watch').task) {
-            removeSubTasksDivFromWatch();
-        }
-
-        $('checkbox-task-completed').checked = task.status == 'completed';
-        $('input-task-name').value = task.title;
-        $('input-task-date').value = task.due != null ? new MyDate(new Date(task.due)).toInputValue() : myDate.toInputValue();
-        var notesOrig = targ.task.notes != undefined ? task.notes : '';
-        $('input-task-comment').value = notesOrig;
-        $('input-task-comment').style.display = '';
-        $('checkbox-with-date').checked = task.due != null;
-        $('input-task-date').style.display = task.due != null ? '': 'none';
-
-        // show subtasks and hide notes
-        if (canBeConvertedToSubtasks(notesOrig)) {
-            addSubTasksDivToWatch(notesOrig);
-        }
+       removeSubTasksDivFromWatch();
+       SetWatchFieldsFromTask($('watch').task);
     }
 }
 
@@ -683,6 +659,26 @@ function changeNotesState(showSubTasks) {
     }
 }
 
+
+function SetWatchFieldsFromTask(task) {
+    var myDate = new MyDate();
+    myDate.setStartNextHour();
+
+    $('checkbox-task-completed').checked = task.status == TaskStatuses.COMPLETED;
+    $('input-task-name').value = task.title;
+    $('input-task-date').value = task.due != null ? new MyDate(new Date(task.due)).toInputValue() : myDate.toInputValue();
+    var notesOrig = targ.task.notes != undefined ? getNotesSection(task) : '';
+    $('input-task-comment').value = notesOrig;
+    $('input-task-comment').style.display = '';
+    $('checkbox-with-date').checked = task.due != null;
+    $('input-task-date').style.display = task.due != null ? '': 'none';
+
+    // show subtasks and hide notes
+    if (canBeConvertedToSubtasks(notesOrig)) {
+        addSubTasksDivToWatch(notesOrig);
+    }
+}
+
 // </editor-fold>
 
 // <editor-fold desc="Drawing in a Watch section">
@@ -692,7 +688,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     var text = subTask.substring(1);
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
-    checkBox.setAttribute("id", "ch_w_" + taskId + "_" + subTaskNum);
+    checkBox.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
     checkBox.addEventListener('change', function(e) {
         var targ;
 
@@ -703,7 +699,8 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     });
 
     span.appendChild(checkBox);
-    span.appendChild(createSimpleTextNode(text, 't_w_' + taskId + "_" + subTaskNum));
+    span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
+    SetSubTaskTitleWatch(taskId, subTaskNum, text);
     li.appendChild(span);
 
     if (isDone) {
@@ -716,7 +713,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
 // <editor-fold desc="Change task requests">
 function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
-    var status = isCompleted ? 'completed':'needsAction';
+    var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
     var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
     makePOSTRequest(url, data, OnChangeTaskStatus);
@@ -731,7 +728,7 @@ function changeSubTaskStatusRequest(taskListId, taskId, notes) {
 function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes) {
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
     var data = '{"id": "'+ task.id + '"';
-    var status = isCompleted ? 'completed':'needsAction';
+    var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
     var hasChanges = false;
 
     if (task.status != status) {
@@ -874,7 +871,7 @@ function isAlarmedTask(additionalSection) {
 }
 
 function isOverdueTask(task) {
-    if (task.due && task.status == "needsAction") {
+    if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
         var today = new Date();
         var due = new Date(task.due);
 
