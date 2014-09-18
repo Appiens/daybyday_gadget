@@ -256,14 +256,16 @@ function createCheckBoxForTask(task) {
 function refreshSubTasksSectionMain(taskDiv, task) {
     var notesSection = getNotesSection(task);
 
+    var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
+
+    if (subTaskDiv) {
+        subTaskDiv.parentNode.removeChild(subTaskDiv);
+    }
+
+    taskDiv.subTask = null;
+
     if (canBeConvertedToSubtasks( notesSection)) {
         var subTasks = convertToSubTasks(notesSection);
-        var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
-
-        if (subTaskDiv) {
-            subTaskDiv.parentNode.removeChild(subTaskDiv);
-        }
-
         createSubTasksDiv(taskDiv, task, subTasks, MainSectionPrefixes.PREFIX_DIV_SUBTASK, true);
         taskDiv.subTasks = subTasks;
     }
