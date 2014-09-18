@@ -22,6 +22,22 @@ var StatusImagesNames = (function() {
         URL_PRIORITY_LOW: urlPriorityLow
     };})();
 
+var MainSectionPrefixes = (function() {
+    return {
+        PREFIX_DIV_TASK: "div_",
+        PREFIX_SPAN_TITLE: "t_",
+        PREFIX_CB_COMPLETED: "ch_",
+        PREFIX_DIV_SUBTASK: "divsub_",
+        PREFIX_CB_SUBTASK_COMPLETED: "ch_",
+        PREFIX_SPAN_SUBTASK_TITLE: "t_"
+    };})();
+
+var TaskStatuses = (function() {
+    return {
+        COMPLETED: "completed",
+        NEEDS_ACTION: "needsAction"
+    };})();
+
 // структура дерева
 //   <ul id="listId">
 //   <li> (содержит ссылку taskListId) Название списка задач
@@ -116,26 +132,30 @@ function generateList(taskLists) {
                 var liChild = document.createElement('li');
                 var taskDiv = createTaskDiv(taskLists[i].tasks[j], taskLists[i].id);
 
-                var span = createSimpleTextNode(taskLists[i].tasks[j].title, 't_' + taskLists[i].tasks[j].id);
+                var span = createSimpleTextNode(taskLists[i].tasks[j].title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskLists[i].tasks[j].id);
                 var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
                 taskDiv.appendChild(checkBox);
                 createTaskStatusImages(taskDiv, taskLists[i].tasks[j]);
                 taskDiv.appendChild(span);
                 liChild.appendChild(taskDiv);
 
-                var notesOrig = getNotesSection(taskLists[i].tasks[j]) || '';
+//                var notesOrig = getNotesSection(taskLists[i].tasks[j]) || '';
+//
+//                if (canBeConvertedToSubtasks(notesOrig)) {
+//                    var subTasks = convertToSubTasks(notesOrig);
+//                    taskDiv.subTasks = subTasks;
+//                    createSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_', true);
+//                }
 
-                if (canBeConvertedToSubtasks(notesOrig)) {
-                    var subTasks = convertToSubTasks(notesOrig);
-                    taskDiv.subTasks = subTasks;
-                    createSubTasksDiv(taskDiv, taskLists[i].tasks[j], subTasks, 'divsub_', true);
-                }
+                refreshSubTasksSectionMain(taskDiv, taskLists[i].tasks[j]);
 
                 ul.appendChild(liChild);
 
                 // set task statuses
                 SetDisplayTaskStatusAddImages(taskLists[i].tasks[j]);
                 SetDisplayStatusOverdue(taskLists[i].tasks[j]);
+                SetTaskStatusCheckbox(taskLists[i].tasks[j]);
+                SetTaskTitle(taskLists[i].tasks[j]);
             } // for j
         } // if
         else {
@@ -163,9 +183,7 @@ function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
 
 function createSimpleTextNode(text, id) {
     var span = document.createElement('span');
-
-    // TODO move this line to a setTaskTitle function
-    span.appendChild(document.createTextNode(text));
+    span.appendChild(document.createTextNode(''));
     span.setAttribute("id", id);
     span.style.backgroundColor = 'inherit';
     return span;
@@ -173,7 +191,7 @@ function createSimpleTextNode(text, id) {
 
 function createTaskDiv(task, taskListId) {
     var taskDiv = document.createElement('div');
-    taskDiv.setAttribute("id", "div_" + task.id);
+    taskDiv.setAttribute("id", MainSectionPrefixes.PREFIX_DIV_TASK + task.id);
     taskDiv.task = task;
     taskDiv.taskListId = taskListId;
     taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
@@ -209,7 +227,7 @@ function createTaskStatusImg(url, task, prefix) {
 function createCheckBoxForTask(task) {
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
-    checkBox.setAttribute("id", "ch_" + task.id);
+    checkBox.setAttribute("id", MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
     checkBox.addEventListener('change', function(e) {
         var targ;
@@ -225,7 +243,7 @@ function createCheckBoxForTask(task) {
 
         while (li != null && li.taskListId == undefined) li = li.parentNode;
 
-        var m_taskId = targ.id.substring('ch_'.length);
+        var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
         var taskListId = li? li.taskListId: '';
         task.status = targ.checked ? 'completed' : 'needsAction';
 
@@ -234,12 +252,24 @@ function createCheckBoxForTask(task) {
         alert(task.title + " " + taskListId);
     });
 
-    // TODO move this to setCheckbox
-    if (task.status == 'completed') {
-        checkBox.checked = true;
-        setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
-    }
     return checkBox;
+}
+
+function refreshSubTasksSectionMain(taskDiv, task) {
+    var notesSection = getNotesSection(task);
+
+    if (canBeConvertedToSubtasks( notesSection)) {
+        var subTasks = convertToSubTasks(notesSection);
+        var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
+
+        if (subTaskDiv) {
+            subTaskDiv.parentNode.removeChild(subTaskDiv);
+        }
+
+        createSubTasksDiv(taskDiv, task, subTasks, MainSectionPrefixes.PREFIX_DIV_SUBTASK, true);
+        // перерисовать узел subTasks
+        taskDiv.subTasks = subTasks;
+    }
 }
 
 // </editor-fold>
@@ -259,6 +289,20 @@ function SetDisplayTaskStatusAddImages(task) {
 
 function SetDisplayStatusOverdue(task) {
     $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
+}
+
+function SetTaskStatusCheckbox(task) {
+    var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
+
+    if (checkBox.checked != task.status == 'completed') {
+        checkBox.checked = task.status == 'completed';
+        setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
+    }
+}
+
+function SetTaskTitle(task) {
+    var taskSpan = document.getElementById(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
+    taskSpan.innerText = task.title;
 }
 
 // </editor-fold>
@@ -324,15 +368,15 @@ function OnTaskDivClick(e) {
 
 // <editor-fold desc="Common event handlers">
 function OnChangeTaskStatusCB(targ) {
-    var taskId = targ.id.substring('ch_'.length);
-    var spanId = 't_' + taskId;
+    var taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
+    var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
 
     document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
 }
 
 function OnChangeSubTaskStatusCB(targ) {
     var taskId = targ.id.substring('ch_'.length);
-    var spanId = 't_' + taskId;
+    var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
 
     var li = targ;
     while (li != null && li.taskListId == undefined) li = li.parentNode;
@@ -736,48 +780,18 @@ function OnChangeTaskStatus(obj) {
         var taskFromServer = JSON.parse(obj.text);
 
         if (taskFromServer) {
-            var isCompleted = taskFromServer.status == "completed";
-            var checkBox = document.getElementById("ch_" + taskFromServer.id);
-            if (checkBox.checked != isCompleted) {
-                checkBox.checked = isCompleted;
-                OnChangeTaskStatusCB(checkBox);
-            }
 
-            var taskDiv = document.getElementById("div_" + taskFromServer.id);
+            SetTaskStatusCheckbox(taskFromServer);
+            SetTaskTitle(taskFromServer);
 
-            var taskSpan = document.getElementById('t_' + taskFromServer.id);
-            taskSpan.innerText = taskFromServer.title;
+            var taskDiv = document.getElementById(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
 
             SetDisplayStatusOverdue(taskFromServer);
 
             if (taskFromServer.notes != taskDiv.task.notes) {
 
-                var notesSection = getNotesSection(taskFromServer);
-
-
-//                if (additionalSectionExist(taskFromServer)) {
-//                    var additionalSection = getAdditionalSection(taskFromServer);
-//                    $("img_alm_" + taskFromServer.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
-//                    $("img_rpt_" + taskFromServer.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
-//                    $("img_phi_" + taskFromServer.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
-//                    $("img_plo_" + taskFromServer.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
-//
-//                }
-
                 SetDisplayTaskStatusAddImages(taskFromServer);
-
-                if (canBeConvertedToSubtasks(/*taskFromServer.notes*/ notesSection)) {
-                    var subTasks = convertToSubTasks(/*taskFromServer.notes*/ notesSection);
-                    var subTaskDiv = document.getElementById('divsub_' + taskFromServer.id);
-
-                    if (subTaskDiv) {
-                        subTaskDiv.parentNode.removeChild(subTaskDiv);
-                    }
-
-                    createSubTasksDiv(taskDiv, taskFromServer, subTasks, 'divsub_', true);
-                    // перерисовать узел subTasks
-                    taskDiv.subTasks = subTasks;
-                }
+                refreshSubTasksSectionMain(taskDiv, taskFromServer);
             }
 
             taskDiv.task = taskFromServer;
