@@ -121,6 +121,7 @@ function init(makePostRequestFunc) {
     $('button-discard').addEventListener('click', ActionDiscard);
 }
 
+/*generates the tasks tree in a main section*/
 function generateList(taskLists) {
     var i;
     var ulMain = document.getElementById('listId');
@@ -170,6 +171,11 @@ function generateList(taskLists) {
 
 // <editor-fold desc="Creating elements for a MAIN div">
 
+// Creates Sub Tasks Div section And Adds it to taskDiv section as a child
+// object taskDiv - the parent div for a subTasksDiv
+// task - the task which is connected to a task Div
+// string[] subTasks - array of subTasks
+// divNamePrefix - prefix for a SubTasks
 // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
 //                 false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
 function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
@@ -179,6 +185,10 @@ function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
     taskDiv.appendChild(subTasksDiv);
 }
 
+// Creates a span with id = id and innerText = text
+// string text - a text to write in a span
+// id - the id of a span, which allows to change innerText later
+// returns an [object span] which should be added to some parent element
 function createSimpleTextNode(text, id) {
     var span = document.createElement('span');
     span.appendChild(document.createTextNode(text));
@@ -187,6 +197,10 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
+// Creates a task div
+// task - the task which is connected to a task Div
+// int taskListId - the task list id to which this task belongs
+// returns an [object taskDiv] which should be added to some parent element
 function createTaskDiv(task, taskListId) {
     var taskDiv = document.createElement('div');
     taskDiv.setAttribute("id", MainSectionPrefixes.PREFIX_DIV_TASK + task.id);
@@ -199,6 +213,9 @@ function createTaskDiv(task, taskListId) {
     return taskDiv;
 }
 
+// Creates status images and adds them to a task Div, we should show/hide them when task status changes
+// object taskDiv - a parent div for images
+// task -  the task which is connected to a task Div
 function createTaskStatusImages(taskDiv, task) {
     var imgOverdue = createTaskStatusImg(StatusImagesNames.URL_OVERDUE, task, StatusImagesNames.PREFIX_OVERDUE);
     taskDiv.appendChild(imgOverdue);
@@ -212,6 +229,11 @@ function createTaskStatusImages(taskDiv, task) {
     taskDiv.appendChild(imgPriorityLow);
 }
 
+// Creates a status img
+// string url - the Image url
+// task - the task which is connected to a task Div (to form the unique id)
+// prefix - the prefix to an image id
+// returns [object img] which should be added to some parent element
 function createTaskStatusImg(url, task, prefix) {
     var img = document.createElement('img');
     img.setAttribute("id", prefix + task.id);
@@ -222,6 +244,9 @@ function createTaskStatusImg(url, task, prefix) {
     return img;
 }
 
+// Creates a checkBox completed / needsAction for a task
+// task - the task which is connected to a task Div
+// returns [object checkBox] which should be added to some parent element
 function createCheckBoxForTask(task) {
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
@@ -244,18 +269,20 @@ function createCheckBoxForTask(task) {
         var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
         var taskListId = li? li.taskListId: '';
         task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
-
-        //backGround.loader.changeTaskStatus(taskListId, m_taskId, targ.checked);
         changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
-        alert(task.title + " " + taskListId);
+       // alert(task.title + " " + taskListId);
     });
 
     return checkBox;
 }
 
+/*
+    Refreshes sub tasks div (removes old section and creates new section)
+    object taskDiv - the parent section for a subTaskDiv
+    task - a task which is connected to a task Div
+*/
 function refreshSubTasksSectionMain(taskDiv, task) {
     var notesSection = getNotesSection(task);
-
     var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
 
     if (subTaskDiv) {
@@ -275,7 +302,8 @@ function refreshSubTasksSectionMain(taskDiv, task) {
 
 //  <editor-fold desc="Setting elements states for a MAIN div">
 
-// shows / hides images prioriry, repeat, alarm in MAIN section
+// shows / hides images priority, repeat, alarm in MAIN section
+// task - a task which is connected to a task div, to which images belong
 function SetDisplayTaskStatusAddImages(task) {
     if (additionalSectionExist(task)) {
         var additionalSection = getAdditionalSection(task);
@@ -286,10 +314,14 @@ function SetDisplayTaskStatusAddImages(task) {
     }
 }
 
+// shows / hides overdue image in MAIN section
+// task - a task which is connected to a task div, to which images belong
 function SetDisplayStatusOverdue(task) {
     $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
 }
 
+// checks / unchecks task checkbox to show task.status
+// task - a task which is connected to a task div, to which checkbox belongs
 function SetTaskStatusCheckbox(task) {
     var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
@@ -299,23 +331,34 @@ function SetTaskStatusCheckbox(task) {
     }
 }
 
+// sets a task Title for a task div
+// task - a task which is connected to a task div
 function SetTaskTitle(task) {
     var taskSpan = $(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
     taskSpan.innerText = task.title;
 }
 
+// sets a subTask Title
+// string taskId - the id of a task to which subTask belongs
+// int subTaskNum - the number of subtask from 0
+// string text - the new Title
 function SetSubTaskTitle(taskId, subTaskNum, text) {
     var subTaskSpan = $(MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
     subTaskSpan.innerText = text;
 }
 
 // </editor-fold>
+
+//  <editor-fold desc="Setting elements states for a WATCH div">
+
+// sets a subTask Title
+// string taskId - the id of a task to which subTask belongs
+// int subTaskNum - the number of subtask from 0
+// string text - the new Title
 function SetSubTaskTitleWatch(taskId, subTaskNum, text) {
     var subTaskSpan = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
     subTaskSpan.innerText = text;
 }
-//  <editor-fold desc="Setting elements states for a WATCH div">
-
 //  </editor-fold>
 
 // <editor-fold desc="Task Div event handlers for a MAIN div">

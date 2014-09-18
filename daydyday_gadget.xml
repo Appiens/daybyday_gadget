@@ -139,7 +139,17 @@
   <script type="text/javascript">
   
     var taskLists = [];
+    var taskListsTmp = [];
     var errorOccured = false;
+
+    function fetchDataAll() {
+        fetchData(true);
+    }
+
+    function fetchOnlyNewData() {
+        fetchData(false);
+        setTimeout(fetchOnlyNewData , 5 * 60 * 1000);
+    }
 
     // Invoke makeRequest() to fetch data from the service provider endpoint.
     // Depending on the results of makeRequest, decide which version of the UI
@@ -149,7 +159,7 @@
     // URL that includes a Google-supplied request token. This is presented in the 
     // gadget as a link that the user clicks to begin the approval process. 
        
-    function fetchData() {
+    function fetchData(reloadAll) {
       errorOccured = false;
       var params = {};
       url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY;
@@ -168,7 +178,7 @@
             destination: response.oauthApprovalUrl,
             windowOptions: null,
             onOpen: function() { showOneSection('waiting'); },
-            onClose: function() { fetchData(); }
+            onClose: function() { fetchDataAll(); }
           });
           // Use the popup handler to attach onclick handlers to UI elements.  The
           // createOpenerOnClick() function returns an onclick handler to open the
@@ -181,23 +191,36 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-            alert('15:50');
-            init(makePOSTRequest);
-            taskLists = [];
-            taskLists = response.data.items;
-            for(var i=0; i< taskLists.length; i++) {
-               taskLists[i].isLoading = true;
-               getTasksForTaskList(taskLists[i]);
+            if (reloadAll) {
+                 alert('18:03');
+                 init(makePOSTRequest);
+                 taskLists = [];
+                 taskLists = response.data.items;
+                 for(var i=0; i< taskLists.length; i++) {
+                    taskLists[i].isLoading = true;
+                    getTasksForTaskList(taskLists[i]);
+                 }
+            }
+            else {
+                taskListsTmp = response.data.items;
+                for(var i=0; i< taskLists.length; i++) {
+                    alert(taskListsTmp[i].title);
+                 }
             }
         } else {
             // The response.oauthError and response.oauthErrorText values may help debug
             // problems with your gadget.
-            var main = document.getElementById('main');
-            var err = document.createTextNode('OAuth error: ' +
-              response.oauthError + ': ' + response.oauthErrorText);
-            main.appendChild(err);
-            showOneSection('main');
-            errorOccured = true;
+            if (reloadAll) {
+                var main = document.getElementById('main');
+                var err = document.createTextNode('OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
+                main.appendChild(err);
+                showOneSection('main');
+                errorOccured = true;
+            }
+            else {
+               taskListsTmp = null;
+               alert('Error loading task lists');
+            }
         }
       }, params);
     }
@@ -227,6 +250,7 @@
               CollapsibleLists.applyTo(document.getElementById('listId'));
               showOneSection('main');
               alert('done');
+              setTimeout(fetchOnlyNewData , 5 * 60 * 1000);
            }
             
         } else {
@@ -267,7 +291,7 @@
 };
 
     // Call fetchData() when gadget loads.
-    gadgets.util.registerOnLoadHandler(fetchData);
+    gadgets.util.registerOnLoadHandler(fetchDataAll);
   </script>
   
   <div id="main" style="display: none; height: 450; overflow-y: scroll;">
