@@ -173,7 +173,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('18:43');
+                 alert('18:54');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -182,7 +182,7 @@
                     getTasksForTaskList(taskLists[i]);
                  }
             }
-        } else {
+         else {
                 var main = document.getElementById('main');
                 var err = document.createTextNode('OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
                 main.appendChild(err);
@@ -201,7 +201,7 @@
                     alert(taskListsTmp[i].title);
                  }
             }
-        } else {
+        else {
                taskListsTmp = null;
                alert('Error loading task lists');
         }
