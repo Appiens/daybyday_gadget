@@ -469,8 +469,8 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
 
     span.appendChild(checkBox);
     span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
-    SetSubTaskTitle(taskId, subTaskNum, text);
     li.appendChild(span);
+    SetSubTaskTitle(taskId, subTaskNum, text);
 
     if (isDone) {
         checkBox.checked = true;
@@ -700,8 +700,8 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
     span.appendChild(checkBox);
     span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
-    SetSubTaskTitleWatch(taskId, subTaskNum, text);
     li.appendChild(span);
+    SetSubTaskTitleWatch(taskId, subTaskNum, text);
 
     if (isDone) {
         checkBox.checked = true;
