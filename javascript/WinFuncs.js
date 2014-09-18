@@ -22,17 +22,6 @@ var StatusImagesNames = (function() {
         URL_PRIORITY_LOW: urlPriorityLow
     };})();
 
-/*img_ovr_");
-taskDiv.appendChild(imgOverdue);
-var imgAlarm = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_alarm_light.png', task, "img_alm_");
-taskDiv.appendChild(imgAlarm);
-var imgRepeat = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_repeat_light.png', task, "img_rpt_");
-taskDiv.appendChild(imgRepeat);
-var imgPriorityHigh = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_high_light.png', task, "img_phi_");
-taskDiv.appendChild(imgPriorityHigh);
-var imgPriorityLow = createTaskStatusImg('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ic_tiny_priority_low_light.png', task, "img_plo_");*/
-
-
 // структура дерева
 //   <ul id="listId">
 //   <li> (содержит ссылку taskListId) Название списка задач
@@ -200,9 +189,9 @@ function createTaskStatusImages(taskDiv, task) {
     taskDiv.appendChild(imgAlarm);
     var imgRepeat = createTaskStatusImg(StatusImagesNames.URL_REPEAT, task, StatusImagesNames.PREFIX_REPEAT);
     taskDiv.appendChild(imgRepeat);
-    var imgPriorityHigh = createTaskStatusImg(StatusImagesNames.PREFIX_PRIORITY_HIGH, task, StatusImagesNames.PREFIX_PRIORITY_HIGH);
+    var imgPriorityHigh = createTaskStatusImg(StatusImagesNames.URL_PRIORITY_HIGH, task, StatusImagesNames.PREFIX_PRIORITY_HIGH);
     taskDiv.appendChild(imgPriorityHigh);
-    var imgPriorityLow = createTaskStatusImg(StatusImagesNames.PREFIX_PRIORITY_LOW, task, StatusImagesNames.PREFIX_PRIORITY_LOW);
+    var imgPriorityLow = createTaskStatusImg(StatusImagesNames.URL_PRIORITY_LOW, task, StatusImagesNames.PREFIX_PRIORITY_LOW);
     taskDiv.appendChild(imgPriorityLow);
 }
 
