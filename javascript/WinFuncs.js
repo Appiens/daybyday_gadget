@@ -398,7 +398,6 @@ function removeSubTasksDivFromWatch() {
 
 function addSubTasksDivToWatch(notesOrig) {
     var subTasks = convertToSubTasks(notesOrig);
-    // $('watch').subTasks = subTasks;
     createSubTasksDiv($("div-notes"), $('watch').task , subTasks, WatchSectionPrefixes.PREFIX_DIV_SUBTASK, false);
     $('input-task-comment').style.display = 'none';
 }
@@ -502,8 +501,13 @@ function drawSubTasks_new(li, subTasks, taskId, forMain) {
 
 function canBeConvertedToSubtasks(text) {
     text = text.trim();
-    if (text.indexOf('[ ]') != 0 && text.indexOf('[x]') != 0) {
-        return false;
+    var textCpy = text;
+    var mas = textCpy.split('\n');
+
+    for (var i = 0; i < mas.length; i++) {
+        if (mas[i].indexOf('[ ]') != 0 && mas[i].indexOf('[x]') != 0) {
+            return false;
+        }
     }
 
     return true;
@@ -639,7 +643,11 @@ function changeNotesState(showSubTasks) {
         // кол-во строк там = кол-ву подзадач
         // если у подзадачи есть [x] - это значит выполненная подзадача
         // если есть [] - это удаляется из описания (пока не будем делать этого)
-        var notesOrig = $('input-task-comment').value;
+        var notesOrig = $('input-task-comment').value.trim();
+        if (notesOrig == '') {
+            return;
+        }
+
         var subTasks = convertToSubTasksLight(notesOrig);
 
         createSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
