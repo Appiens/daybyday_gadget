@@ -173,8 +173,8 @@ function alertList(taskLists) {
     for (i = 0; i < taskLists.length; ++i) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
+                UpdateTask(taskLists[i].tasks[j]);
                 alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
-
             } // for j
         }
     } // for i
@@ -839,24 +839,28 @@ function OnChangeTaskStatus(obj) {
     // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
+        UpdateTask(taskFromServer);
+    }
+}
 
-        if (taskFromServer) {
 
-            SetTaskStatusCheckbox(taskFromServer);
-            SetTaskTitle(taskFromServer);
+function UpdateTask(taskFromServer) {
+    if (taskFromServer) {
 
-            var taskDiv = document.getElementById(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
+        SetTaskStatusCheckbox(taskFromServer);
+        SetTaskTitle(taskFromServer);
 
-            SetDisplayStatusOverdue(taskFromServer);
+        var taskDiv = document.getElementById(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
 
-            if (taskFromServer.notes != taskDiv.task.notes) {
+        SetDisplayStatusOverdue(taskFromServer);
 
-                SetDisplayTaskStatusAddImages(taskFromServer);
-                refreshSubTasksSectionMain(taskDiv, taskFromServer);
-            }
+        if (taskFromServer.notes != taskDiv.task.notes) {
 
-            taskDiv.task = taskFromServer;
+            SetDisplayTaskStatusAddImages(taskFromServer);
+            refreshSubTasksSectionMain(taskDiv, taskFromServer);
         }
+
+        taskDiv.task = taskFromServer;
     }
 }
 
