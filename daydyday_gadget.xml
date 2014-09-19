@@ -177,7 +177,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('13:43');
+                 alert('14:17');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -312,6 +312,8 @@
         var dateStart = new MyDate();
         var timeStart = new MyTime();
         timeLastAsk = dateStart.toInputValue() + timeStart.toTimeWithTimeZone();
+        timeStartAsk.split(':').join('%3A');
+        timeStartAsk.split('+').join('%2B');
     }
 
     // tl - task lists
