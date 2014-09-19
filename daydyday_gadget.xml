@@ -146,10 +146,12 @@
     var requestInterval = 5 * 60 * 1000; // интервал запросов обновлений (мс)
 
     function fetchDataAll() {
+        errorOccured = false;
         fetchData(OnFetchDataDoneAll);
     }
 
     function fetchOnlyNewData() {
+        errorOccuredTmp = false;
         fetchData(OnFetchDataDoneNew);
     }
 
@@ -175,7 +177,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('18:54');
+                 alert('13:15');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -219,7 +221,7 @@
     // gadget as a link that the user clicks to begin the approval process. 
        
     function fetchData(onDone) {
-        errorOccured = false;
+
         var params = {};
         url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY;
         params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
