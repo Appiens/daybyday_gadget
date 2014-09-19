@@ -177,7 +177,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('14:34');
+                 alert('14:48');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -312,8 +312,11 @@
         var dateStart = new MyDate();
         var timeStart = new MyTime();
         timeLastAsk = dateStart.toInputValue() + timeStart.toTimeWithTimeZone();
-        timeLastAsk.split(':').join('%3A');
-        timeLastAsk.split('+').join('%2B');
+        console.log(timeLastAsk);
+        timeLastAsk = timeLastAsk.split(':').join('%3A');
+        console.log(timeLastAsk);
+        timeLastAsk = timeLastAsk.split('+').join('%2B');
+        console.log(timeLastAsk);
     }
 
     // tl - task lists
