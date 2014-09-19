@@ -173,10 +173,11 @@ function alertList(taskLists) {
     for (i = 0; i < taskLists.length; ++i) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
-               alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
+                alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
 
             } // for j
-        } // for i
+        }
+    } // for i
 }
 
 // <editor-fold desc="Creating elements for a MAIN div">
