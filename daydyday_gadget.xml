@@ -138,9 +138,12 @@
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
-    var taskLists = [];
-    var taskListsTmp = [];
-    var errorOccured = false;
+    var taskLists = []; // полный список задач
+    var taskListsTmp = [];  // список обновлений, получаемый каждый "интервал запроса"
+    var errorOccured = false; // признак ошибки при полной загрузке данных
+    var errorOccuredTmp = false; // признак ошибки при загрузке обновлений (lastUpdated)
+    var timeLastAsk; // время последнего дополнительного запроса
+    var requestInterval = 5 * 60 * 1000; // интервал запросов обновлений (мс)
 
     function fetchDataAll() {
         fetchData(OnFetchDataDoneAll);
@@ -148,7 +151,6 @@
 
     function fetchOnlyNewData() {
         fetchData(OnFetchDataDoneNew);
-        setTimeout(fetchOnlyNewData , 5 * 60 * 1000);
     }
 
     function OnFetchDataDoneAll(response) {
@@ -196,9 +198,10 @@
            // сюда не должны попадать вообще
         } else if (response.data) {
 
-                taskListsTmp = response.data.items;
-                for(var i=0; i< taskLists.length; i++) {
-                    alert(taskListsTmp[i].title);
+                 taskListsTmp = response.data.items;
+                 for(var i=0; i< taskListsTmp.length; i++) {
+                    taskListsTmp[i].isLoading = true;
+                    getTasksForTaskListTmp(taskListsTmp[i]);
                  }
             }
         else {
@@ -216,46 +219,39 @@
     // gadget as a link that the user clicks to begin the approval process. 
        
     function fetchData(onDone) {
-      errorOccured = false;
-      var params = {};
-      url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY;
-      params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
-      params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
-      params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
-      params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
-      params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
-
-      gadgets.io.makeRequest(url, /*function (response) { }*/ onDone, params);
-    }
-    
-    function getTasksForTaskList(taskList) {
-        if (errorOccured) {
-           return;
-        }
-    
+        errorOccured = false;
         var params = {};
-	    url = "https://www.googleapis.com/tasks/v1/lists/" + taskList.id + "/tasks?key=" + API_KEY + "&showCompleted=true";
+        url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY;
         params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
         params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
         params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
         params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
         params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
- 
-        gadgets.io.makeRequest(url, function (response) { 
+
+        gadgets.io.makeRequest(url, onDone, params);
+    }
+
+    function getTasksForTaskList(taskList) {
+        if (errorOccured) {
+           return;
+        }
+
+        fetchDataTaskList(taskList, function (response) {
         if (response.oauthApprovalUrl) {
           // сюда попадать вообще не должны
         } else if (response.data) {
            taskList.isLoading = false;
            taskList.tasks = response.data.items;
-           
-           if (allTasksLoaded()) {
+
+           if (allTasksLoaded(taskLists)) {
               generateList(taskLists);
               CollapsibleLists.applyTo(document.getElementById('listId'));
               showOneSection('main');
               alert('done');
-              setTimeout(fetchOnlyNewData , 5 * 60 * 1000);
+
+              setTimeLastAsk();
+              setTimeout(fetchOnlyNewData , requestInterval);
            }
-            
         } else {
             // The response.oauthError and response.oauthErrorText values may help debug
             // problems with your gadget.
@@ -266,19 +262,62 @@
             showOneSection('main');
             errorOccured = true;
         }
-      }, params);
-   
+      }, "&showCompleted=true");
+    }
+
+    function getTasksForTaskListTmp(taskList) {
+        if (errorOccuredTmp) {
+            return;
+        }
+
+        fetchDataTaskList(taskList, function (response) {
+        if (response.oauthApprovalUrl) {
+          // сюда попадать вообще не должны
+        } else if (response.data) {
+           taskList.isLoading = false;
+           taskList.tasks = response.data.items;
+
+           if (allTasksLoaded(taskListsTmp)) {
+               alertList(taskListsTmp);
+               setTimeLastAsk();
+               setTimeout(fetchOnlyNewData , requestInterval);
+           }
+           } else {
+                alert('Error in getting a taskList');
+                errorOccuredTmp = true;
+           }
+      }, "&showDeleted=true&updatedMin=" + timeLastAsk);
     }
     
-    function allTasksLoaded() {
+    function fetchDataTaskList(taskList, onDone, options) {
+        var params = {};
+	    url = "https://www.googleapis.com/tasks/v1/lists/" + taskList.id + "/tasks?key=" + API_KEY + options;
+        params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+        params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
+        params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
+        params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
+        params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.GET;
+ 
+        gadgets.io.makeRequest(url, onDone, params);
+   
+    }
+
+    function setTimeLastAsk() {
+        var dateStart = new MyDate();
+        var timeStart = new MyTime();
+        timeLastAsk = dateStart.toInputValue() + timeStart.toTimeWithTimeZone();
+    }
+
+    // tl - task lists
+    function allTasksLoaded(tl) {
         var i;
-        for(var i=0; i< taskLists.length; i++) {
-            if (taskLists[i].isLoading) {
+        for(var i=0; i< tl.length; i++) {
+            if (tl[i].isLoading) {
                 break;
             }
         }
 
-        return i == taskLists.length;
+        return i == tl.length;
     }
     
    function makePOSTRequest(url, postdata, callback) {
@@ -353,8 +392,6 @@
                     </td>
                 </tr>
     </table>
-
-    <a href="#" id="href-back">&#x25C1 __MSG_action_back_to_list__</a>
   </div>
   ]]> 
   </Content>

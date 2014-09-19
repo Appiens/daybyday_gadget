@@ -110,8 +110,6 @@ var TaskStatuses = (function() {
 // TODO написать структуру секции Watch
 
 function init(makePostRequestFunc) {
-    var backToList = document.getElementById('href-back');
-    backToList.onclick = ActionBackToList;
     makePOSTRequest = makePostRequestFunc;
 
     $('checkbox-with-date').addEventListener('change', OnNoDateCheckChanged);
@@ -167,6 +165,18 @@ function generateList(taskLists) {
     } // for i
 
     return ulMain;
+}
+
+function alertList(taskLists) {
+    var i;
+
+    for (i = 0; i < taskLists.length; ++i) {
+        if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
+            for (var j = 0; j < taskLists[i].tasks.length; j++) {
+               alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
+
+            } // for j
+        } // for i
 }
 
 // <editor-fold desc="Creating elements for a MAIN div">
