@@ -336,8 +336,8 @@ function SetDisplayStatusOverdue(task) {
 function SetTaskStatusCheckbox(task) {
     var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
-    if (checkBox.checked != task.status == TaskStatuses.COMPLETED) {
-        checkBox.checked = task.status == TaskStatuses.COMPLETED;
+    if (checkBox.checked != (task.status == TaskStatuses.COMPLETED)) {
+        checkBox.checked = (task.status == TaskStatuses.COMPLETED);
         setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
     }
 }
@@ -850,7 +850,7 @@ function UpdateTask(taskFromServer) {
         SetTaskStatusCheckbox(taskFromServer);
         SetTaskTitle(taskFromServer);
 
-        var taskDiv = document.getElementById(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
+        var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
 
         SetDisplayStatusOverdue(taskFromServer);
 
