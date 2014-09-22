@@ -185,7 +185,13 @@ function processTmpList(taskLists) {
                     var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
                     console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
 
-                    if (taskListUl.children.length == 1) {
+                    for(var k=0; k < taskListUl.childNodes.length; k++) {
+                        var child = taskListUl.childNodes[k];
+                        console.log(child.type + ' ' + child.id);
+                    }
+
+
+                    if (taskListUl.childNodes.length == 1) {
                         // no tasks any more, we should show <no tasks> section
                         $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskLists[i].id).style.display = '';
                     }
