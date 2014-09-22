@@ -180,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('10:43');
+                 alert('11:28');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -281,6 +281,7 @@
             else if (response.data) {
                 taskList.isLoading = false;
                 taskList.tasks = response.data.items;
+                console.log("Good result for " + taskList.title);
 
                 if (allTasksLoaded(taskListsTmp)) {
                     alertList(taskListsTmp);
@@ -288,8 +289,9 @@
                 }
             }
             else {
-                    alert('OAuth error: ' +
-                    response.oauthError + ': ' + response.oauthErrorText);
+                    console.log("Error for " + taskList.title);
+                    // alert('OAuth error: ' +
+                    // response.oauthError + ': ' + response.oauthErrorText);
                     errorOccuredTmp = true;
             }
 

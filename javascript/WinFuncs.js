@@ -25,6 +25,7 @@ var StatusImagesNames = (function() {
 var MainSectionPrefixes = (function() {
     return {
         PREFIX_UL_TASKLIST: "ul_",
+        PREFIX_LI_NO_TASKS: "emp_",
         PREFIX_DIV_TASK: "div_",
         PREFIX_SPAN_TITLE: "t_",
         PREFIX_CB_COMPLETED: "ch_",
@@ -131,51 +132,67 @@ function generateList(taskLists) {
         li.taskListId = taskLists[i].id;
         ulMain.appendChild(li); // create <li>
 
-        if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
-            var ul = document.createElement('ul'); // assume + create <ul>
-            ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
-            li.appendChild(ul);
+        var ul = document.createElement('ul'); // assume + create <ul>
+        ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
+        li.appendChild(ul);
 
-            for (var j=0; j < taskLists[i].tasks.length; j++) {
-                var liChild = document.createElement('li');
-                var taskDiv = createTaskDiv(taskLists[i].tasks[j], taskLists[i].id);
-
-                var span = createSimpleTextNode(taskLists[i].tasks[j].title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskLists[i].tasks[j].id);
-                var checkBox = createCheckBoxForTask(taskLists[i].tasks[j]);
-                taskDiv.appendChild(checkBox);
-                createTaskStatusImages(taskDiv, taskLists[i].tasks[j]);
-                taskDiv.appendChild(span);
-                liChild.appendChild(taskDiv);
-
-                refreshSubTasksSectionMain(taskDiv, taskLists[i].tasks[j]);
-                ul.appendChild(liChild);
-
-                // set task statuses
-                SetDisplayTaskStatusAddImages(taskLists[i].tasks[j]);
-                SetDisplayStatusOverdue(taskLists[i].tasks[j]);
-                SetTaskStatusCheckbox(taskLists[i].tasks[j]);
-                SetTaskTitle(taskLists[i].tasks[j]);
-            } // for j
-        } // if
-        else {
-            var ul = document.createElement('ul');
-            var liChild = document.createElement('li');
-            liChild.appendChild(document.createTextNode('<no tasks>'));
-            ul.appendChild(liChild);
-            li.appendChild(ul);
-        }
+        DrawTasksForTaskList(taskLists[i], ul);
     } // for i
 
     return ulMain;
 }
 
+/*
+    Draws
+*/
+function DrawTasksForTaskList(taskList, ul) {
+    if (taskList.tasks && taskList.tasks.length > 0) {
+
+        for (var j=0; j < taskList.tasks.length; j++) {
+            var liChild = document.createElement('li');
+            var taskDiv = createTaskDiv(taskList.tasks[j], taskList.id);
+
+            var span = createSimpleTextNode(taskList.tasks[j].title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskList.tasks[j].id);
+            var checkBox = createCheckBoxForTask(taskList.tasks[j]);
+            taskDiv.appendChild(checkBox);
+            createTaskStatusImages(taskDiv, taskList.tasks[j]);
+            taskDiv.appendChild(span);
+            liChild.appendChild(taskDiv);
+
+            refreshSubTasksSectionMain(taskDiv, taskList.tasks[j]);
+            ul.appendChild(liChild);
+
+            // set task statuses
+            SetDisplayTaskStatusAddImages(taskList.tasks[j]);
+            SetDisplayStatusOverdue(taskList.tasks[j]);
+            SetTaskStatusCheckbox(taskList.tasks[j]);
+            SetTaskTitle(taskList.tasks[j]);
+        } // for j
+    } // if
+    else {
+        var liChild = document.createElement('li');
+        liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
+        liChild.appendChild(document.createTextNode('<no tasks>'));
+        ul.appendChild(liChild);
+    }
+}
+
+/*
+    Updates a task list from taskListsTmp asked from server
+*/
 function alertList(taskLists) {
     var i;
 
     for (i = 0; i < taskLists.length; ++i) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
-                UpdateTask(taskLists[i].tasks[j]);
+                try {
+                   UpdateTask(taskLists[i].tasks[j]);
+                }
+                catch (e) {
+                   console.log("Error updating task " + taskLists[i].tasks[j].id + ' ' + e);
+                }
+
                 alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
             } // for j
         }
