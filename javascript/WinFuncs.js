@@ -51,10 +51,19 @@ var TaskStatuses = (function() {
 // структура дерева
 //   <ul id="listId">
 //   <li> (содержит ссылку taskListId) Название списка задач
-//   <ul>
-//   <li>
+//   <ul id = "ul_" + taskListId> (список задач)
+//   <li id= "emp_" + taskListId> (есть есть другие li в списке - секция скрыта, иначе отображена)
+//   <span> <no tasks> </span>
+//   </li>
+//   <li id="li_" + taskId> (именно его нужно удалить при удалении таска)
+//
 //   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId) ===> Нажатие на DIV вызывает окно редактирования таска
 //   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox> ===> Нажатие на CHECKBOX объявляет задачу выполненной/невыполненной (отправляет запрос PUT status)
+//   <img id = "img_alm_" + taskId> // признак напоминания скрыт если нет напоминания, отображён - если есть
+//   <img id = "img_rpt_" + taskId> // признак повторяющейся задачи скрыт если нет, отображён если есть
+//   <img id = "img_ovr_" + taskId> // признак просроченной задачи скрыт если нет, отображён если есть
+//   <img id = "img_phi_" + taskId> // признак высокого приоритета - скрыт если нет, отображён если есть
+//   <img id = "img_plo_" + taskId> // признак низкого приоритета - скрыт если нет, отображён если есть
 //   <span id = "t_" + taskId> Название задачи </span>
 //   <div id = "divsub_" + taskId> (содержит подзадачи)
 //   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
@@ -67,6 +76,11 @@ var TaskStatuses = (function() {
 //   <li>
 //   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
 //   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
+//   <img id = "img_alm_" + taskId> // признак напоминания скрыт если нет напоминания, отображён - если есть
+//   <img id = "img_rpt_" + taskId> // признак повторяющейся задачи скрыт если нет, отображён если есть
+//   <img id = "img_ovr_" + taskId> // признак просроченной задачи скрыт если нет, отображён если есть
+//   <img id = "img_phi_" + taskId> // признак высокого приоритета - скрыт если нет, отображён если есть
+//   <img id = "img_plo_" + taskId> // признак низкого приоритета - скрыт если нет, отображён если есть
 //   <span id = "t_" + taskId> Название задачи </span>
 //   <div id = "divsub_" + taskId> (содержит подзадачи)
 //   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
@@ -78,39 +92,22 @@ var TaskStatuses = (function() {
 //   </ul> // tasks
 //   </li>
 //   ...
-//   <li> (содержит ссылку taskListId) Название списка задач
-//   <ul>
-//   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
-//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
-//   <span id = "t_" + taskId> Название задачи </span>
-//   <div id = "divsub_" + taskId> (содержит подзадачи)
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   ...
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   </div> // div sub
-//   </div> // div task
-//   </li>
-//   ...
-//   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
-//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
-//   <span id = "t_" + taskId> Название задачи </span>
-//   <div id = "divsub_" + taskId> (содержит подзадачи)
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   ...
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   </div> // div sub
-//   </div> // div task
-//   </li>
-//   </ul> // tasks
-//   </li>
-//   </ul>  // списки задач
+
 
 
 // структура секции Watch
 //
-// TODO написать структуру секции Watch
+// $('watch').task  содержат задачу
+// $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
+// у гугла происходит выброс в секцию списка
+//  <div id="div-notes" class="new-select-style-wpandyou"> => сюда же привязываются таски
+//  <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
+//  <div id = "divsubwatch_" + taskId> (содержит подзадачи)
+//   <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
+//   ...
+//   <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div>
+//   </div> // div sub
+// </div>
 
 function init(makePostRequestFunc) {
     makePOSTRequest = makePostRequestFunc;
@@ -143,9 +140,9 @@ function generateList(taskLists) {
     return ulMain;
 }
 
-/*
-    Draws
-*/
+/* Draws tasks for a task list
+object taskList - a task list to draw
+object ul - an ul section - a parent for <li> sections (which are tasks) */
 function DrawTasksForTaskList(taskList, ul) {
     AddNoTasksElement(taskList, ul);
 
@@ -160,6 +157,7 @@ function DrawTasksForTaskList(taskList, ul) {
     }
 }
 
+/*Adds <no task> element to each task List ul section*/
 function AddNoTasksElement(taskList, ul) {
     var liChild = document.createElement('li');
     liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
@@ -168,9 +166,8 @@ function AddNoTasksElement(taskList, ul) {
     ul.appendChild(liChild);
 }
 
-/*
-    Updates a task list from taskListsTmp asked from server
-*/
+/* Updates a task list from taskListsTmp asked from server, in this list we get tasks which were created/updated/deleted during last 5 mins*/
+/*array[] taskLists - task Lists that we got from request*/
 function processTmpList(taskLists) {
     var i;
 
