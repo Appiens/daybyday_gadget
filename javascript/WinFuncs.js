@@ -186,6 +186,11 @@ function alertList(taskLists) {
     for (i = 0; i < taskLists.length; ++i) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
+                if (taskLists[i].tasks[j].deleted) {
+                    console.log("Need to delete task " + taskLists[i].tasks[j].id);
+                    continue;
+                }
+
                 try {
                    UpdateTask(taskLists[i].tasks[j]);
                 }
