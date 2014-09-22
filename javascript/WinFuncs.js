@@ -187,7 +187,7 @@ function processTmpList(taskLists) {
 
                     for(var k=0; k < taskListUl.childNodes.length; k++) {
                         var child = taskListUl.childNodes[k];
-                        console.log(child.type + ' ' + child.id);
+                        console.log(k + ' ' + child.type + ' ' + child.id);
                     }
 
 
