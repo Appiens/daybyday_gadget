@@ -142,6 +142,7 @@
     var taskListsTmp = [];  // список обновлений, получаемый каждый "интервал запроса"
     var errorOccured = false; // признак ошибки при полной загрузке данных
     var errorOccuredTmp = false; // признак ошибки при загрузке обновлений (lastUpdated)
+    var reponseСounter = 0; // количество полученных ответов на запрос "о тасках"
     var timeLastAsk; // время последнего дополнительного запроса
     var requestInterval = 5 * 60 * 1000; // интервал запросов обновлений (мс)
 
@@ -151,6 +152,8 @@
     }
 
     function fetchOnlyNewData() {
+        var d = new Date();
+        console.log(d + ' fetchOnlyNewData');
         errorOccuredTmp = false;
         fetchData(OnFetchDataDoneNew);
     }
@@ -177,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('16:52');
+                 alert('10:43');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -200,6 +203,7 @@
            // сюда не должны попадать вообще
         } else if (response.data) {
 
+                 responseCounter = 0; //счётчик поступивших ответов на запросы о тасках
                  taskListsTmp = response.data.items;
                  for(var i=0; i< taskListsTmp.length; i++) {
                     taskListsTmp[i].isLoading = true;
@@ -268,29 +272,31 @@
     }
 
     function getTasksForTaskListTmp(taskList) {
-        if (errorOccuredTmp) {
-            return;
-        }
 
         fetchDataTaskList(taskList, function (response) {
-        if (response.oauthApprovalUrl) {
-          // сюда попадать вообще не должны
-        }
-        else if (response.data) {
-           taskList.isLoading = false;
-           taskList.tasks = response.data.items;
+            responseCounter++;
+            if (response.oauthApprovalUrl) {
+                // сюда попадать вообще не должны
+            }
+            else if (response.data) {
+                taskList.isLoading = false;
+                taskList.tasks = response.data.items;
 
-            if (allTasksLoaded(taskListsTmp)) {
-                alertList(taskListsTmp);
-                setTimeLastAsk();
+                if (allTasksLoaded(taskListsTmp)) {
+                    alertList(taskListsTmp);
+                    setTimeLastAsk();
+                }
+            }
+            else {
+                    alert('OAuth error: ' +
+                    response.oauthError + ': ' + response.oauthErrorText);
+                    errorOccuredTmp = true;
+            }
+
+            if (responseCounter == taskListsTmp.length) {
+                // запускаем новый запрос
                 setTimeout(fetchOnlyNewData , requestInterval);
             }
-        }
-        else {
-                alert('OAuth error: ' +
-                    response.oauthError + ': ' + response.oauthErrorText);
-                errorOccuredTmp = true;
-        }
       }, "&showDeleted=true&updatedMin=" + timeLastAsk);
     }
     
@@ -332,15 +338,15 @@
     }
     
    function makePOSTRequest(url, postdata, callback) {
-   	var params = {};
-   	params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
-   	params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.PUT;
-   	params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/json'}
-    params[gadgets.io.RequestParameters.POST_DATA]= postdata;
-   	params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
-   	params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
-   	params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
-   	gadgets.io.makeRequest(url, callback, params);
+   	    var params = {};
+   	    params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
+   	    params[gadgets.io.RequestParameters.METHOD] = gadgets.io.MethodType.PUT;
+   	    params[gadgets.io.RequestParameters.HEADERS] = {'Content-Type': 'application/json'}
+        params[gadgets.io.RequestParameters.POST_DATA]= postdata;
+   	    params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
+   	    params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
+   	    params[gadgets.io.RequestParameters.OAUTH_USE_TOKEN] = "always";
+   	    gadgets.io.makeRequest(url, callback, params);
 };
 
     // Call fetchData() when gadget loads.

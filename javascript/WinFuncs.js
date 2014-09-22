@@ -24,6 +24,7 @@ var StatusImagesNames = (function() {
 
 var MainSectionPrefixes = (function() {
     return {
+        PREFIX_UL_TASKLIST: "ul_",
         PREFIX_DIV_TASK: "div_",
         PREFIX_SPAN_TITLE: "t_",
         PREFIX_CB_COMPLETED: "ch_",
@@ -132,6 +133,7 @@ function generateList(taskLists) {
 
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             var ul = document.createElement('ul'); // assume + create <ul>
+            ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
             li.appendChild(ul);
 
             for (var j=0; j < taskLists[i].tasks.length; j++) {
