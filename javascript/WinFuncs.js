@@ -146,6 +146,8 @@ function generateList(taskLists) {
     Draws
 */
 function DrawTasksForTaskList(taskList, ul) {
+    AddNoTasksElement(ul);
+
     if (taskList.tasks && taskList.tasks.length > 0) {
 
         for (var j=0; j < taskList.tasks.length; j++) {
@@ -170,11 +172,16 @@ function DrawTasksForTaskList(taskList, ul) {
         } // for j
     } // if
     else {
-        var liChild = document.createElement('li');
-        liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
-        liChild.appendChild(document.createTextNode('<no tasks>'));
-        ul.appendChild(liChild);
+       $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = '';
     }
+}
+
+function AddNoTasksElement(ul) {
+    var liChild = document.createElement('li');
+    liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
+    liChild.appendChild(document.createTextNode('<no tasks>'));
+    liChild.style.display = 'none';
+    ul.appendChild(liChild);
 }
 
 /*
@@ -187,7 +194,17 @@ function alertList(taskLists) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
                 if (taskLists[i].tasks[j].deleted) {
-                    console.log("Need to delete task " + taskLists[i].tasks[j].id);
+                    var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id);
+                    if (taskDiv) {
+                         taskDiv.parentNode.removeChild(taskDiv);
+                    }
+
+                    var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
+                    if (taskListUl.children.length == 1) {
+                        // no tasks any more, we should show <no tasks> section
+                        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskLists[i].id).style.display = '';
+                    }
+
                     continue;
                 }
 

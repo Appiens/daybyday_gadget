@@ -142,7 +142,7 @@
     var taskListsTmp = [];  // список обновлений, получаемый каждый "интервал запроса"
     var errorOccured = false; // признак ошибки при полной загрузке данных
     var errorOccuredTmp = false; // признак ошибки при загрузке обновлений (lastUpdated)
-    var reponseСounter = 0; // количество полученных ответов на запрос "о тасках"
+    // var reponseСounter = 0; // количество полученных ответов на запрос "о тасках"
     var timeLastAsk; // время последнего дополнительного запроса
     var requestInterval = 5 * 60 * 1000; // интервал запросов обновлений (мс)
 
@@ -180,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('11:52');
+                 alert('13:01');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -196,6 +196,8 @@
                 showOneSection('main');
                 errorOccured = true;
         }
+
+
     }
 
     function OnFetchDataDoneNew(response) {
@@ -203,7 +205,7 @@
            // сюда не должны попадать вообще
         } else if (response.data) {
 
-                 responseCounter = 0; //счётчик поступивших ответов на запросы о тасках
+                 // responseCounter = 0; //счётчик поступивших ответов на запросы о тасках
                  taskListsTmp = response.data.items;
                  for(var i=0; i< taskListsTmp.length; i++) {
                     taskListsTmp[i].isLoading = true;
@@ -214,6 +216,8 @@
                taskListsTmp = null;
                alert('Error loading task lists');
         }
+
+        setTimeout(fetchOnlyNewData , requestInterval);
     }
 
     // Invoke makeRequest() to fetch data from the service provider endpoint.
@@ -274,7 +278,7 @@
     function getTasksForTaskListTmp(taskList) {
 
         fetchDataTaskList(taskList, function (response) {
-            responseCounter++;
+            // responseCounter++;
             if (response.oauthApprovalUrl) {
                 // сюда попадать вообще не должны
             }
@@ -295,10 +299,10 @@
                     errorOccuredTmp = true;
             }
 
-            if (responseCounter == taskListsTmp.length) {
+            // if (responseCounter == taskListsTmp.length) {
                 // запускаем новый запрос
-                setTimeout(fetchOnlyNewData , requestInterval);
-            }
+            //    setTimeout(fetchOnlyNewData , requestInterval);
+            // }
       }, "&showDeleted=true&updatedMin=" + timeLastAsk);
     }
     
