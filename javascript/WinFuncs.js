@@ -915,6 +915,7 @@ function InsertTask(taskList, taskFromServer, ul) {
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);
     ul.appendChild(liChild);
+    $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = 'none';
 
     // set task statuses
     SetDisplayTaskStatusAddImages(taskFromServer);
