@@ -902,6 +902,7 @@ function UpdateTask(taskFromServer) {
 
 function InsertTask(taskList, taskFromServer, ul) {
     var liChild = document.createElement('li');
+    liChild.setAttribute("id", "li_" + taskFromServer.id);
     var taskDiv = createTaskDiv(taskFromServer, taskList.id);
 
     var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
