@@ -151,24 +151,7 @@ function DrawTasksForTaskList(taskList, ul) {
     if (taskList.tasks && taskList.tasks.length > 0) {
 
         for (var j=0; j < taskList.tasks.length; j++) {
-            var liChild = document.createElement('li');
-            var taskDiv = createTaskDiv(taskList.tasks[j], taskList.id);
-
-            var span = createSimpleTextNode(taskList.tasks[j].title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskList.tasks[j].id);
-            var checkBox = createCheckBoxForTask(taskList.tasks[j]);
-            taskDiv.appendChild(checkBox);
-            createTaskStatusImages(taskDiv, taskList.tasks[j]);
-            taskDiv.appendChild(span);
-            liChild.appendChild(taskDiv);
-
-            refreshSubTasksSectionMain(taskDiv, taskList.tasks[j]);
-            ul.appendChild(liChild);
-
-            // set task statuses
-            SetDisplayTaskStatusAddImages(taskList.tasks[j]);
-            SetDisplayStatusOverdue(taskList.tasks[j]);
-            SetTaskStatusCheckbox(taskList.tasks[j]);
-            SetTaskTitle(taskList.tasks[j]);
+            InsertTask(taskList, taskList.tasks[j], ul);
         } // for j
     } // if
     else {
@@ -200,6 +183,8 @@ function alertList(taskLists) {
                     }
 
                     var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
+                    console.log("Удалили. Осталось тасков в списке: " + taskListUl.children.length);
+
                     if (taskListUl.children.length == 1) {
                         // no tasks any more, we should show <no tasks> section
                         $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskLists[i].id).style.display = '';
@@ -209,10 +194,16 @@ function alertList(taskLists) {
                 }
 
                 try {
-                   UpdateTask(taskLists[i].tasks[j]);
+                   if ($(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id)) {
+                       UpdateTask(taskLists[i].tasks[j]);
+                   }
+                   else {
+                       InsertTask(taskLists[i], taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+                   }
+
                 }
                 catch (e) {
-                   console.log("Error updating task " + taskLists[i].tasks[j].id + ' ' + e);
+                   console.log("Error inserting/updating task " + taskLists[i].tasks[j].id + ' ' + e);
                 }
 
                 alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
@@ -903,6 +894,27 @@ function UpdateTask(taskFromServer) {
 
         taskDiv.task = taskFromServer;
     }
+}
+
+function InsertTask(taskList, taskFromServer, ul) {
+    var liChild = document.createElement('li');
+    var taskDiv = createTaskDiv(taskFromServer, taskList.id);
+
+    var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
+    var checkBox = createCheckBoxForTask(taskFromServer);
+    taskDiv.appendChild(checkBox);
+    createTaskStatusImages(taskDiv, taskFromServer);
+    taskDiv.appendChild(span);
+    liChild.appendChild(taskDiv);
+
+    refreshSubTasksSectionMain(taskDiv, taskFromServer);
+    ul.appendChild(liChild);
+
+    // set task statuses
+    SetDisplayTaskStatusAddImages(taskFromServer);
+    SetDisplayStatusOverdue(taskFromServer);
+    SetTaskStatusCheckbox(taskFromServer);
+    SetTaskTitle(taskFromServer);
 }
 
 
