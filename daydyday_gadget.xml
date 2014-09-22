@@ -180,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('15:28');
+                 alert('15:38');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -300,8 +300,8 @@
             }
 
             // if (responseCounter == taskListsTmp.length) {
-                // запускаем новый запрос
-            //    setTimeout(fetchOnlyNewData , requestInterval);
+            // запускаем новый запрос
+            // setTimeout(fetchOnlyNewData , requestInterval);
             // }
       }, "&showDeleted=true&updatedMin=" + timeLastAsk);
     }
