@@ -146,7 +146,7 @@ function generateList(taskLists) {
     Draws
 */
 function DrawTasksForTaskList(taskList, ul) {
-    AddNoTasksElement(ul);
+    AddNoTasksElement(taskList, ul);
 
     if (taskList.tasks && taskList.tasks.length > 0) {
 
@@ -176,7 +176,7 @@ function DrawTasksForTaskList(taskList, ul) {
     }
 }
 
-function AddNoTasksElement(ul) {
+function AddNoTasksElement(taskList, ul) {
     var liChild = document.createElement('li');
     liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
     liChild.appendChild(document.createTextNode('<no tasks>'));
