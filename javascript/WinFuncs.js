@@ -25,6 +25,7 @@ var StatusImagesNames = (function() {
 var MainSectionPrefixes = (function() {
     return {
         PREFIX_UL_TASKLIST: "ul_",
+        PREFIX_LI_TASK: "li_",
         PREFIX_LI_NO_TASKS: "emp_",
         PREFIX_DIV_TASK: "div_",
         PREFIX_SPAN_TITLE: "t_",
@@ -177,9 +178,9 @@ function processTmpList(taskLists) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
                 if (taskLists[i].tasks[j].deleted) {
-                    var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id);
-                    if (taskDiv) {
-                         taskDiv.parentNode.removeChild(taskDiv);
+                    var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskLists[i].tasks[j].id);
+                    if (taskLi) {
+                         taskLi.parentNode.removeChild(taskLi);
                     }
 
                     var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
@@ -902,7 +903,7 @@ function UpdateTask(taskFromServer) {
 
 function InsertTask(taskList, taskFromServer, ul) {
     var liChild = document.createElement('li');
-    liChild.setAttribute("id", "li_" + taskFromServer.id + "_" + taskFromServer.title);
+    liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
     var taskDiv = createTaskDiv(taskFromServer, taskList.id);
 
     var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
