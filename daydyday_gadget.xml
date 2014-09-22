@@ -180,7 +180,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('14:00');
+                 alert('14:24');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -288,7 +288,7 @@
                 console.log("Good result for " + taskList.title);
 
                 if (allTasksLoaded(taskListsTmp)) {
-                    alertList(taskListsTmp);
+                    processTmpList(taskListsTmp);
                     setTimeLastAsk();
                 }
             }

@@ -170,7 +170,7 @@ function AddNoTasksElement(taskList, ul) {
 /*
     Updates a task list from taskListsTmp asked from server
 */
-function alertList(taskLists) {
+function processTmpList(taskLists) {
     var i;
 
     for (i = 0; i < taskLists.length; ++i) {
@@ -183,7 +183,7 @@ function alertList(taskLists) {
                     }
 
                     var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
-                    console.log("Удалили. Осталось тасков в списке: " + taskListUl.children.length);
+                    console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
 
                     if (taskListUl.children.length == 1) {
                         // no tasks any more, we should show <no tasks> section
@@ -205,8 +205,6 @@ function alertList(taskLists) {
                 catch (e) {
                    console.log("Error inserting/updating task " + taskLists[i].tasks[j].id + ' ' + e);
                 }
-
-                alert(taskLists[i].tasks[j].title + "\n" + taskLists[i].tasks[j].updated);
             } // for j
         }
     } // for i
