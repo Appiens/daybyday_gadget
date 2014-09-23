@@ -175,25 +175,7 @@ function processTmpList(taskLists) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
                 if (taskLists[i].tasks[j].deleted) {
-                    var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskLists[i].tasks[j].id);
-                    if (taskLi) {
-                         taskLi.parentNode.removeChild(taskLi);
-                    }
-
-                    var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
-                    console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
-
-                    for(var k=0; k < taskListUl.childNodes.length; k++) {
-                        var child = taskListUl.childNodes[k];
-                        console.log(k + ' ' + child.type + ' ' + child.id);
-                    }
-
-
-                    if (taskListUl.childNodes.length == 1) {
-                        // no tasks any more, we should show <no tasks> section
-                        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskLists[i].id).style.display = '';
-                    }
-
+                    DeleteTask(taskLists[i].tasks[j], taskLists[i]);
                     continue;
                 }
 
@@ -728,14 +710,16 @@ function ActionDiscard() {
 
     var taskListId = $('watch').taskListId;
 
-    var date = "";
+ /*   var date = "";
     if ($('checkbox-with-date').checked) {
         date = new MyDate();
         date.setFromInputValue( $('input-task-date').value);
     }
 
     var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
-    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);*/
+
+    deleteTaskRequest(taskListId, $('watch').task);
 }
 
 function changeNotesState(showSubTasks) {
@@ -894,6 +878,11 @@ function insertTaskRequest(taskListId, isCompleted, title, dueDate, notes) {
     makePOSTRequest(url, data, OnTaskInserted, "POST");
 }
 
+function deleteTaskRequest(taskListId, task) {
+    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
+    makePOSTRequest(url, '', OnTaskDeleted, "DELETE");
+}
+
 // calback function for a change task request
 function OnChangeTaskStatus(obj) {
     if (obj.errors.length > 0) {
@@ -920,6 +909,16 @@ function  OnTaskInserted(obj) {
         var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
         taskListId = taskListId.substring(0, taskListId.indexOf('/'));
         InsertTask(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
+    }
+}
+
+function OnTaskDeleted(obj) {
+    if (obj.errors.length > 0) {
+        alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
+        return;
+    }
+
+    if (obj.text) {
         alert(obj.text);
     }
 }
@@ -966,6 +965,27 @@ function InsertTask(taskListId, taskFromServer, ul) {
     SetDisplayStatusOverdue(taskFromServer);
     SetTaskStatusCheckbox(taskFromServer);
     SetTaskTitle(taskFromServer);
+}
+
+function DeleteTask(taskFromServer, taskList) {
+    var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
+    if (taskLi) {
+        taskLi.parentNode.removeChild(taskLi);
+    }
+
+    var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskList.id);
+    console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
+
+    for(var k=0; k < taskListUl.childNodes.length; k++) {
+        var child = taskListUl.childNodes[k];
+        console.log(k + ' ' + child.type + ' ' + child.id);
+    }
+
+
+    if (taskListUl.childNodes.length == 1) {
+        // no tasks any more, we should show <no tasks> section
+        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskLists[i].id).style.display = '';
+    }
 }
 
 
