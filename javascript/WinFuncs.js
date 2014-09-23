@@ -175,7 +175,7 @@ function processTmpList(taskLists) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
                 if (taskLists[i].tasks[j].deleted) {
-                    DeleteTask(taskLists[i].tasks[j], taskLists[i]);
+                    DeleteTask(taskLists[i].tasks[j], taskLists[i].id);
                     continue;
                 }
 
@@ -880,7 +880,8 @@ function insertTaskRequest(taskListId, isCompleted, title, dueDate, notes) {
 
 function deleteTaskRequest(taskListId, task) {
     var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
-    makePOSTRequest(url, '', OnTaskDeleted, "DELETE");
+    var shell = TaskDeletedShell(task, taskListId);
+    makePOSTRequest(url, '', shell.OnTaskDeleted, "DELETE");
 }
 
 // calback function for a change task request
@@ -918,10 +919,28 @@ function OnTaskDeleted(obj) {
         return;
     }
 
-    if (obj.text) {
-        alert(obj.text);
+    if (obj.text == '' && obj.rc == 204) {
+        // deleted successfully
     }
 }
+
+function TaskDeletedShell(taskToDelete, taskListId) {
+    var task = taskToDelete;
+    return {
+        OnTaskDeleted: function(obj) {
+            if (obj.errors.length > 0) {
+                alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
+                return;
+            }
+
+            if (obj.text == '' && obj.rc == 204) {
+                DeleteTask(task, taskListId);
+            }
+        }
+    };
+
+}
+
 
 
 function UpdateTask(taskFromServer) {
@@ -967,13 +986,13 @@ function InsertTask(taskListId, taskFromServer, ul) {
     SetTaskTitle(taskFromServer);
 }
 
-function DeleteTask(taskFromServer, taskList) {
+function DeleteTask(taskFromServer, taskListId) {
     var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
     if (taskLi) {
         taskLi.parentNode.removeChild(taskLi);
     }
 
-    var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskList.id);
+    var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId);
     console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
 
     for(var k=0; k < taskListUl.childNodes.length; k++) {
@@ -984,7 +1003,7 @@ function DeleteTask(taskFromServer, taskList) {
 
     if (taskListUl.childNodes.length == 1) {
         // no tasks any more, we should show <no tasks> section
-        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskLists[i].id).style.display = '';
+        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = '';
     }
 }
 
