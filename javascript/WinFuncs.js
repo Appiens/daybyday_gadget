@@ -149,7 +149,7 @@ function DrawTasksForTaskList(taskList, ul) {
     if (taskList.tasks && taskList.tasks.length > 0) {
 
         for (var j=0; j < taskList.tasks.length; j++) {
-            InsertTask(taskList, taskList.tasks[j], ul);
+            InsertTask(taskList.id, taskList.tasks[j], ul);
         } // for j
     } // if
     else {
@@ -202,7 +202,7 @@ function processTmpList(taskLists) {
                        UpdateTask(taskLists[i].tasks[j]);
                    }
                    else {
-                       InsertTask(taskLists[i], taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+                       InsertTask(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
                    }
 
                 }
@@ -915,12 +915,11 @@ function  OnTaskInserted(obj) {
         return;
     }
 
-    // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
         var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
         taskListId = taskListId.substring(0, taskListId.indexOf('/'));
-        alert(taskListId);
+        InsertTask(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
         alert(obj.text);
     }
 }
@@ -946,10 +945,10 @@ function UpdateTask(taskFromServer) {
     }
 }
 
-function InsertTask(taskList, taskFromServer, ul) {
+function InsertTask(taskListId, taskFromServer, ul) {
     var liChild = document.createElement('li');
     liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
-    var taskDiv = createTaskDiv(taskFromServer, taskList.id);
+    var taskDiv = createTaskDiv(taskFromServer, taskListId);
 
     var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
     var checkBox = createCheckBoxForTask(taskFromServer);
@@ -960,7 +959,7 @@ function InsertTask(taskList, taskFromServer, ul) {
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);
     ul.appendChild(liChild);
-    $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = 'none';
+    $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = 'none';
 
     // set task statuses
     SetDisplayTaskStatusAddImages(taskFromServer);
