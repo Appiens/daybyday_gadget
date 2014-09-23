@@ -909,7 +909,7 @@ function OnChangeTaskStatus(obj) {
 }
 
 // calback function for a change task request
-function OnTaskInserted(obj) {
+function  OnTaskInserted(obj) {
     if (obj.errors.length > 0) {
         alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
         return;
@@ -918,6 +918,9 @@ function OnTaskInserted(obj) {
     // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
+        var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
+        taskListId = taskListId.substring(0, taskListId.indexOf('/'));
+        alert(taskListId);
         alert(obj.text);
     }
 }
