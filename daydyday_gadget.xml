@@ -140,7 +140,7 @@
 
         ul#navWrapper {
             border: 0 black dashed;
-            margin-left: -9px;
+            margin-left: 9px;
             float: left;
         }
 
@@ -158,7 +158,7 @@
         ul#navWrapper li li {
             border: 0 blue dashed;
             float: none;
-            margin-left: -14px;
+            margin-left: -5px;
             margin-top: 3px;
         }
 
@@ -233,7 +233,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('16:35');
+                 alert('17:26');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
