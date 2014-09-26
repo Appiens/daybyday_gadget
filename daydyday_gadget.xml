@@ -140,7 +140,7 @@
 
         ul#navWrapper {
             border: 0 black dashed;
-            margin-left: -39px;
+            margin-left: -9px;
             float: left;
         }
 
@@ -158,7 +158,7 @@
         ul#navWrapper li li {
             border: 0 blue dashed;
             float: none;
-            margin-left: -44px;
+            margin-left: -14px;
             margin-top: 3px;
         }
 
@@ -233,7 +233,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('16:24');
+                 alert('16:35');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -475,7 +475,7 @@
                 <li><a href="pageA2.html">Menu A, Item 2</a></li>
             </ul>
         </li> <!-- Menu A -->
-    </ul> <!-- Top Nav -->
+    </ul> <!-- Top Nav --><br>
        <table cellpadding=0 width=50%>
                 <tr>
                     <td style="width: 25%; text-align:left; vertical-align:middle;">
