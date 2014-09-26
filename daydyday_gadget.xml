@@ -131,6 +131,59 @@
     textarea {
         resize: vertical;
     }
+
+            a, a:hover {
+            text-decoration: none;
+        }
+
+        /**********/
+
+        ul#navWrapper {
+            border: 0 black dashed;
+            margin-left: -39px;
+            float: left;
+        }
+
+        ul#navWrapper li {
+            border: 0 red dashed;
+            float: left;
+            list-style: none;
+            margin-right: 0.75em;
+            background-color: #DDD;
+            padding: 0 0.25em;
+            border-radius: 4px;
+            box-shadow: 3px 3px 6px 1px #333;
+        }
+
+        ul#navWrapper li li {
+            border: 0 blue dashed;
+            float: none;
+            margin-left: -44px;
+            margin-top: 3px;
+        }
+
+        ul#navWrapper li li:first-child {
+            margin-top: 4px;
+        }
+
+        ul#navWrapper ul {
+            display: none;
+            position: absolute;
+            background-color: #FFF; /* For non-CSS3 browsers. */
+            background-color: rgba(255, 255, 255, 0);
+        }
+
+        ul#navWrapper li:hover ul {
+            display: block;
+        }
+
+        ul#navWrapper a {
+            font-weight: bold;
+        }
+
+        ul#navWrapper li:hover {
+            background-color: #8C8D61;
+        }
   </style>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
@@ -180,7 +233,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('18:18');
+                 alert('16:24');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -414,6 +467,15 @@
     <div id="div-notes" class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
+    <ul id="navWrapper"> <!-- Top Nav -->
+        <li> <!-- Menu A -->
+            <a href="pageA.html" aria-haspopup="true">Menu A</a>
+            <ul>
+                <li><a href="pageA1.html">Menu A, Item 1</a></li>
+                <li><a href="pageA2.html">Menu A, Item 2</a></li>
+            </ul>
+        </li> <!-- Menu A -->
+    </ul> <!-- Top Nav -->
        <table cellpadding=0 width=50%>
                 <tr>
                     <td style="width: 25%; text-align:left; vertical-align:middle;">

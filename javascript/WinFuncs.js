@@ -710,16 +710,16 @@ function ActionDiscard() {
 
     var taskListId = $('watch').taskListId;
 
- /*   var date = "";
+    var date = "";
     if ($('checkbox-with-date').checked) {
         date = new MyDate();
         date.setFromInputValue( $('input-task-date').value);
     }
 
     var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
-    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);*/
+    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
 
-    deleteTaskRequest(taskListId, $('watch').task);
+  //  deleteTaskRequest(taskListId, $('watch').task);
 }
 
 function changeNotesState(showSubTasks) {
