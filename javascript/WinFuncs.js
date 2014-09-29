@@ -465,6 +465,12 @@ function SetDisplayTaskStatusAddImagesWatch() {
         $(StatusImagesNames.PREFIX_PRIORITY_HIGH + 'watch').style.display = isHighPriorityTask(additionalSection) ? '' : 'none';
         $(StatusImagesNames.PREFIX_PRIORITY_LOW + 'watch').style.display = isLowPriorityTask(additionalSection) ? '' : 'none';
     }
+    else {
+        $(StatusImagesNames.PREFIX_ALARM + 'watch').style.display = 'none';
+        $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display = 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_HIGH + 'watch').style.display = 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_LOW + 'watch').style.display = 'none';
+    }
 }
 //  </editor-fold>
 
