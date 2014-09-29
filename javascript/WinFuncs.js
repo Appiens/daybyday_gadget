@@ -797,7 +797,7 @@ function SetWatchFieldsFromTask(task) {
         var taskList = $('listId').children[i].taskList;
         var li = document.createElement('li');
         li.addEventListener("click", OnMoveToListClick);
-        var galka = $('watch').taskListId == taskList.id ? '\\u2714' : '';
+        var galka = $('watch').taskListId == taskList.id ? '\u2714' : '';
         li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
         li.taskListId = taskList.id;
         $('taskListsWatch').appendChild(li);
