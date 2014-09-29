@@ -132,58 +132,58 @@
         resize: vertical;
     }
 
-            a, a:hover {
-            text-decoration: none;
-        }
+    a, a:hover {
+        text-decoration: none;
+    }
 
-        /**********/
+    /**********/
 
-        ul#navWrapper {
-            border: 0 black dashed;
-            margin-left: 9px;
-            float: left;
-        }
+    ul#navWrapper {
+        border: 0 black dashed;
+        margin-left: 9px;
+        float: left;
+    }
 
-        ul#navWrapper li {
-            border: 0 red dashed;
-            float: left;
-            list-style: none;
-            margin-right: 0.75em;
-            background-color: #DDD;
-            padding: 0 0.25em;
-            border-radius: 4px;
-            box-shadow: 3px 3px 6px 1px #333;
-        }
+    ul#navWrapper li {
+        border: 0 red dashed;
+        float: left;
+        list-style: none;
+        margin-right: 0.75em;
+        background-color: #DDD;
+        padding: 0 0.25em;
+    }
 
-        ul#navWrapper li li {
-            border: 0 blue dashed;
-            float: none;
-            margin-left: -5px;
-            margin-top: 3px;
-        }
+    ul#navWrapper li li {
+        border: 0 black dashed;
+        float: none;
+        margin-left: -5px;
+        margin-top: 3px;
+    }
 
-        ul#navWrapper li li:first-child {
-            margin-top: 4px;
-        }
+    ul#navWrapper li li:first-child {
+        margin-top: 4px;
+    }
 
-        ul#navWrapper ul {
-            display: none;
-            position: absolute;
-            background-color: #FFF; /* For non-CSS3 browsers. */
-            background-color: rgba(255, 255, 255, 0);
-        }
+    ul#navWrapper ul {
+        display: none;
+        position: absolute;
+        background-color: #FFF; /* For non-CSS3 browsers. */
+        background-color: rgba(255, 255, 255, 0);
+    }
 
-        ul#navWrapper li:hover ul {
-            display: block;
-        }
+    ul#navWrapper li:hover ul {
+        display: block;
+    }
 
-        ul#navWrapper a {
-            font-weight: bold;
-        }
+    ul#navWrapper a {
+        display: block;
+        color: black;
+        text-decoration: none;
+    }
 
-        ul#navWrapper li:hover {
-            background-color: #8C8D61;
-        }
+    ul#navWrapper li:hover {
+        background-color: #33B5E5;
+    }
   </style>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
   <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
@@ -233,7 +233,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('17:26');
+                 alert('11:04');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -469,9 +469,9 @@
     </div>
     <ul id="navWrapper"> <!-- Top Nav -->
         <li> <!-- Menu A -->
-            <a href="pageA.html" aria-haspopup="true">Menu A</a>
+            <a href="pageA.html" aria-haspopup="true">Move to list</a>
             <ul>
-                <li><a href="pageA1.html">Menu A, Item 1</a></li>
+                <li><a href="pageA1.html">&#x2714 Menu A, Item 1</a></li>
                 <li><a href="pageA2.html">Menu A, Item 2</a></li>
             </ul>
         </li> <!-- Menu A -->
