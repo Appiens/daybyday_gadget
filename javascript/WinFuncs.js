@@ -1007,12 +1007,12 @@ function InsertTask(taskListId, taskFromServer, ul) {
     createTaskStatusImages(taskDiv, taskFromServer);
     taskDiv.appendChild(span);
     var arrow = createSimpleTextNode('\u25B6', MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
-    arrow.style.textAlign = 'right';
-    arrow.style.float = 'right';
-    arrow.style.display = 'block';
-    arrow.style.position = 'absolute';
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
+    arrow.style.float = 'right';
+    arrow.style.display = 'inline';
+    arrow.style.margin = '0px';
+    arrow.style.clear = 'none';
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);
     ul.appendChild(liChild);
