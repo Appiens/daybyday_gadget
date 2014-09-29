@@ -50,7 +50,7 @@ var TaskStatuses = (function() {
 
 // структура дерева
 //   <ul id="listId">
-//   <li> (содержит ссылку taskListId) Название списка задач
+//   <li> (содержит ссылку taskListId, taskList) Название списка задач
 //   <ul id = "ul_" + taskListId> (список задач)
 //   <li id= "emp_" + taskListId> (есть есть другие li в списке - секция скрыта, иначе отображена)
 //   <span> <no tasks> </span>
@@ -128,6 +128,7 @@ function generateList(taskLists) {
         var li = document.createElement('li');
         li.appendChild(document.createTextNode(taskLists[i].title));
         li.taskListId = taskLists[i].id;
+        li.taskList = taskLists[i];
         ulMain.appendChild(li); // create <li>
 
         var ul = document.createElement('ul'); // assume + create <ul>
@@ -775,6 +776,19 @@ function SetWatchFieldsFromTask(task) {
 
     while( $('taskListsWatch').children.length > 0){
         $('taskListsWatch').removeChild( $('taskListsWatch').children[0]);
+    }
+
+    for (var i = 0 ; i < $('ulMain').children.length; i++) {
+        if ($('ulMain').children[i].taskList == undefined) {
+           continue;
+        }
+
+        var taskList = $('ulMain').children[i].taskList;
+        var li = document.createElement('li');
+        var galka = $('watch').taskListId == taskList.id ? '&#x2714 ': '';
+        li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
+        li.taskListId = taskList.id;
+        $('taskListsWatch').appendChild(li);
     }
 }
 
