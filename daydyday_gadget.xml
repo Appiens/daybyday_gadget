@@ -231,7 +231,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('17:01');
+                 alert('17:36');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -265,7 +265,7 @@
             }
         else {
                taskListsTmp = null;
-               alert('Error loading task lists');
+               console.log('Error loading task lists');
         }
 
         setTimeout(fetchOnlyNewData , requestInterval);

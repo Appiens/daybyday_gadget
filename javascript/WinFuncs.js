@@ -120,6 +120,13 @@ function init(makePostRequestFunc) {
     $('button-discard').addEventListener('click', ActionDiscard);
 
     createTaskStatusImagesWatch();
+
+    // TODO add Event listener to subTasks checkboxes or edit boxes
+    $('checkbox-task-completed').addEventListener('change', OnSomeEditDone);
+    $('input-task-name').addEventListener('change', OnSomeEditDone);
+    $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
+    $('input-task-date').addEventListener('change', OnSomeEditDone);
+    $('input-task-comment').addEventListener('change', OnSomeEditDone);
 }
 
 /*generates the tasks tree in a main section*/
@@ -302,9 +309,9 @@ function createTaskStatusImgWatch(url, prefix) {
     var img = document.createElement('img');
     img.setAttribute("id", prefix + 'watch');
     img.src = url;
-//    img.width = 12;
-//    img.height = 12;
-//    img.style.display = 'none';
+    img.width = 16;
+    img.height = 16;
+    img.style.display = 'none';
     return img;
 }
 
@@ -423,6 +430,20 @@ function SetSubTaskTitleWatch(taskId, subTaskNum, text) {
     var subTaskSpan = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
     subTaskSpan.innerText = text;
 }
+
+function SetDisplayStatusOverdueWatch() {
+    var status = $('checkbox-task-completed').checked ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
+    var date = null;
+    if ($('checkbox-with-date').checked) {
+        date = new MyDate();
+        date.setFromInputValue( $('input-task-date').value);
+        date = date.toJSON();
+    }
+
+    var task = date? {status: status, due: date}: {status: status};
+
+    $(StatusImagesNames.PREFIX_OVERDUE + 'watch').style.display = isOverdueTask(task) ? '': 'none';
+}
 //  </editor-fold>
 
 // <editor-fold desc="Task Div event handlers for a MAIN div">
@@ -523,6 +544,10 @@ function OnChangeSubTaskStatusCB(targ) {
  Hides input-task-date if checkbox not checked, shows otherwise */
 function OnNoDateCheckChanged() {
     $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
+}
+
+function OnSomeEditDone() {
+    SetDisplayStatusOverdueWatch();
 }
 
 // </editor-fold>
@@ -776,21 +801,21 @@ function ActionToSubtasks() {
 }
 
 function ActionDiscard() {
-  /*  if ($('watch').task != undefined && $('watch').taskListId != undefined) {
+    if ($('watch').task != undefined && $('watch').taskListId != undefined) {
        removeSubTasksDivFromWatch();
        SetWatchFieldsFromTask($('watch').task);
-    }*/
-
-    var taskListId = $('watch').taskListId;
-
-    var date = "";
-    if ($('checkbox-with-date').checked) {
-        date = new MyDate();
-        date.setFromInputValue( $('input-task-date').value);
     }
 
-    var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
-    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+//    var taskListId = $('watch').taskListId;
+//
+//    var date = "";
+//    if ($('checkbox-with-date').checked) {
+//        date = new MyDate();
+//        date.setFromInputValue( $('input-task-date').value);
+//    }
+//
+//    var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
+//    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
 
   //  deleteTaskRequest(taskListId, $('watch').task);
 }
@@ -1194,6 +1219,8 @@ function isOverdueTask(task) {
 
     return false;
 }
+
+
 
 
 
