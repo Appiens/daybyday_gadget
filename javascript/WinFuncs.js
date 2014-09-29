@@ -32,7 +32,8 @@ var MainSectionPrefixes = (function() {
         PREFIX_CB_COMPLETED: "ch_",
         PREFIX_DIV_SUBTASK: "divsub_",
         PREFIX_CB_SUBTASK_COMPLETED: "ch_",
-        PREFIX_SPAN_SUBTASK_TITLE: "t_"
+        PREFIX_SPAN_SUBTASK_TITLE: "t_",
+        PREFIX_ARROW_TITLE: 'ar_'
     };})();
 
 var WatchSectionPrefixes = (function() {
@@ -1005,6 +1006,9 @@ function InsertTask(taskListId, taskFromServer, ul) {
     taskDiv.appendChild(checkBox);
     createTaskStatusImages(taskDiv, taskFromServer);
     taskDiv.appendChild(span);
+    var arrow = createSimpleTextNode('\u25B6', MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
+    arrow.style.textAlign = 'right';
+    taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);

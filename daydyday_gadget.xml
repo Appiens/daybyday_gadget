@@ -136,8 +136,6 @@
         text-decoration: none;
     }
 
-    /**********/
-
     ul#navWrapper {
         border: 0 black dashed;
         margin-left: 9px;
@@ -233,7 +231,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('13:32');
+                 alert('13:53');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
