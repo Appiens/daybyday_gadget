@@ -302,8 +302,8 @@ function createTaskStatusImgWatch(url, prefix) {
     var img = document.createElement('img');
     img.setAttribute("id", prefix + 'watch');
     img.src = url;
-    img.width = 12;
-    img.height = 12;
+//    img.width = 12;
+//    img.height = 12;
 //    img.style.display = 'none';
     return img;
 }
