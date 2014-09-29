@@ -238,7 +238,6 @@ function createTaskDiv(task, taskListId) {
     taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
     taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
     taskDiv.addEventListener("click", OnTaskDivClick);
-    taskDiv.style.cursor = 'pointer';
     return taskDiv;
 }
 
@@ -1012,7 +1011,8 @@ function InsertTask(taskListId, taskFromServer, ul) {
     arrow.style.float = 'right';
     arrow.style.display = 'inline';
     arrow.style.margin = '0px';
-    arrow.style.clear = 'none';
+    arrow.style.cursor = 'pointer';
+//    arrow.style.clear = 'none';
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);
     ul.appendChild(liChild);
