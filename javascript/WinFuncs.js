@@ -237,7 +237,6 @@ function createTaskDiv(task, taskListId) {
     taskDiv.taskListId = taskListId;
     taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
     taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
-    taskDiv.addEventListener("click", OnTaskDivClick);
     return taskDiv;
 }
 
@@ -422,6 +421,8 @@ function OnTaskDivClick(e) {
     if (!e) var e = window.event;
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
+
+    targ = targ.parentNode;
 
     if (targ.task && targ.taskListId) {
         // removing previous divSubWatch
@@ -1021,6 +1022,7 @@ function InsertTask(taskListId, taskFromServer, ul) {
     arrow.style.margin = '0px';
     arrow.style.cursor = 'pointer';
     arrow.style.display = 'none';
+    arrow.addEventListener("click", OnTaskDivClick);
     // TODO change it to langs
     arrow.title = 'Edit details';
 
