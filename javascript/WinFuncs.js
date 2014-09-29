@@ -778,12 +778,12 @@ function SetWatchFieldsFromTask(task) {
         $('taskListsWatch').removeChild( $('taskListsWatch').children[0]);
     }
 
-    for (var i = 0 ; i < $('ulMain').children.length; i++) {
-        if ($('ulMain').children[i].taskList == undefined) {
+    for (var i = 0 ; i < $('listId').children.length; i++) {
+        if ($('listId').children[i].taskList == undefined) {
            continue;
         }
 
-        var taskList = $('ulMain').children[i].taskList;
+        var taskList = $('listId').children[i].taskList;
         var li = document.createElement('li');
         var galka = $('watch').taskListId == taskList.id ? '&#x2714 ': '';
         li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
