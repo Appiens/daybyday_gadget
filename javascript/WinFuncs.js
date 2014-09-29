@@ -1010,6 +1010,7 @@ function InsertTask(taskListId, taskFromServer, ul) {
     arrow.style.textAlign = 'right';
     arrow.style.float = 'right';
     arrow.style.display = 'block';
+    arrow.style.position = 'absolute';
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
 
