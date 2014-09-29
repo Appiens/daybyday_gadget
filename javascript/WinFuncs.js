@@ -101,6 +101,13 @@ var TaskStatuses = (function() {
 // $('watch').task  содержат задачу
 // $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
 // у гугла происходит выброс в секцию списка
+// <div id='div-status-images'> дочерние img создаются динамически
+//    <img id = "img_alm_watch"> // признак напоминания скрыт если нет напоминания, отображён - если есть (показывается то, что получилось в результате редактирования)
+//    <img id = "img_rpt_watch"> // признак повторяющейся задачи скрыт если нет, отображён если есть (показывается то, что получилось в результате редактирования)
+//    <img id = "img_ovr_watch"> // признак просроченной задачи скрыт если нет, отображён если есть (показывается то, что получилось в результате редактирования)
+//    <img id = "img_phi_watch"> // признак высокого приоритета - скрыт если нет, отображён если есть (показывается то, что получилось в результате редактирования)
+//    <img id = "img_plo_watch"> // признак низкого приоритета - скрыт если нет, отображён если есть (показывается то, что получилось в результате редактирования)
+// </div>
 //  <div id="div-notes" class="new-select-style-wpandyou"> => сюда же привязываются таски
 //  <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
 //  <div id = "divsubwatch_" + taskId> (содержит подзадачи)
@@ -444,6 +451,21 @@ function SetDisplayStatusOverdueWatch() {
 
     $(StatusImagesNames.PREFIX_OVERDUE + 'watch').style.display = isOverdueTask(task) ? '': 'none';
 }
+
+function SetDisplayTaskStatusAddImagesWatch() {
+    var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
+    notes += getAdditionalSection($('watch').task);
+
+    var task = {notes: notes};
+
+    if (additionalSectionExist(task)) {
+        var additionalSection = getAdditionalSection(task);
+        $(StatusImagesNames.PREFIX_ALARM + 'watch').style.display = isAlarmedTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display = isRepeatableTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_HIGH + 'watch').style.display = isHighPriorityTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_LOW + 'watch').style.display = isLowPriorityTask(additionalSection) ? '' : 'none';
+    }
+}
 //  </editor-fold>
 
 // <editor-fold desc="Task Div event handlers for a MAIN div">
@@ -548,6 +570,7 @@ function OnNoDateCheckChanged() {
 
 function OnSomeEditDone() {
     SetDisplayStatusOverdueWatch();
+    SetDisplayTaskStatusAddImagesWatch();
 }
 
 // </editor-fold>
