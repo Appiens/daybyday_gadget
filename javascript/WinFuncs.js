@@ -442,7 +442,23 @@ function OnMoveToListClick(e) {
     else if (e.srcElement) targ = e.srcElement;
 
     if (targ.taskListId) {
-        alert('Hello from ' + targ.taskListId);
+        if ($('watch').taskListId != targ.taskListId) {
+            // try to move task to another task list
+            deleteTaskRequest($('watch').taskListId, $('watch').task);
+            var date = "";
+            if ($('checkbox-with-date').checked) {
+                date = new MyDate();
+                date.setFromInputValue( $('input-task-date').value);
+            }
+
+            var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
+            notes += getAdditionalSection($('watch').task);
+            insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+
+            // TODO
+            // throw away the user from this section
+            ActionBackToList();
+        }
     }
 }
 
@@ -981,8 +997,6 @@ function TaskDeletedShell(taskToDelete, taskListId) {
     };
 
 }
-
-
 
 function UpdateTask(taskFromServer) {
     if (taskFromServer) {
