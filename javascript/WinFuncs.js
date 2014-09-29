@@ -118,6 +118,8 @@ function init(makePostRequestFunc) {
     $('button-save_task').addEventListener('click', ActionSaveTask);
     $('button-to-subtasks').addEventListener('click', ActionToSubtasks);
     $('button-discard').addEventListener('click', ActionDiscard);
+
+    createTaskStatusImagesWatch();
 }
 
 /*generates the tasks tree in a main section*/
@@ -261,6 +263,21 @@ function createTaskStatusImages(taskDiv, task) {
     taskDiv.appendChild(imgPriorityLow);
 }
 
+// Creates status images and adds them to a div-status-images div, we should show/hide them when task status changes
+function createTaskStatusImagesWatch() {
+    var imgOverdue = createTaskStatusImgWatch(StatusImagesNames.URL_OVERDUE, StatusImagesNames.PREFIX_OVERDUE);
+    $('div-status-images').appendChild(imgOverdue);
+    var imgAlarm = createTaskStatusImgWatch(StatusImagesNames.URL_ALARM, StatusImagesNames.PREFIX_ALARM);
+    $('div-status-images').appendChild(imgAlarm);
+    var imgRepeat = createTaskStatusImgWatch(StatusImagesNames.URL_REPEAT, StatusImagesNames.PREFIX_REPEAT);
+    $('div-status-images').appendChild(imgRepeat);
+    var imgPriorityHigh = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_HIGH, StatusImagesNames.PREFIX_PRIORITY_HIGH);
+    $('div-status-images').appendChild(imgPriorityHigh);
+    var imgPriorityLow = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_LOW, StatusImagesNames.PREFIX_PRIORITY_LOW);
+    $('div-status-images').appendChild(imgPriorityLow);
+}
+
+
 // Creates a status img
 // string url - the Image url
 // task - the task which is connected to a task Div (to form the unique id)
@@ -273,6 +290,21 @@ function createTaskStatusImg(url, task, prefix) {
     img.width = 12;
     img.height = 12;
     img.style.display = 'none';
+    return img;
+}
+
+// Creates a status img
+// string url - the Image url
+// task - the task which is connected to a task Div (to form the unique id)
+// prefix - the prefix to an image id
+// returns [object img] which should be added to some parent element
+function createTaskStatusImgWatch(url, prefix) {
+    var img = document.createElement('img');
+    img.setAttribute("id", prefix + 'watch');
+    img.src = url;
+    img.width = 12;
+    img.height = 12;
+//    img.style.display = 'none';
     return img;
 }
 
