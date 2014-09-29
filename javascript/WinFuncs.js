@@ -142,32 +142,6 @@ function generateList(taskLists) {
     return ulMain;
 }
 
-/* Draws tasks for a task list
-object taskList - a task list to draw
-object ul - an ul section - a parent for <li> sections (which are tasks) */
-function DrawTasksForTaskList(taskList, ul) {
-    AddNoTasksElement(taskList, ul);
-
-    if (taskList.tasks && taskList.tasks.length > 0) {
-
-        for (var j=0; j < taskList.tasks.length; j++) {
-            InsertTask(taskList.id, taskList.tasks[j], ul);
-        } // for j
-    } // if
-    else {
-       $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = '';
-    }
-}
-
-/*Adds <no task> element to each task List ul section*/
-function AddNoTasksElement(taskList, ul) {
-    var liChild = document.createElement('li');
-    liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
-    liChild.appendChild(document.createTextNode('<no tasks>'));
-    liChild.style.display = 'none';
-    ul.appendChild(liChild);
-}
-
 /* Updates a task list from taskListsTmp asked from server, in this list we get tasks which were created/updated/deleted during last 5 mins*/
 /*array[] taskLists - task Lists that we got from request*/
 function processTmpList(taskLists) {
@@ -176,6 +150,10 @@ function processTmpList(taskLists) {
     for (i = 0; i < taskLists.length; ++i) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
+                if ($('watch').style.display != 'none' && $('watch').task && $('watch').task.id == taskLists[i].tasks[j].id) {
+                    ActionBackToList();
+                }
+
                 if (taskLists[i].tasks[j].deleted) {
                     DeleteTask(taskLists[i].tasks[j], taskLists[i].id);
                     continue;
@@ -196,6 +174,33 @@ function processTmpList(taskLists) {
             } // for j
         }
     } // for i
+}
+
+
+/* Draws tasks for a task list
+ object taskList - a task list to draw
+ object ul - an ul section - a parent for <li> sections (which are tasks) */
+function DrawTasksForTaskList(taskList, ul) {
+    AddNoTasksElement(taskList, ul);
+
+    if (taskList.tasks && taskList.tasks.length > 0) {
+
+        for (var j=0; j < taskList.tasks.length; j++) {
+            InsertTask(taskList.id, taskList.tasks[j], ul);
+        } // for j
+    } // if
+    else {
+        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = '';
+    }
+}
+
+/*Adds <no task> element to each task List ul section*/
+function AddNoTasksElement(taskList, ul) {
+    var liChild = document.createElement('li');
+    liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
+    liChild.appendChild(document.createTextNode('<no tasks>'));
+    liChild.style.display = 'none';
+    ul.appendChild(liChild);
 }
 
 // <editor-fold desc="Creating elements for a MAIN div">
@@ -455,8 +460,7 @@ function OnMoveToListClick(e) {
             notes += getAdditionalSection($('watch').task);
             insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
 
-            // TODO
-            // throw away the user from this section
+            // TODO throw away the user from this section
             ActionBackToList();
         }
     }
