@@ -426,6 +426,17 @@ function OnTaskDivClick(e) {
     }
 }
 
+function OnMoveToListClick(e) {
+    var targ;
+    if (!e) var e = window.event;
+    if (e.target) targ = e.target;
+    else if (e.srcElement) targ = e.srcElement;
+
+    if (targ.taskListId) {
+        alert('Hello from ' + targ.taskListId);
+    }
+}
+
 // </editor-fold>
 
 // <editor-fold desc="Common event handlers">
@@ -785,7 +796,8 @@ function SetWatchFieldsFromTask(task) {
 
         var taskList = $('listId').children[i].taskList;
         var li = document.createElement('li');
-        var galka = $('watch').taskListId == taskList.id ? '&#x2714 ': '';
+        li.addEventListener("click", OnMoveToListClick);
+        var galka = $('watch').taskListId == taskList.id ? '\\u2714' : '';
         li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
         li.taskListId = taskList.id;
         $('taskListsWatch').appendChild(li);
