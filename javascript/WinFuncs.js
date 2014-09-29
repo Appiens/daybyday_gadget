@@ -398,6 +398,10 @@ function OnTaskDivMouseOver(e) {
     else if (e.srcElement) targ = e.srcElement;
 
     targ.style.background='gray';
+
+    if (targ.task) {
+        $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = '';
+    }
 }
 
 function OnTaskDivMouseOut(e) {
@@ -407,6 +411,10 @@ function OnTaskDivMouseOut(e) {
     else if (e.srcElement) targ = e.srcElement;
 
     targ.style.background='white';
+
+    if (targ.task) {
+        $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = 'none';
+    }
 }
 
 function OnTaskDivClick(e) {
@@ -1009,10 +1017,12 @@ function InsertTask(taskListId, taskFromServer, ul) {
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
     arrow.style.float = 'right';
-    arrow.style.display = 'inline';
+    arrow.style.display = 'inline-block';
     arrow.style.margin = '0px';
     arrow.style.cursor = 'pointer';
-//    arrow.style.clear = 'none';
+    arrow.style.display = 'none';
+    // TODO change it to langs
+    arrow.title = 'Edit details';
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);
     ul.appendChild(liChild);
