@@ -770,6 +770,12 @@ function SetWatchFieldsFromTask(task) {
     if (canBeConvertedToSubtasks(notesOrig)) {
         addSubTasksDivToWatch(notesOrig);
     }
+
+    // tasklists
+
+    while( $('taskListsWatch').children.length > 0){
+        $('taskListsWatch').removeChild( $('taskListsWatch').children[0]);
+    }
 }
 
 // </editor-fold>
