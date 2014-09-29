@@ -911,6 +911,8 @@ function SetWatchFieldsFromTask(task) {
         li.taskListId = taskList.id;
         $('taskListsWatch').appendChild(li);
     }
+
+    OnSomeEditDone();
 }
 
 // </editor-fold>
