@@ -1008,6 +1008,8 @@ function InsertTask(taskListId, taskFromServer, ul) {
     taskDiv.appendChild(span);
     var arrow = createSimpleTextNode('\u25B6', MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
     arrow.style.textAlign = 'right';
+    arrow.style.float = 'right';
+    arrow.style.display = 'block';
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
 
