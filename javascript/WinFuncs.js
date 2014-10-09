@@ -900,8 +900,9 @@ function changeNotesState(showSubTasks) {
 
 
 function SetDisableWatchButtons(disable) {
-    $('button-save_task').disbled = disable;
-    $('button-discard').disabled = disable;
+    var disableStr = disable ? 'disabled' : 'enabled';
+    $('button-save_task').setAttribute('disabled', disableStr);
+    $('button-discard').setAttribute('disabled', disableStr);
 }
 
 function SetWatchFieldsFromTask(task) {
