@@ -119,13 +119,6 @@
         margin-top:0px;
     }
 
-    input[type=button]:disabled {
-        background-color: #dcdcdc;
-        border:1px solid #dcdcdc;
-        display:inline-block;
-        color:#777777;
-    }
-
     input[type=button]:hover {
         background-color:#33B5E5;
     }
@@ -133,6 +126,13 @@
     input[type=button]:active {
         position:relative;
         top:1px;
+    }
+
+    input[type=button]:disabled {
+        background-color: #dcdcdc;
+        border:1px solid #dcdcdc;
+        display:inline-block;
+        color:#777777;
     }
 
     textarea {
@@ -238,7 +238,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('16:49');
+                 alert('17:01');
                  init(makePOSTRequest);
                  taskLists = [];
                  taskLists = response.data.items;
@@ -254,8 +254,6 @@
                 showOneSection('main');
                 errorOccured = true;
         }
-
-
     }
 
     function OnFetchDataDoneNew(response) {
