@@ -900,9 +900,14 @@ function changeNotesState(showSubTasks) {
 
 
 function SetDisableWatchButtons(disable) {
-    var disableStr = disable ? 'disabled' : 'enabled';
-    $('button-save_task').setAttribute('disabled', disableStr);
-    $('button-discard').setAttribute('disabled', disableStr);
+    if (disable) {
+        disableButton($('button-save_task'));
+        disableButton($('button-discard'));
+    }
+    else {
+        enableButton($('button-save_task'));
+        enableButton($('button-discard'));
+    }
 }
 
 function SetWatchFieldsFromTask(task) {
@@ -1274,6 +1279,18 @@ function isOverdueTask(task) {
     }
 
     return false;
+}
+
+/* make button disabled
+ Button (getElementById) button*/
+function disableButton(button) {
+    button.setAttribute('disabled', 'disabled');
+}
+
+/* make button enabled
+ Button (getElementById) button*/
+function enableButton(button) {
+    button.removeAttribute('disabled');
 }
 
 
