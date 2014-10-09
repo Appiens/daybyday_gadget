@@ -128,12 +128,13 @@ function init(makePostRequestFunc) {
 
     createTaskStatusImagesWatch();
 
-    // TODO add Event listener to subTasks checkboxes or edit boxes
+    // TODO add Event listeners to subTasks checkboxes or edit boxes
     $('checkbox-task-completed').addEventListener('change', OnSomeEditDone);
     $('input-task-name').addEventListener('change', OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
     $('input-task-date').addEventListener('change', OnSomeEditDone);
     $('input-task-comment').addEventListener('change', OnSomeEditDone);
+    $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
 }
 
 /*generates the tasks tree in a main section*/
@@ -141,6 +142,12 @@ function generateList(taskLists) {
     var i;
     var ulMain = document.getElementById('listId');
 
+    // clear the list
+    while( ulMain.firstChild ){
+        ulMain.removeChild( ulMain.firstChild );
+    }
+
+    // fill the list
     for (i = 0; i < taskLists.length; ++i) {
         var li = document.createElement('li');
         li.appendChild(document.createTextNode(taskLists[i].title));
@@ -159,6 +166,7 @@ function generateList(taskLists) {
 }
 
 /* Updates a task list from taskListsTmp asked from server, in this list we get tasks which were created/updated/deleted during last 5 mins*/
+/* Применение изменений, полученных с сервера, к отображаемому списку ul*/
 /*array[] taskLists - task Lists that we got from request*/
 function processTmpList(taskLists) {
     var i;
@@ -166,6 +174,8 @@ function processTmpList(taskLists) {
     for (i = 0; i < taskLists.length; ++i) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
+
+                // если получаем таск, который редактируется в данный момент, выбрасываем пользователя в секцию Main, если были в секции Watch
                 if ($('watch').style.display != 'none' && $('watch').task && $('watch').task.id == taskLists[i].tasks[j].id) {
                     ActionBackToList();
                 }
@@ -192,8 +202,7 @@ function processTmpList(taskLists) {
     } // for i
 }
 
-
-/* Draws tasks for a task list
+/* Draws child tasks for a task list
  object taskList - a task list to draw
  object ul - an ul section - a parent for <li> sections (which are tasks) */
 function DrawTasksForTaskList(taskList, ul) {
@@ -290,7 +299,6 @@ function createTaskStatusImagesWatch() {
     var imgPriorityLow = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_LOW, StatusImagesNames.PREFIX_PRIORITY_LOW);
     $('div-status-images').appendChild(imgPriorityLow);
 }
-
 
 // Creates a status img
 // string url - the Image url
@@ -438,6 +446,7 @@ function SetSubTaskTitleWatch(taskId, subTaskNum, text) {
     subTaskSpan.innerText = text;
 }
 
+// shows or hides Overdue image in Watch section
 function SetDisplayStatusOverdueWatch() {
     var status = $('checkbox-task-completed').checked ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
     var date = null;
@@ -452,6 +461,7 @@ function SetDisplayStatusOverdueWatch() {
     $(StatusImagesNames.PREFIX_OVERDUE + 'watch').style.display = isOverdueTask(task) ? '': 'none';
 }
 
+// shows or hides alarm, repeat, priority_high, priority_low images in Watch section
 function SetDisplayTaskStatusAddImagesWatch() {
     var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
     notes += getAdditionalSection($('watch').task);
@@ -517,6 +527,7 @@ function OnTaskDivClick(e) {
         $('watch').taskListId = targ.taskListId;
 
         SetWatchFieldsFromTask($('watch').task);
+        SetDisableWatchButtons(true);
         showOneSection('watch');
     }
 }
@@ -540,8 +551,6 @@ function OnMoveToListClick(e) {
             var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
             notes += getAdditionalSection($('watch').task);
             insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
-
-            // TODO throw away the user from this section
             ActionBackToList();
         }
     }
@@ -574,15 +583,18 @@ function OnNoDateCheckChanged() {
     $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
 }
 
+// Update status images when some editing was done
 function OnSomeEditDone() {
     SetDisplayStatusOverdueWatch();
     SetDisplayTaskStatusAddImagesWatch();
+    SetDisableWatchButtons(false);
 }
 
 // </editor-fold>
 
 // <editor-fold desc="Actions (add/remove) for a subTasks div in Watch div">
 
+// Removes Sub Tasks div section from Watch section
 function removeSubTasksDivFromWatch() {
     if ($('watch').task == undefined) {
         return;
@@ -595,6 +607,7 @@ function removeSubTasksDivFromWatch() {
     }
 }
 
+// Adds Sub Tasks div section to Watch section
 function addSubTasksDivToWatch(notesOrig) {
     var subTasks = convertToSubTasks(notesOrig);
     createSubTasksDiv($("div-notes"), $('watch').task , subTasks, WatchSectionPrefixes.PREFIX_DIV_SUBTASK, false);
@@ -603,9 +616,10 @@ function addSubTasksDivToWatch(notesOrig) {
 
 // </editor-fold>
 
+// Make subTasks array from a sub Tasks Div
+// Returns string[] subTasks - array of subTasks
 function getSubTasksArrFromWatchDiv() {
     var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
-
 
     var num = subTasksDiv.children.length;
     var subTasks = [];
@@ -622,7 +636,11 @@ function getSubTasksArrFromWatchDiv() {
     return subTasks;
 }
 
-
+// Adds a subTask span and a checkbox to a parent task
+// object li - parent node (with task name)
+// string subTask - a name of a subTask
+// string taskId  - parent task`s id
+// int subTaskNum - subtask`s number
 function drawSubTask(li, subTask, taskId, subTaskNum) {
     var span = document.createElement('div');
     span.style.paddingLeft = '25px';
@@ -673,13 +691,17 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
     if (isDone) {
         checkBox.checked = true;
         setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
-
     }
 }
 
 
 // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
-//                 false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
+// false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
+// Draws subTasks for a task
+// object li - parent node (with task name)
+// string[] subTasks - array of subTasks
+// string taskId - the Task id
+// bool forMain - true, draw subTasks for main section ; false, draw subTasks for watch section
 function drawSubTasks_new(li, subTasks, taskId, forMain) {
     for (var k = 0; k< subTasks.length; k++) {
         if (subTasks[k].trim() == '') {
@@ -692,12 +714,13 @@ function drawSubTasks_new(li, subTasks, taskId, forMain) {
         else {
             drawSubTaskWatch(li, subTasks[k], taskId, k);
         }
-
     }
 }
 
 // <editor-fold desc="Convert text to subTasks and SubTasks To Text">
-
+// Checks if the comment text can be converted to subTasks array
+// string text - a text to check
+// returns true if the conversion can be done
 function canBeConvertedToSubtasks(text) {
     text = text.trim();
     var textCpy = text;
@@ -713,7 +736,8 @@ function canBeConvertedToSubtasks(text) {
 }
 
 // returns a subTasks array from task notes (text)
-// each line must start from [ ] or [x]
+// each line MUST start from [ ] or [x]
+// returns string[] subTasks - array of subTasks
 function convertToSubTasks(text) {
    if (!canBeConvertedToSubtasks(text)) {
        return null;
@@ -739,8 +763,9 @@ function convertToSubTasks(text) {
 }
 
 // returns a subTasks array from a multiline text
-// each line becomes a task with a status = require action
+// each line with any text becomes a task with a status = require action
 // each line started with [x] becomes a task with a status = completed
+// returns string[] subTasks - array of subTasks
 function convertToSubTasksLight(text) {
 
     var textCpy = text;
@@ -767,6 +792,9 @@ function convertToSubTasksLight(text) {
     return subTasksList;
 }
 
+// Build a string (notes) from sub Tasks array
+// string[] arr - array of subTasks
+// Returns [string] notes
 function convertFromSubTasks(arr) {
     var str = arr.join('\n^&^');
     str = str.split('^&^F').join('[ ]');
@@ -802,12 +830,13 @@ function showOneSection(toshow) {
 }
 
 // <editor-fold desc="Actions for a Watch section">
-
+// Return to Main section from Watch section
 function ActionBackToList() {
     removeSubTasksDivFromWatch();
     showOneSection('main');
 }
 
+// Save changes
 function ActionSaveTask() {
     if ($('watch').task != undefined && $('watch').taskListId != undefined) {
         var task = $('watch').task;
@@ -825,28 +854,18 @@ function ActionSaveTask() {
     }
 }
 
+// Convert notes to subTaks
 function ActionToSubtasks() {
     changeNotesState($('input-task-comment').style.display == '');
 }
 
+// Cancel changes = go back to server state
 function ActionDiscard() {
     if ($('watch').task != undefined && $('watch').taskListId != undefined) {
        removeSubTasksDivFromWatch();
+       SetDisableWatchButtons(true);
        SetWatchFieldsFromTask($('watch').task);
     }
-
-//    var taskListId = $('watch').taskListId;
-//
-//    var date = "";
-//    if ($('checkbox-with-date').checked) {
-//        date = new MyDate();
-//        date.setFromInputValue( $('input-task-date').value);
-//    }
-//
-//    var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : getSubTasksArrFromWatchDiv().join('\n');
-//    insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
-
-  //  deleteTaskRequest(taskListId, $('watch').task);
 }
 
 function changeNotesState(showSubTasks) {
@@ -879,6 +898,11 @@ function changeNotesState(showSubTasks) {
     }
 }
 
+
+function SetDisableWatchButtons(disable) {
+    $('button-save_task').disbled = disable;
+    $('button-discard').disabled = disable;
+}
 
 function SetWatchFieldsFromTask(task) {
     var myDate = new MyDate();
