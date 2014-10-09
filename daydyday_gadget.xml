@@ -200,12 +200,25 @@
     var taskListsTmp = [];  // список обновлений, получаемый каждый "интервал запроса"
     var errorOccured = false; // признак ошибки при полной загрузке данных
     var errorOccuredTmp = false; // признак ошибки при загрузке обновлений (lastUpdated)
-    // var reponseСounter = 0; // количество полученных ответов на запрос "о тасках"
     var timeLastAsk; // время последнего дополнительного запроса
     var requestInterval = 5 * 60 * 1000; // интервал запросов обновлений (мс)
+    var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
+
+    function startGadget() {
+        init(makePOSTRequest);
+        $('button-refresh').addEventListener('click', fetchDataAll);
+        fetchDataAll();
+    }
 
     function fetchDataAll() {
         errorOccured = false;
+
+        // Break the updates cycle
+        if (timerFetchNewData != -1) {
+            clearTimeout(timerFetchNewData);
+            timerFetchNewData = -1;
+        }
+
         fetchData(OnFetchDataDoneAll);
     }
 
@@ -238,8 +251,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('17:01');
-                 init(makePOSTRequest);
+                 alert('17:51');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -273,7 +285,7 @@
                console.log('Error loading task lists');
         }
 
-        setTimeout(fetchOnlyNewData , requestInterval);
+        timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
     }
 
     // Invoke makeRequest() to fetch data from the service provider endpoint.
@@ -316,7 +328,7 @@
               alert('done');
 
               setTimeLastAsk();
-              setTimeout(fetchOnlyNewData , requestInterval);
+              timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
         } else {
             // The response.oauthError and response.oauthErrorText values may help debug
@@ -355,10 +367,6 @@
                     errorOccuredTmp = true;
             }
 
-            // if (responseCounter == taskListsTmp.length) {
-            // запускаем новый запрос
-            // setTimeout(fetchOnlyNewData , requestInterval);
-            // }
       }, "&showDeleted=true&updatedMin=" + timeLastAsk);
     }
     
@@ -426,11 +434,12 @@
    	    gadgets.io.makeRequest(url, callback, params);
 };
 
-    // Call fetchData() when gadget loads.
-    gadgets.util.registerOnLoadHandler(fetchDataAll);
+    // Call () when gadget loads.
+    gadgets.util.registerOnLoadHandler(startGadget);
   </script>
   
   <div id="main" style="display: none; height: 450; overflow-y: scroll;">
+    <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
 	<ul id="listId" class="collapsibleList"></ul>
   </div>
 

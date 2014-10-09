@@ -1,5 +1,6 @@
 var makePOSTRequest = null;
 var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
+var isDrawingMainList = false;
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
@@ -140,6 +141,8 @@ function init(makePostRequestFunc) {
 /*generates the tasks tree in a main section*/
 function generateList(taskLists) {
     var i;
+
+    isDrawingMainList = true;
     var ulMain = document.getElementById('listId');
 
     // clear the list
@@ -162,6 +165,8 @@ function generateList(taskLists) {
         DrawTasksForTaskList(taskLists[i], ul);
     } // for i
 
+    isDrawingMainList = false;
+
     return ulMain;
 }
 
@@ -175,13 +180,24 @@ function processTmpList(taskLists) {
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
 
+                // main list is refreshing, we MUST stop the updating process
+                if (isDrawingMainList) {
+                    break;
+                }
+
                 // если получаем таск, который редактируется в данный момент, выбрасываем пользователя в секцию Main, если были в секции Watch
                 if ($('watch').style.display != 'none' && $('watch').task && $('watch').task.id == taskLists[i].tasks[j].id) {
                     ActionBackToList();
                 }
 
                 if (taskLists[i].tasks[j].deleted) {
-                    DeleteTask(taskLists[i].tasks[j], taskLists[i].id);
+                    try {
+                        DeleteTask(taskLists[i].tasks[j], taskLists[i].id);
+                    }
+                    catch (e) {
+                        console.log("Error deleting task " + taskLists[i].tasks[j].id + ' ' + e);
+                    }
+
                     continue;
                 }
 
