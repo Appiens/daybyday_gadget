@@ -146,9 +146,9 @@ function generateList(taskLists) {
     var ulMain = document.getElementById('listId');
 
     // clear the list
-    while( ulMain.firstChild ){
-        ulMain.removeChild( ulMain.firstChild );
-    }
+//    while( ulMain.firstChild ){
+//        ulMain.removeChild( ulMain.firstChild );
+//    }
 
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {

@@ -14,9 +14,7 @@
     <Locale lang="ru" messages="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/lang/ru_ALL.xml"/>
   </ModulePrefs>
   <Content type="html">
-  <![CDATA[ 
-  
-
+  <![CDATA[
   <style>
   	#main {
 	  margin: 0px;
@@ -219,6 +217,16 @@
             timerFetchNewData = -1;
         }
 
+        // Clear the list
+        var ulMain = document.getElementById('listId');
+
+        while( ulMain.firstChild ){
+            ulMain.removeChild( ulMain.firstChild );
+        }
+
+        // Hide err section
+         $('label-oauth-error').style.display = 'none';
+
         fetchData(OnFetchDataDoneAll);
     }
 
@@ -251,7 +259,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('17:51');
+                 alert('16:37');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -261,8 +269,8 @@
             }
          else {
                 var main = document.getElementById('main');
-                var err = document.createTextNode('OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
-                main.appendChild(err);
+                $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                $('label-oauth-error').style.display = '';
                 showOneSection('main');
                 errorOccured = true;
         }
@@ -325,7 +333,7 @@
               generateList(taskLists);
               CollapsibleLists.applyTo(document.getElementById('listId'));
               showOneSection('main');
-              alert('done');
+              // alert('done');
 
               setTimeLastAsk();
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
@@ -334,9 +342,8 @@
             // The response.oauthError and response.oauthErrorText values may help debug
             // problems with your gadget.
             var main = document.getElementById('main');
-            var err = document.createTextNode('OAuth error: ' +
-              response.oauthError + ': ' + response.oauthErrorText);
-            main.appendChild(err);
+            $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+            $('label-oauth-error').style.display = '';
             showOneSection('main');
             errorOccured = true;
         }
@@ -362,8 +369,6 @@
             }
             else {
                     console.log("Error for " + taskList.title);
-                    // alert('OAuth error: ' +
-                    // response.oauthError + ': ' + response.oauthErrorText);
                     errorOccuredTmp = true;
             }
 
@@ -441,6 +446,7 @@
   <div id="main" style="display: none; height: 450; overflow-y: scroll;">
     <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
 	<ul id="listId" class="collapsibleList"></ul>
+	<label id="label-oauth-error" style="display:none;"></label>
   </div>
 
   <div id="approval" style="display: none">
