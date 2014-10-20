@@ -994,6 +994,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     editBox.setAttribute("id", WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
     editBox.placeholder = "__MSG_title_default__";
     editBox.value = text;
+    editBox.style.width = '40%';
 
     span.appendChild(editBox);
 
