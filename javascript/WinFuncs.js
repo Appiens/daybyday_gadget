@@ -41,7 +41,8 @@ var WatchSectionPrefixes = (function() {
     return {
         PREFIX_DIV_SUBTASK: "divsubwatch_",
         PREFIX_CB_SUBTASK_COMPLETED: "ch_w_",
-        PREFIX_SPAN_SUBTASK_TITLE: "t_w_"
+        PREFIX_SPAN_SUBTASK_TITLE: "t_w_",
+        PREFIX_A_SUBTASK_REMOVE: "a_w_"
     };})();
 
 var TaskStatuses = (function() {
@@ -978,12 +979,6 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     checkBox.type = 'checkbox';
     checkBox.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
     checkBox.addEventListener('change', function(e) {
-      /*  var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        OnChangeSubTaskStatusCB(targ);*/
         OnSomeEditDone();
     });
 
@@ -992,12 +987,15 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     var editBox = document.createElement("input");
     editBox.type = 'text';
     editBox.setAttribute("id", WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
-    editBox.placeholder = "__MSG_title_default__";
+    editBox.placeholder = getLangValue("title_default");
     editBox.value = text;
-    editBox.style.width = '40%';
+    editBox.style.width = '60%';
     editBox.style.minHeight = '15px';
     editBox.style.height = '15px';
     editBox.style.display = 'inline-block';
+    editBox.addEventListener('change', function(e) {
+        OnSomeEditDone();
+    });
 
     span.appendChild(editBox);
 
@@ -1008,7 +1006,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     var a = document.createElement('a');
     a.href =  '#';
     a.innerText = ' \u2715';
-    a.setAttribute("id", "a_w_" + taskId + "_" + subTaskNum);
+    a.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE + taskId + "_" + subTaskNum);
     a.addEventListener('click', function(e) {
          var targ;
          if (!e) var e = window.event;
@@ -1335,6 +1333,11 @@ function disableButton(button) {
  Button (getElementById) button*/
 function enableButton(button) {
     button.removeAttribute('disabled');
+}
+
+function getLangValue(message) {
+    var prefs = new gadgets.Prefs();
+    return prefs.getMsg(message);
 }
 
 
