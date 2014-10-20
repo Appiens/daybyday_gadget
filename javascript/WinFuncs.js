@@ -995,6 +995,8 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     editBox.placeholder = "__MSG_title_default__";
     editBox.value = text;
     editBox.style.width = '40%';
+    editBox.style.minHeight = '15px';
+    editBox.style.height = '15px';
     editBox.style.display = 'inline-block';
 
     span.appendChild(editBox);
