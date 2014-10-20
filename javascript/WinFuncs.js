@@ -42,7 +42,8 @@ var WatchSectionPrefixes = (function() {
         PREFIX_DIV_SUBTASK: "divsubwatch_",
         PREFIX_CB_SUBTASK_COMPLETED: "ch_w_",
         PREFIX_SPAN_SUBTASK_TITLE: "t_w_",
-        PREFIX_A_SUBTASK_REMOVE: "a_w_"
+        PREFIX_A_SUBTASK_REMOVE: "a_w_",
+        PREFIX_A_SUBTASK_ADD: "a_wa_"
     };})();
 
 var TaskStatuses = (function() {
@@ -1003,6 +1004,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     li.appendChild(span);
     span.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + taskId);
 
+    // удаление сабТакса
     var a = document.createElement('a');
     a.href =  '#';
     a.innerText = ' \u2715';
@@ -1017,16 +1019,44 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
     span.appendChild(a);
 
+    // добавление сабТаска
+    var aplus = document.createElement('a');
+    aplus.href =  '#';
+    aplus.innerText = ' \u2795';
+    aplus.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + taskId + "_" + subTaskNum);
+    aplus.addEventListener('click', function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        AddSubTaskDivToWatch(targ);
+    });
+
+    span.appendChild(aplus);
+
+
     if (isDone) {
         checkBox.checked = true;
         // setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
     }
 }
 
+function AddSubTaskDivToWatch(targ) {
+    var subTasks = getSubTasksArrFromWatchDiv();
+    var subTaskNum = subTasks.length;
+
+    drawSubTaskWatch($("div-notes"), 'F', $('watch').task.id, subTaskNum);
+}
+
 function RemoveSubTaskDivFromWatch(targ) {
     // получить номер удаляемого сабтаска
     var subTaskNum = parseInt(targ.id.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
     var subTasks = getSubTasksArrFromWatchDiv();
+
+    // нельзя удалить единственный сабтаск
+    if (subTasks.length == 1) {
+        return;
+    }
 
     // пердвинуть все значения вверх, потеряв удаляемое, но сохранив имена элементов
     for (var i = subTaskNum;  i < subTasks.length - 1;i++) {
