@@ -990,6 +990,15 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     span.appendChild(checkBox);
     span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
+    span.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
+    span.addEventListener('click', function(e) {
+         var targ;
+         if (!e) var e = window.event;
+         if (e.target) targ = e.target;
+         else if (e.srcElement) targ = e.srcElement;
+         alert(targ.id);
+    });
+
     // SetSubTaskTitleWatch(taskId, subTaskNum, text);
 
     if (isDone) {
