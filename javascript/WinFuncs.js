@@ -1029,14 +1029,14 @@ function RemoveSubTaskDivFromWatch(targ) {
     var subTasks = getSubTasksArrFromWatchDiv();
 
     // пердвинуть все значения вверх, потеряв удаляемое, но сохранив имена элементов
-    for (var i = subTasks.length - 1; i > subTaskNum; i--) {
+    for (var i = subTaskNum;  i < subTasks.length - 1;i++) {
         var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + i);
         var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
-        var checkBoxPrev = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + (i - 1).toString());
-        var textNodePrev = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + (i - 1).toString());
+        var checkBoxNext = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + (i + 1).toString());
+        var textNodeNext = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + (i + 1).toString());
 
-        checkBoxPrev.checked = checkBox.checked;
-        textNodePrev.value  = textNode.value;
+        checkBox.checked = checkBoxNext.checked;
+        textNode.value = textNodeNext.value;
     }
 
     // удалить последний div
