@@ -1001,7 +1001,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
     // span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
-    span.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
+    span.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + taskId);
 
     var a = document.createElement('a');
     a.href =  '#';
