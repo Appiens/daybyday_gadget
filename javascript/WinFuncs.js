@@ -899,7 +899,7 @@ function changeNotesState(showSubTasks) {
 
         var subTasks = convertToSubTasksLight(notesOrig);
 
-        createSubTasksDiv($("div-notes"), $('watch').task , subTasks, 'divsubwatch_', false);
+        createSubTasksDiv($("div-notes"), $('watch').task , subTasks, WatchSectionPrefixes.PREFIX_DIV_SUBTASK, false);
         $('input-task-comment').style.display = 'none';
     }
     else {
@@ -1002,7 +1002,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
     // span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
-    span.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + taskId);
+    // span.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + taskId);
 
     // удаление сабТакса
     var a = document.createElement('a');
@@ -1043,9 +1043,10 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
 function AddSubTaskDivToWatch(targ) {
     var subTasks = getSubTasksArrFromWatchDiv();
+    var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
     var subTaskNum = subTasks.length;
 
-    drawSubTaskWatch($("div-notes"), 'F', $('watch').task.id, subTaskNum);
+    drawSubTaskWatch(subTasksDiv , 'F', $('watch').task.id, subTaskNum);
 }
 
 function RemoveSubTaskDivFromWatch(targ) {
