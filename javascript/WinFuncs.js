@@ -988,13 +988,20 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     });
 
     span.appendChild(checkBox);
-    span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
+
+    var editBox = document.createElement("input");
+    editBox.type = 'text';
+    editBox.setAttribute("id", WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
+    editBox.placeholder = "__MSG_title_default__";
+    editBox.value = text;
+
+    // span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
     span.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
 
     var a = document.createElement('a');
-    a.href =  '#'; // Instead of calling setAttribute
-    a.innerText = ' \u2715' //"&#x2715" // <a>INNER_TEXT</a>
+    a.href =  '#';
+    a.innerText = ' \u2715';
     a.setAttribute("id", "a_w_" + taskId + "_" + subTaskNum);
     a.addEventListener('click', function(e) {
          var targ;
