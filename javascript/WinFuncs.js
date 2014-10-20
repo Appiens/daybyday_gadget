@@ -991,7 +991,19 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
     li.appendChild(span);
     span.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
-    span.addEventListener('click', function(e) {
+//    span.addEventListener('click', function(e) {
+//         var targ;
+//         if (!e) var e = window.event;
+//         if (e.target) targ = e.target;
+//         else if (e.srcElement) targ = e.srcElement;
+//         alert(targ.id);
+//    });
+
+    var a = document.createElement('a');
+    a.href =  '#'; // Instead of calling setAttribute
+    a.innerText = "&#x2715" // <a>INNER_TEXT</a>
+    a.setAttribute("id", "a_w_" + taskId + "_" + subTaskNum);
+    a.addEventListener('click', function(e) {
          var targ;
          if (!e) var e = window.event;
          if (e.target) targ = e.target;
@@ -999,7 +1011,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
          alert(targ.id);
     });
 
-    // SetSubTaskTitleWatch(taskId, subTaskNum, text);
+    li.appendChild(a);
 
     if (isDone) {
         checkBox.checked = true;
