@@ -995,16 +995,16 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     var a = document.createElement('a');
     a.href =  '#'; // Instead of calling setAttribute
     a.innerText = 'X' //"&#x2715" // <a>INNER_TEXT</a>
-//    a.setAttribute("id", "a_w_" + taskId + "_" + subTaskNum);
-//    a.addEventListener('click', function(e) {
-//         var targ;
-//         if (!e) var e = window.event;
-//         if (e.target) targ = e.target;
-//         else if (e.srcElement) targ = e.srcElement;
-//         alert(targ.id);
-//    });
+    a.setAttribute("id", "a_w_" + taskId + "_" + subTaskNum);
+    a.addEventListener('click', function(e) {
+         var targ;
+         if (!e) var e = window.event;
+         if (e.target) targ = e.target;
+         else if (e.srcElement) targ = e.srcElement;
+         alert(targ.id);
+    });
 
-    li.appendChild(a);
+    span.appendChild(a);
 
     if (isDone) {
         checkBox.checked = true;
