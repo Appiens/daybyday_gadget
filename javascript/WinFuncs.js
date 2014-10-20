@@ -1025,7 +1025,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
 function RemoveSubTaskDivFromWatch(targ) {
     // получить номер удаляемого сабтаска
-    var subTaskNum = parseInt(targ.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
+    var subTaskNum = parseInt(targ.id.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
     var subTasks = getSubTasksArrFromWatchDiv();
 
     // пердвинуть все значения вверх, потеряв удаляемое, но сохранив имена элементов
