@@ -978,12 +978,13 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     checkBox.type = 'checkbox';
     checkBox.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
     checkBox.addEventListener('change', function(e) {
-        var targ;
+      /*  var targ;
 
         if (!e) var e = window.event;
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
-        OnChangeSubTaskStatusCB(targ);
+        OnChangeSubTaskStatusCB(targ);*/
+        OnSomeEditDone();
     });
 
     span.appendChild(checkBox);
@@ -993,7 +994,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
     if (isDone) {
         checkBox.checked = true;
-        setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
+        // setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
     }
 }
 
