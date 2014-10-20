@@ -645,7 +645,7 @@ function getSubTasksArrFromWatchDiv() {
         var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
 
         var subTask = checkBox.checked ? '[x]':'[ ]';
-        subTask = subTask + textNode.innerText;
+        subTask = subTask + textNode.value;
         subTasks.push(subTask);
     }
 
