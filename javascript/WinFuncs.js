@@ -1012,7 +1012,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
          if (!e) var e = window.event;
          if (e.target) targ = e.target;
          else if (e.srcElement) targ = e.srcElement;
-         alert(targ.id);
+         RemoveSubTaskDivFromWatch(targ);
     });
 
     span.appendChild(a);
@@ -1020,6 +1020,30 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     if (isDone) {
         checkBox.checked = true;
         // setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
+    }
+}
+
+function RemoveSubTaskDivFromWatch(targ) {
+    // получить номер удаляемого сабтаска
+    var subTaskNum = parseInt(targ.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
+    var subTasks = getSubTasksArrFromWatchDiv();
+
+    // пердвинуть все значения вверх, потеряв удаляемое, но сохранив имена элементов
+    for (var i = subTasks.length - 1; i > subTaskNum; i--) {
+        var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + i);
+        var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
+        var checkBoxPrev = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + (i - 1).toString());
+        var textNodePrev = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + (i - 1).toString());
+
+        checkBoxPrev.checked = checkBox.checked;
+        textNodePrev.value  = textNode.value;
+    }
+
+    // удалить последний div
+    var subTaskDiv = targ.parentNode;
+
+    if (subTaskDiv) {
+        subTaskDiv.parentNode.removeChild(subTaskDiv);
     }
 }
 
