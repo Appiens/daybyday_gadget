@@ -1039,8 +1039,10 @@ function RemoveSubTaskDivFromWatch(targ) {
         textNode.value = textNodeNext.value;
     }
 
+    var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + (subTasks.length - 1).toString());
+
     // удалить последний div
-    var subTaskDiv = targ.parentNode;
+    var subTaskDiv = textNode.parentNode;
 
     if (subTaskDiv) {
         subTaskDiv.parentNode.removeChild(subTaskDiv);
