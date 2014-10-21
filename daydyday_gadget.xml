@@ -263,7 +263,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('15:18');
+                 alert('15:45');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -451,7 +451,7 @@
     The footer is downstairs
   </div>
   
-  <div id="main" style="display: none; height: 100%; overflow-y: scroll;">
+  <div id="main" style="display: none; height: auto; overflow-y: scroll;">
     <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
 	<ul id="listId" class="collapsibleList"></ul>
 	<label id="label-oauth-error" style="display:none;"></label>
