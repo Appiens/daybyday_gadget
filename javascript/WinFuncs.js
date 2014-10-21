@@ -849,6 +849,7 @@ function convertFromSubTasks(arr) {
 // obtain and display the user's data.
 function showOneSection(toshow) {
     var sections = [ 'main', 'approval', 'waiting', 'watch' ];
+
     for (var i=0; i < sections.length; ++i) {
         var s = sections[i];
         var el = document.getElementById(s);
@@ -858,6 +859,8 @@ function showOneSection(toshow) {
             el.style.display = "none";
         }
     }
+
+    $('footer').style.display = toshow == 'main'? "": "none";
 }
 
 // <editor-fold desc="Actions for a Watch section">

@@ -264,7 +264,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('17:05');
+                 alert('17:26');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -449,7 +449,7 @@
   </script>
 
   <div id="footer">
-    <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
+    <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3" title="__MSG_action_refresh__"/>
   </div>
   
   <div id="main" style="display: none; height: 80%; overflow-y: scroll;">
