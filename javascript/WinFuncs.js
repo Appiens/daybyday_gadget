@@ -387,7 +387,6 @@ function createCheckBoxForTask(task) {
         var taskListId = li? li.taskListId: '';
         task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
         changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
-       // alert(task.title + " " + taskListId);
     });
 
     return checkBox;
@@ -569,6 +568,11 @@ function OnMoveToListClick(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
+    if (!IsButtonDisabled($('button-save_task'))) {
+        alert(getLangValue("msg_move_forbidden"));
+        return;
+    }
+
     if (targ.taskListId) {
         if ($('watch').taskListId != targ.taskListId) {
             // try to move task to another task list
@@ -696,20 +700,16 @@ function drawSubTask(li, subTask, taskId, subTaskNum) {
         var m_taskId = li ? li.task.id : '';
         var oldNotes = li ? li.task.notes : '';
         var task = li.task;
-        // alert("task = " + JSON.stringify(li.task));
 
         while (li != null && li.taskListId == undefined) li = li.parentNode;
 
 
         var taskListId = li? li.taskListId: '';
-         // alert("taskListId = " + taskListId);
         var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
-        // alert("subTaskId = " + subTaskId);
 
         var arr = convertToSubTasks(oldNotes);
         arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
         var newNotes = convertFromSubTasks(arr);
-        // alert("newNotes = " + newNotes);
         task.notes = newNotes;
         changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
     });
@@ -1047,7 +1047,6 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
 
     span.appendChild(aplus);
 
-
     if (isDone) {
         checkBox.checked = true;
         // setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
@@ -1191,7 +1190,7 @@ function deleteTaskRequest(taskListId, task) {
 // calback function for a change task request
 function OnChangeTaskStatus(obj) {
     if (obj.errors.length > 0) {
-        alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
+        alert(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
         return;
     }
 
@@ -1205,7 +1204,7 @@ function OnChangeTaskStatus(obj) {
 // calback function for a change task request
 function  OnTaskInserted(obj) {
     if (obj.errors.length > 0) {
-        alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
+        alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
         return;
     }
 
@@ -1219,7 +1218,7 @@ function  OnTaskInserted(obj) {
 
 function OnTaskDeleted(obj) {
     if (obj.errors.length > 0) {
-        alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
+        alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
         return;
     }
 
@@ -1233,7 +1232,7 @@ function TaskDeletedShell(taskToDelete, taskListId) {
     return {
         OnTaskDeleted: function(obj) {
             if (obj.errors.length > 0) {
-                alert('Sorry! Some error occured! ' + JSON.stringify(obj.errors[0]));
+                alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
                 return;
             }
 
@@ -1417,6 +1416,10 @@ function disableButton(button) {
  Button (getElementById) button*/
 function enableButton(button) {
     button.removeAttribute('disabled');
+}
+
+function IsButtonDisabled(button) {
+    return button.hasAttribute('disabled');
 }
 
 function getLangValue(message) {
