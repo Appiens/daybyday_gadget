@@ -133,10 +133,10 @@ function init(makePostRequestFunc) {
 
     // TODO add Event listeners to subTasks checkboxes or edit boxes
     $('checkbox-task-completed').addEventListener('change', OnSomeEditDone);
-    $('input-task-name').addEventListener('keypress', OnSomeEditDone);
+    $('input-task-name').addEventListener('keyup', OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
     $('input-task-date').addEventListener('change', OnSomeEditDone);
-    $('input-task-comment').addEventListener('keypress', OnSomeEditDone);
+    $('input-task-comment').addEventListener('keyup', OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
 }
 
@@ -994,7 +994,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     editBox.style.minHeight = '15px';
     editBox.style.height = '15px';
     editBox.style.display = 'inline-block';
-    editBox.addEventListener('keypress', function(e) {
+    editBox.addEventListener('keyup', function(e) {
         OnSomeEditDone();
     });
 
