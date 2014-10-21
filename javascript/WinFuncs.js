@@ -733,6 +733,10 @@ function drawSubTasks_new(li, subTasks, taskId, forMain) {
             drawSubTaskWatch(li, subTasks[k], taskId, k);
         }
     }
+
+    if (!forMain) {
+        setSubTaskAddVisibility();
+    }
 }
 
 // <editor-fold desc="Convert text to subTasks and SubTasks To Text">
@@ -1047,6 +1051,7 @@ function AddSubTaskDivToWatch(targ) {
     var subTaskNum = subTasks.length;
 
     drawSubTaskWatch(subTasksDiv , 'F', $('watch').task.id, subTaskNum);
+    setSubTaskAddVisibility();
 }
 
 function RemoveSubTaskDivFromWatch(targ) {
@@ -1078,6 +1083,18 @@ function RemoveSubTaskDivFromWatch(targ) {
     if (subTaskDiv) {
         subTaskDiv.parentNode.removeChild(subTaskDiv);
     }
+
+    setSubTaskAddVisibility();
+}
+
+function setSubTaskAddVisibility() {
+    var subTasks = getSubTasksArrFromWatchDiv();
+
+    for (var i = 0;  i < subTasks.length - 1;i++) {
+        $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + $('watch').task.id + "_" + i).style.display = 'none';
+    }
+
+    $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + $('watch').task.id + "_" + (subTasks.length - 1)).style.display = '';
 }
 
 // </editor-fold>
