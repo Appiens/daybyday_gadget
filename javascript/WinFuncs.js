@@ -260,6 +260,10 @@ function createSubTasksDiv(taskDiv, task, subTasks, divNamePrefix, forMain) {
     subTasksDiv.setAttribute("id", divNamePrefix + task.id);
     drawSubTasks_new(subTasksDiv, subTasks, task.id, forMain);
     taskDiv.appendChild(subTasksDiv);
+
+    if (!forMain) {
+        setSubTaskAddVisibility();
+    }
 }
 
 // Creates a span with id = id and innerText = text
@@ -732,10 +736,6 @@ function drawSubTasks_new(li, subTasks, taskId, forMain) {
         else {
             drawSubTaskWatch(li, subTasks[k], taskId, k);
         }
-    }
-
-    if (!forMain) {
-        setSubTaskAddVisibility();
     }
 }
 
