@@ -18,7 +18,7 @@
   <style>
     html {height: 100%;}
     body {height:auto !important; min-height:100%; height:100%; position:relative; }
-    #footer {position:absolute; bottom:0; width:100%; background:red}
+    #footer {position:absolute; bottom:0; width:100%; background:white; border-top:thin solid slategray;}
 
   	#main {
 	  margin: 0px;
@@ -263,7 +263,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('14:51');
+                 alert('15:12');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -447,11 +447,11 @@
     gadgets.util.registerOnLoadHandler(startGadget);
   </script>
 
-  <div id="footer">
+  <div id="footer" style="height: 30">
     The footer is downstairs
   </div>
   
-  <div id="main" style="display: none; height: 300; overflow-y: scroll;">
+  <div id="main" style="display: none; overflow-y: scroll;">
     <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
 	<ul id="listId" class="collapsibleList"></ul>
 	<label id="label-oauth-error" style="display:none;"></label>
