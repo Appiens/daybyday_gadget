@@ -24,6 +24,7 @@
 	  margin: 0px;
 	  padding: 0px;
       font-size: small;
+      margin-bottom: -30px;
 	}
 
 	#watch {
@@ -263,7 +264,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('15:58');
+                 alert('16:10');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -451,7 +452,7 @@
     <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
   </div>
   
-  <div id="main" style="display: none; height: 370; overflow-y: scroll;">
+  <div id="main" style="display: none; height: 100%; overflow-y: scroll;">
 	<ul id="listId" class="collapsibleList"></ul>
 	<label id="label-oauth-error" style="display:none;"></label>
   </div>
