@@ -2,6 +2,7 @@
     <msg name="completed">Выполнено</msg>
     <msg name="due_date">Дата выполнения</msg>
     <msg name="title_default">Заголовок</msg>
+    <msg name="sub_title_default">Подзадача</msg>
     <msg name="notes_default">Описание</msg>
     <msg name="action_back_to_list">К списку задач</msg>
     <msg name="action_save_task">Сохранить изменения</msg>

@@ -988,7 +988,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     var editBox = document.createElement("input");
     editBox.type = 'text';
     editBox.setAttribute("id", WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
-    editBox.placeholder = getLangValue("title_default");
+    editBox.placeholder = getLangValue("sub_title_default");
     editBox.value = text;
     editBox.style.width = '60%';
     editBox.style.minHeight = '15px';
@@ -1022,7 +1022,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     // добавление сабТаска
     var aplus = document.createElement('a');
     aplus.href =  '#';
-    aplus.innerText = ' \u2795';
+    aplus.innerText = ' \uFF0B';
     aplus.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + taskId + "_" + subTaskNum);
     aplus.addEventListener('click', function(e) {
         var targ;
