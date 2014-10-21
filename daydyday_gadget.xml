@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <Module>
-  <ModulePrefs title="daybyday_gadget" scrolling="true" author_email="info@appiens.com" height="500">
+  <ModulePrefs title="daybyday_gadget" scrolling="true" author_email="info@appiens.com" height="400">
     <Require feature="opensocial-0.8" />
     <Require feature="locked-domain"/>
       <OAuth>
@@ -263,7 +263,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('15:45');
+                 alert('15:58');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -448,11 +448,10 @@
   </script>
 
   <div id="footer" style="min-height: 30">
-    The footer is downstairs
+    <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
   </div>
   
-  <div id="main" style="display: none; height: auto; overflow-y: scroll;">
-    <input type="button" id="button-refresh" name="button-refresh" value="&#x27F3"/>
+  <div id="main" style="display: none; height: 370; overflow-y: scroll;">
 	<ul id="listId" class="collapsibleList"></ul>
 	<label id="label-oauth-error" style="display:none;"></label>
   </div>
