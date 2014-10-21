@@ -514,7 +514,7 @@ function OnTaskDivMouseOver(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
-    targ.style.background='gray';
+    targ.style.background='#DFEEFF';
 
     if (targ.task) {
         $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = '';
@@ -1266,6 +1266,8 @@ function InsertTask(taskListId, taskFromServer, ul) {
     taskDiv.appendChild(checkBox);
     createTaskStatusImages(taskDiv, taskFromServer);
     taskDiv.appendChild(span);
+
+    // стрелочка для перехода в секцию Watch
     var arrow = createSimpleTextNode('\u25B6', MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
@@ -1275,8 +1277,7 @@ function InsertTask(taskListId, taskFromServer, ul) {
     arrow.style.cursor = 'pointer';
     arrow.style.display = 'none';
     arrow.addEventListener("click", OnTaskDivClick);
-    // TODO change it to langs
-    arrow.title = 'Edit details';
+    arrow.title = getLangValue("edit_details");
 
     refreshSubTasksSectionMain(taskDiv, taskFromServer);
     ul.appendChild(liChild);
