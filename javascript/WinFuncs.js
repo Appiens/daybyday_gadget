@@ -52,6 +52,15 @@ var TaskStatuses = (function() {
         NEEDS_ACTION: "needsAction"
     };})();
 
+
+var UnicodeSymbols = (function() {
+    return {
+        CLOSE: '\u2715',
+        PLUS: '\uFF0B',
+        ARROW_RIGHT: '\u25B6',
+        GALKA: '\u2714'
+    };})();
+
 // структура дерева
 //   <ul id="listId">
 //   <li> (содержит ссылку taskListId, taskList) Название списка задач
@@ -964,7 +973,7 @@ function SetWatchFieldsFromTask(task) {
         var taskList = $('listId').children[i].taskList;
         var li = document.createElement('li');
         li.addEventListener("click", OnMoveToListClick);
-        var galka = $('watch').taskListId == taskList.id ? '\u2714' : '';
+        var galka = $('watch').taskListId == taskList.id ? /*'\u2714'*/ UnicodeSymbols.GALKA : '';
         li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
         li.taskListId = taskList.id;
         $('taskListsWatch').appendChild(li);
@@ -1011,7 +1020,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     // удаление сабТакса
     var a = document.createElement('a');
     a.href =  '#';
-    a.innerText = ' \u2715';
+    a.innerText = /*' \u2715'*/ ' ' + UnicodeSymbols.CLOSE;
     a.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE + taskId + "_" + subTaskNum);
     a.addEventListener('click', function(e) {
          var targ;
@@ -1026,7 +1035,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     // добавление сабТаска
     var aplus = document.createElement('a');
     aplus.href =  '#';
-    aplus.innerText = ' \uFF0B';
+    aplus.innerText = /*' \uFF0B'*/ ' ' + UnicodeSymbols.PLUS;
     aplus.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + taskId + "_" + subTaskNum);
     aplus.addEventListener('click', function(e) {
         var targ;
@@ -1268,7 +1277,7 @@ function InsertTask(taskListId, taskFromServer, ul) {
     taskDiv.appendChild(span);
 
     // стрелочка для перехода в секцию Watch
-    var arrow = createSimpleTextNode('\u25B6', MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
+    var arrow = createSimpleTextNode(/*'\u25B6'*/ UnicodeSymbols.ARROW_RIGHT, MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
     arrow.style.float = 'right';
