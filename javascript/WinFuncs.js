@@ -181,12 +181,15 @@ function generateList(taskLists) {
 /*array[] taskLists - task Lists that we got from request*/
 function processTmpList(taskLists) {
     var i;
+    var isNewTaskList;
 
     for (i = 0; i < taskLists.length; ++i) {
         // main list is refreshing, we MUST stop the updating process
         if (isDrawingMainList) {
             return;
         }
+
+        isNewTaskList = false;
 
         var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
         if (taskListUl) {
@@ -196,6 +199,7 @@ function processTmpList(taskLists) {
         else {
             // таск лист был вставлен
             drawTaskList(taskLists[i], $('listId'));
+            isNewTaskList = true;
         }
 
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
@@ -236,6 +240,10 @@ function processTmpList(taskLists) {
                 }
             } // for j
         }
+
+        if (isNewTaskList) {
+            CollapsibleLists.applyTo($(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+        }
     } // for i
 
     // анализируем что было удалено
@@ -263,7 +271,6 @@ function processTmpList(taskLists) {
         liTaskList.parentNode.removeChild(liTaskList);
     }
 
-    //CollapsibleLists.applyTo(document.getElementById('listId'));
     taskListsLast = taskLists;
 }
 
