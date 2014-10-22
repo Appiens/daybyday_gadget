@@ -259,11 +259,11 @@ function processTmpList(taskLists) {
 
     // удаляем то, что было удалено
     for (var i=0; i< toDelete.length; i++) {
-        var liTaskList = $( MainSectionPrefixes.PREFIX_SPAN_TASKLIST + toDelete[i]);
+        var liTaskList = $( MainSectionPrefixes.PREFIX_LI_TASKLIST + toDelete[i]);
         liTaskList.parentNode.removeChild(liTaskList);
     }
 
-    CollapsibleLists.applyTo(document.getElementById('listId'));
+    //CollapsibleLists.applyTo(document.getElementById('listId'));
     taskListsLast = taskLists;
 }
 
