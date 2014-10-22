@@ -1,6 +1,7 @@
 var makePOSTRequest = null;
 var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
+var taskListsLast = []; // последний полученный список таскЛистов
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
@@ -25,6 +26,7 @@ var StatusImagesNames = (function() {
 
 var MainSectionPrefixes = (function() {
     return {
+        PREFIX_LI_TASKLIST: "litl_",
         PREFIX_SPAN_TASKLIST: "tl_",
         PREFIX_UL_TASKLIST: "ul_",
         PREFIX_LI_TASK: "li_",
@@ -164,21 +166,12 @@ function generateList(taskLists) {
 
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {
-        var li = document.createElement('li');
-        var span = createSimpleTextNode(taskLists[i].title , MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskLists[i].id);
-        li.appendChild(span);
-        li.taskListId = taskLists[i].id;
-        li.taskList = taskLists[i];
-        ulMain.appendChild(li); // create <li>
-
-        var ul = document.createElement('ul'); // assume + create <ul>
-        ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
-        li.appendChild(ul);
-
-        DrawTasksForTaskList(taskLists[i], ul);
+        drawTaskList(taskLists[i], ulMain);
+        DrawTasksForTaskList(taskLists[i], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
     } // for i
 
     isDrawingMainList = false;
+    taskListsLast = taskLists;
 
     return ulMain;
 }
@@ -192,19 +185,17 @@ function processTmpList(taskLists) {
     for (i = 0; i < taskLists.length; ++i) {
         // main list is refreshing, we MUST stop the updating process
         if (isDrawingMainList) {
-            break;
+            return;
         }
-        console.log(JSON.stringify(taskLists[i]));
 
         var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
-
-        // таск лист был переименован
         if (taskListUl) {
-            // был переименован или удалён
+            // таск лист был переименован (возможно)
             SetTaskListTitle(taskLists[i]);
         }
         else {
-            // был вставлен
+            // таск лист был вставлен
+            drawTaskList(taskLists[i], $('listId'));
         }
 
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
@@ -212,7 +203,7 @@ function processTmpList(taskLists) {
 
                 // main list is refreshing, we MUST stop the updating process
                 if (isDrawingMainList) {
-                    break;
+                    return;
                 }
 
                 // если получаем таск, который редактируется в данный момент, выбрасываем пользователя в секцию Main, если были в секции Watch
@@ -246,6 +237,47 @@ function processTmpList(taskLists) {
             } // for j
         }
     } // for i
+
+    // анализируем что было удалено
+   var founded;
+   var toDelete = [];
+   for (var i=0; i < taskListsLast.length; i++) {
+       var taskListId = taskListsLast[i].id;
+
+       founded = false;
+       for (var j=0; j< taskLists.length; j++) {
+           if (taskLists[j].id == taskListId) {
+               founded = true;
+               break;
+           }
+       }
+
+       if (!founded) {
+            toDelete.push(taskListId);
+       }
+   }
+
+    // удаляем то, что было удалено
+    for (var i=0; i< toDelete.length; i++) {
+        var liTaskList = $( MainSectionPrefixes.PREFIX_SPAN_TASKLIST + toDelete[i]);
+        liTaskList.parentNode.removeChild(liTaskList);
+    }
+
+    taskListsLast = taskLists;
+}
+
+function drawTaskList(taskList, ulMain) {
+    var li = document.createElement('li');
+    li.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASKLIST + taskList.id);
+    var span = createSimpleTextNode(taskList.title , MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
+    li.appendChild(span);
+    li.taskListId = taskList.id;
+    li.taskList = taskList;
+    ulMain.appendChild(li); // create <li>
+
+    var ul = document.createElement('ul'); // assume + create <ul>
+    ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskList.id);
+    li.appendChild(ul);
 }
 
 /* Draws child tasks for a task list
@@ -269,6 +301,7 @@ function DrawTasksForTaskList(taskList, ul) {
 function AddNoTasksElement(taskList, ul) {
     var liChild = document.createElement('li');
     liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
+    // TODO add this to vocabulary
     liChild.appendChild(document.createTextNode('<no tasks>'));
     liChild.style.display = 'none';
     ul.appendChild(liChild);
@@ -1332,12 +1365,12 @@ function DeleteTask(taskFromServer, taskListId) {
     }
 
     var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId);
-    console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
+    // console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
 
-    for(var k=0; k < taskListUl.childNodes.length; k++) {
+    /*for(var k=0; k < taskListUl.childNodes.length; k++) {
         var child = taskListUl.childNodes[k];
         console.log(k + ' ' + child.type + ' ' + child.id);
-    }
+    }*/
 
 
     if (taskListUl.childNodes.length == 1) {
