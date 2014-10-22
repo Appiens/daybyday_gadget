@@ -242,7 +242,7 @@ function processTmpList(taskLists) {
         }
 
         if (isNewTaskList) {
-            CollapsibleLists.applyTo($(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+            CollapsibleLists.applyToChild($('listId'), $(MainSectionPrefixes.PREFIX_LI_TASKLIST + taskLists[i].id));
         }
     } // for i
 
