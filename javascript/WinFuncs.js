@@ -25,6 +25,7 @@ var StatusImagesNames = (function() {
 
 var MainSectionPrefixes = (function() {
     return {
+        PREFIX_SPAN_TASKLIST: "tl_",
         PREFIX_UL_TASKLIST: "ul_",
         PREFIX_LI_TASK: "li_",
         PREFIX_LI_NO_TASKS: "emp_",
@@ -164,7 +165,8 @@ function generateList(taskLists) {
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {
         var li = document.createElement('li');
-        li.appendChild(document.createTextNode(taskLists[i].title));
+        var span = createSimpleTextNode(taskLists[i].title , MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskLists[i].id);
+        li.appendChild(span);
         li.taskListId = taskLists[i].id;
         li.taskList = taskLists[i];
         ulMain.appendChild(li); // create <li>
@@ -188,6 +190,23 @@ function processTmpList(taskLists) {
     var i;
 
     for (i = 0; i < taskLists.length; ++i) {
+        // main list is refreshing, we MUST stop the updating process
+        if (isDrawingMainList) {
+            break;
+        }
+        console.log(JSON.stringify(taskLists[i]));
+
+        var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
+
+        // таск лист был переименован
+        if (taskListUl) {
+            // был переименован или удалён
+            SetTaskListTitle(taskLists[i]);
+        }
+        else {
+            // был вставлен
+        }
+
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
             for (var j = 0; j < taskLists[i].tasks.length; j++) {
 
@@ -445,6 +464,11 @@ function SetTaskStatusCheckbox(task) {
         checkBox.checked = (task.status == TaskStatuses.COMPLETED);
         setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
     }
+}
+
+function SetTaskListTitle(taskList) {
+    var taskListSpan = $(MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
+    taskListSpan.innerText = taskList.title;
 }
 
 // sets a task Title for a task div
