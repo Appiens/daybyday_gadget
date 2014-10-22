@@ -59,36 +59,52 @@ var CollapsibleLists =
         // loop over the list items within this node
         var lis = node.getElementsByTagName('li');
         for (var index = 0; index < lis.length; index ++){
-
-          // check whether this list item should be collapsible
-          if (!doNotRecurse || node == lis[index].parentNode){
-
-            // prevent text from being selected unintentionally
-            if (lis[index].addEventListener){
-              lis[index].addEventListener(
-                  'mousedown', function (e){ e.preventDefault(); }, false);
-            }else{
-              lis[index].attachEvent(
-                  'onselectstart', function(){ event.returnValue = false; });
-            }
-
-            // add the click listener
-            if (lis[index].addEventListener){
-              lis[index].addEventListener(
-                  'click', createClickListener(lis[index]), false);
-            }else{
-              lis[index].attachEvent(
-                  'onclick', createClickListener(lis[index]));
-            }
-
-            // close the unordered lists within this list item
-            toggle(lis[index]);
-
-          }
-
+            this.applyToLi(node, lis[index], doNotRecurse);
         }
 
       };
+
+       this.applyToChild =  function(node, childNode, doNotRecurse) {
+           // loop over the list items within this node
+           var lis = node.getElementsByTagName('li');
+           for (var index = 0; index < lis.length; index ++){
+               if (childNode.id != lis[index].id) {
+                   continue;
+               }
+
+               this.applyToLi(node, lis[index], doNotRecurse);
+           }
+       }
+
+       this.applyToLi = function(node, childNode, doNotRecurse) {
+           // check whether this list item should be collapsible
+           if (!doNotRecurse || node == childNode.parentNode){
+
+               // prevent text from being selected unintentionally
+               if (childNode.addEventListener){
+                   childNode.addEventListener(
+                       'mousedown', function (e){ e.preventDefault(); }, false);
+               }else{
+                   childNode.attachEvent(
+                       'onselectstart', function(){ event.returnValue = false; });
+               }
+
+               // add the click listener
+               if (childNode.addEventListener){
+                   childNode.addEventListener(
+                       'click', createClickListener(childNode), false);
+               }else{
+                   childNode.attachEvent(
+                       'onclick', createClickListener(childNode));
+               }
+
+               // close the unordered lists within this list item
+               toggle(childNode);
+
+           }
+
+       }
+
 
       /* Returns a function that toggles the display status of any unordered
        * list elements within the specified node. The parameter is:
