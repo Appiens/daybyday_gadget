@@ -263,6 +263,7 @@ function processTmpList(taskLists) {
         liTaskList.parentNode.removeChild(liTaskList);
     }
 
+    CollapsibleLists.applyTo(document.getElementById('listId'));
     taskListsLast = taskLists;
 }
 
