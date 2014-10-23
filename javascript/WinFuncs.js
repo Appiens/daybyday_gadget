@@ -146,7 +146,7 @@ function init(makePostRequestFunc) {
     $('input-task-comment').addEventListener('keyup', OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
 
-    $('a-move-to-list').innerText += ' ' + UnicodeSymbols.ARROW_DOWN;
+    $('a-move-to-list').innerText = getLangValue('action_move_to_list') + ' ' + UnicodeSymbols.ARROW_DOWN;
 }
 
 /*generates the tasks tree in a main section*/
