@@ -202,7 +202,7 @@ function processTmpList(taskLists) {
 
                 if (taskLists[i].tasks[j].deleted) {
                     try {
-                        DeleteTaskNode(taskLists[i].tasks[j], taskLists[i].id);
+                        taskNodeController.DeleteTaskNode(taskLists[i].tasks[j], taskLists[i].id);
                     }
                     catch (e) {
                         console.log("Error deleting task " + taskLists[i].tasks[j].id + ' ' + e);
@@ -213,10 +213,10 @@ function processTmpList(taskLists) {
 
                 try {
                    if ($(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id)) {
-                       UpdateTaskNode(taskLists[i].tasks[j]);
+                       taskNodeController.UpdateTaskNode(taskLists[i].tasks[j]);
                    }
                    else {
-                       InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+                       taskNodeController.InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
                    }
 
                 }
@@ -292,7 +292,7 @@ function DrawTasksForTaskList(taskList, ul) {
     if (taskList.tasks && taskList.tasks.length > 0) {
 
         for (var j=0; j < taskList.tasks.length; j++) {
-            InsertTaskNode(taskList.id, taskList.tasks[j], ul);
+            taskNodeController.InsertTaskNode(taskList.id, taskList.tasks[j], ul);
         } // for j
     } // if
     else {
@@ -342,36 +342,6 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
-// Creates a task div
-// task - the task which is connected to a task Div
-// int taskListId - the task list id to which this task belongs
-// returns an [object taskDiv] which should be added to some parent element
-function createTaskDiv(task, taskListId) {
-    var taskDiv = document.createElement('div');
-    taskDiv.setAttribute("id", MainSectionPrefixes.PREFIX_DIV_TASK + task.id);
-    taskDiv.task = task;
-    taskDiv.taskListId = taskListId;
-    taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
-    taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
-    return taskDiv;
-}
-
-// Creates status images and adds them to a task Div, we should show/hide them when task status changes
-// object taskDiv - a parent div for images
-// task -  the task which is connected to a task Div
-function createTaskStatusImages(taskDiv, task) {
-    var imgOverdue = createTaskStatusImg(StatusImagesNames.URL_OVERDUE, task, StatusImagesNames.PREFIX_OVERDUE);
-    taskDiv.appendChild(imgOverdue);
-    var imgAlarm = createTaskStatusImg(StatusImagesNames.URL_ALARM, task, StatusImagesNames.PREFIX_ALARM);
-    taskDiv.appendChild(imgAlarm);
-    var imgRepeat = createTaskStatusImg(StatusImagesNames.URL_REPEAT, task, StatusImagesNames.PREFIX_REPEAT);
-    taskDiv.appendChild(imgRepeat);
-    var imgPriorityHigh = createTaskStatusImg(StatusImagesNames.URL_PRIORITY_HIGH, task, StatusImagesNames.PREFIX_PRIORITY_HIGH);
-    taskDiv.appendChild(imgPriorityHigh);
-    var imgPriorityLow = createTaskStatusImg(StatusImagesNames.URL_PRIORITY_LOW, task, StatusImagesNames.PREFIX_PRIORITY_LOW);
-    taskDiv.appendChild(imgPriorityLow);
-}
-
 // Creates status images and adds them to a div-status-images div, we should show/hide them when task status changes
 function createTaskStatusImagesWatch() {
     var imgOverdue = createTaskStatusImgWatch(StatusImagesNames.URL_OVERDUE, StatusImagesNames.PREFIX_OVERDUE);
@@ -386,20 +356,7 @@ function createTaskStatusImagesWatch() {
     $('div-status-images').appendChild(imgPriorityLow);
 }
 
-// Creates a status img
-// string url - the Image url
-// task - the task which is connected to a task Div (to form the unique id)
-// prefix - the prefix to an image id
-// returns [object img] which should be added to some parent element
-function createTaskStatusImg(url, task, prefix) {
-    var img = document.createElement('img');
-    img.setAttribute("id", prefix + task.id);
-    img.src = url;
-    img.width = 12;
-    img.height = 12;
-    img.style.display = 'none';
-    return img;
-}
+
 
 // Creates a status img
 // string url - the Image url
@@ -414,37 +371,6 @@ function createTaskStatusImgWatch(url, prefix) {
     img.height = 16;
     img.style.display = 'none';
     return img;
-}
-
-// Creates a checkBox completed / needsAction for a task
-// task - the task which is connected to a task Div
-// returns [object checkBox] which should be added to some parent element
-function createCheckBoxForTask(task) {
-    var checkBox = document.createElement("input");
-    checkBox.type = 'checkbox';
-    checkBox.setAttribute("id", MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
-
-    checkBox.addEventListener('change', function(e) {
-        var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        OnChangeTaskStatusCB(targ);
-
-        var li = targ;
-        while (li != null && li.task == undefined) li = li.parentNode;
-        var task = li.task;
-
-        while (li != null && li.taskListId == undefined) li = li.parentNode;
-
-        var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
-        var taskListId = li? li.taskListId: '';
-        task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
-        changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
-    });
-
-    return checkBox;
 }
 
 /*
@@ -472,35 +398,6 @@ function refreshSubTasksSectionMain(taskDiv, task) {
 // </editor-fold>
 
 //  <editor-fold desc="Setting elements states for a MAIN div">
-
-// shows / hides images priority, repeat, alarm in MAIN section
-// task - a task which is connected to a task div, to which images belong
-function SetDisplayTaskStatusAddImages(task) {
-    if (additionalSectionExist(task)) {
-        var additionalSection = getAdditionalSection(task);
-        $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
-        $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
-        $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
-        $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
-    }
-}
-
-// shows / hides overdue image in MAIN section
-// task - a task which is connected to a task div, to which images belong
-function SetDisplayStatusOverdue(task) {
-    $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
-}
-
-// checks / unchecks task checkbox to show task.status
-// task - a task which is connected to a task div, to which checkbox belongs
-function SetTaskStatusCheckbox(task) {
-    var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
-
-    if (checkBox.checked != (task.status == TaskStatuses.COMPLETED)) {
-        checkBox.checked = (task.status == TaskStatuses.COMPLETED);
-        setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
-    }
-}
 
 // sets a task list Title for a task List span
 // taskList - a taskList which is connected to a taskList span
@@ -572,52 +469,6 @@ function SetDisplayTaskStatusAddImagesWatch() {
 
 // <editor-fold desc="Task Div event handlers for a MAIN div">
 
-function OnTaskDivMouseOver(e) {
-    var targ;
-    if (!e) var e = window.event;
-    if (e.target) targ = e.target;
-    else if (e.srcElement) targ = e.srcElement;
-
-    targ.style.background='#DFEEFF'; // cyan
-
-    if (targ.task) {
-        $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = '';
-    }
-}
-
-function OnTaskDivMouseOut(e) {
-    var targ;
-    if (!e) var e = window.event;
-    if (e.target) targ = e.target;
-    else if (e.srcElement) targ = e.srcElement;
-
-    targ.style.background='white';
-
-    if (targ.task) {
-        $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = 'none';
-    }
-}
-
-function OnTaskDivClick(e) {
-    var targ;
-    if (!e) var e = window.event;
-    if (e.target) targ = e.target;
-    else if (e.srcElement) targ = e.srcElement;
-
-    targ = targ.parentNode;
-
-    if (targ.task && targ.taskListId) {
-        // removing previous divSubWatch
-
-        $('watch').task = targ.task;
-        $('watch').taskListId = targ.taskListId;
-
-        SetWatchFieldsFromTask($('watch').task);
-        SetDisableWatchButtons(true);
-        showOneSection('watch');
-    }
-}
-
 function OnMoveToListClick(e) {
     var targ;
     if (!e) var e = window.event;
@@ -650,12 +501,7 @@ function OnMoveToListClick(e) {
 // </editor-fold>
 
 // <editor-fold desc="Common event handlers">
-function OnChangeTaskStatusCB(targ) {
-    var taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
-    var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
 
-    document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
-}
 
 function OnChangeSubTaskStatusCB(targ) {
     var taskId = targ.id.substring('ch_'.length);
@@ -1283,7 +1129,7 @@ function OnChangeTaskStatus(obj) {
     // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
-        UpdateTaskNode(taskFromServer);
+        taskNodeController.UpdateTaskNode(taskFromServer);
     }
 }
 
@@ -1298,7 +1144,7 @@ function  OnTaskInserted(obj) {
         var taskFromServer = JSON.parse(obj.text);
         var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
         taskListId = taskListId.substring(0, taskListId.indexOf('/'));
-        InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
+        taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
     }
 }
 
@@ -1324,91 +1170,12 @@ function TaskDeletedShell(taskToDelete, taskListId) {
             }
 
             if (obj.text == '' && obj.rc == 204) {
-                DeleteTaskNode(task, taskListId);
+                taskNodeController.DeleteTaskNode(task, taskListId);
             }
         }
     };
 
 }
-
-// редактирует нод соотетствующий таску в секции Main
-// object taskFromServer - задача с изменениями (пришедшая с сервера)
-function UpdateTaskNode(taskFromServer) {
-    if (taskFromServer) {
-
-        SetTaskStatusCheckbox(taskFromServer);
-        taskNodeController.SetTaskTitle(taskFromServer);
-
-        var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
-
-        SetDisplayStatusOverdue(taskFromServer);
-
-        if (taskFromServer.notes != taskDiv.task.notes) {
-
-            SetDisplayTaskStatusAddImages(taskFromServer);
-            refreshSubTasksSectionMain(taskDiv, taskFromServer);
-        }
-
-        taskDiv.task = taskFromServer;
-    }
-}
-
-// создаёт нод соотетствующий таску в секции Main
-// string taskListId - идентификатор таск листа, которому принадлежит таск
-// object taskFromServer - новая задача (с сервера)
-// object ul - родительский элемент (ul таск листа)
-function InsertTaskNode(taskListId, taskFromServer, ul) {
-    var liChild = document.createElement('li');
-    liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
-    var taskDiv = createTaskDiv(taskFromServer, taskListId);
-
-    var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
-    var checkBox = createCheckBoxForTask(taskFromServer);
-    taskDiv.appendChild(checkBox);
-    createTaskStatusImages(taskDiv, taskFromServer);
-    taskDiv.appendChild(span);
-
-    // стрелочка для перехода в секцию Watch
-    var arrow = createSimpleTextNode( UnicodeSymbols.ARROW_RIGHT, MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
-    taskDiv.appendChild(arrow);
-    liChild.appendChild(taskDiv);
-    // TODO create a function createArrow
-    arrow.style.float = 'right';
-    arrow.style.display = 'inline-block';
-    arrow.style.margin = '0px';
-    arrow.style.cursor = 'pointer';
-    arrow.style.display = 'none';
-    arrow.addEventListener("click", OnTaskDivClick);
-    arrow.title = getLangValue("edit_details");
-
-    refreshSubTasksSectionMain(taskDiv, taskFromServer);
-    ul.appendChild(liChild);
-    $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = 'none';
-
-    // set task statuses
-    SetDisplayTaskStatusAddImages(taskFromServer);
-    SetDisplayStatusOverdue(taskFromServer);
-    SetTaskStatusCheckbox(taskFromServer);
-    taskNodeController.SetTaskTitle(taskFromServer);
-}
-
-// удаляет нод соотетствующий таску в секции Main
-// string taskListId - идентификатор таск листа, которому принадлежит таск
-// object taskFromServer - удаляемая задача (с сервера)
-function DeleteTaskNode(taskFromServer, taskListId) {
-    var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
-    if (taskLi) {
-        taskLi.parentNode.removeChild(taskLi);
-    }
-
-    var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId);
-
-    if (taskListUl.childNodes.length == 1) {
-        // no tasks any more, we should show <no tasks> section
-        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = '';
-    }
-}
-
 
 // </editor-fold>
 
@@ -1519,11 +1286,249 @@ function getLangValue(message) {
 
 // can Insert, Update, Delete task nodes
 function TaskNodeController() {
+
+    // редактирует нод соотетствующий таску в секции Main
+    // object taskFromServer - задача с изменениями (пришедшая с сервера)
+     this.UpdateTaskNode = function(taskFromServer) {
+        if (taskFromServer) {
+
+            SetTaskStatusCheckbox(taskFromServer);
+            SetTaskTitle(taskFromServer);
+
+            var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
+
+            SetDisplayStatusOverdue(taskFromServer);
+
+            if (taskFromServer.notes != taskDiv.task.notes) {
+
+                SetDisplayTaskStatusAddImages(taskFromServer);
+                refreshSubTasksSectionMain(taskDiv, taskFromServer);
+            }
+
+            taskDiv.task = taskFromServer;
+        }
+    }
+
+    // создаёт нод соотетствующий таску в секции Main
+    // string taskListId - идентификатор таск листа, которому принадлежит таск
+    // object taskFromServer - новая задача (с сервера)
+    // object ul - родительский элемент (ul таск листа)
+    this.InsertTaskNode = function(taskListId, taskFromServer, ul) {
+        var liChild = document.createElement('li');
+        liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
+        var taskDiv = createTaskDiv(taskFromServer, taskListId);
+
+        var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
+        var checkBox = createCheckBoxForTask(taskFromServer);
+        taskDiv.appendChild(checkBox);
+        createTaskStatusImages(taskDiv, taskFromServer);
+        taskDiv.appendChild(span);
+
+        // стрелочка для перехода в секцию Watch
+        var arrow = createSimpleTextNode( UnicodeSymbols.ARROW_RIGHT, MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
+        taskDiv.appendChild(arrow);
+        liChild.appendChild(taskDiv);
+        // TODO create a function createArrow
+        arrow.style.float = 'right';
+        arrow.style.display = 'inline-block';
+        arrow.style.margin = '0px';
+        arrow.style.cursor = 'pointer';
+        arrow.style.display = 'none';
+        arrow.addEventListener("click", OnTaskDivClick);
+        arrow.title = getLangValue("edit_details");
+
+        refreshSubTasksSectionMain(taskDiv, taskFromServer);
+        ul.appendChild(liChild);
+        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = 'none';
+
+        // set task statuses
+        SetDisplayTaskStatusAddImages(taskFromServer);
+        SetDisplayStatusOverdue(taskFromServer);
+        SetTaskStatusCheckbox(taskFromServer);
+        SetTaskTitle(taskFromServer);
+    }
+
+    // удаляет нод соотетствующий таску в секции Main
+    // string taskListId - идентификатор таск листа, которому принадлежит таск
+    // object taskFromServer - удаляемая задача (с сервера)
+    this.DeleteTaskNode = function(taskFromServer, taskListId) {
+        var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
+        if (taskLi) {
+            taskLi.parentNode.removeChild(taskLi);
+        }
+
+        var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId);
+
+        if (taskListUl.childNodes.length == 1) {
+            // no tasks any more, we should show <no tasks> section
+            $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = '';
+        }
+    }
+
     // sets a task Title for a task span
-// task - a task which is connected to a task span
-    this.SetTaskTitle = function(task) {
+    // task - a task which is connected to a task span
+    var SetTaskTitle = function(task) {
         var taskSpan = $(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
         taskSpan.innerText = task.title;
+    }
+
+    // Creates a checkBox completed / needsAction for a task
+    // task - the task which is connected to a task Div
+    // returns [object checkBox] which should be added to some parent element
+    var createCheckBoxForTask = function(task) {
+        var checkBox = document.createElement("input");
+        checkBox.type = 'checkbox';
+        checkBox.setAttribute("id", MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
+
+        checkBox.addEventListener('change', function(e) {
+            var targ;
+
+            if (!e) var e = window.event;
+            if (e.target) targ = e.target;
+            else if (e.srcElement) targ = e.srcElement;
+            OnChangeTaskStatusCB(targ);
+
+            var li = targ;
+            while (li != null && li.task == undefined) li = li.parentNode;
+            var task = li.task;
+
+            while (li != null && li.taskListId == undefined) li = li.parentNode;
+
+            var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
+            var taskListId = li? li.taskListId: '';
+            task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
+            changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
+        });
+
+        return checkBox;
+    }
+
+    // Creates a task div
+    // task - the task which is connected to a task Div
+    // int taskListId - the task list id to which this task belongs
+    // returns an [object taskDiv] which should be added to some parent element
+    var createTaskDiv = function(task, taskListId) {
+        var taskDiv = document.createElement('div');
+        taskDiv.setAttribute("id", MainSectionPrefixes.PREFIX_DIV_TASK + task.id);
+        taskDiv.task = task;
+        taskDiv.taskListId = taskListId;
+        taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
+        taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
+        return taskDiv;
+    }
+
+    // Creates status images and adds them to a task Div, we should show/hide them when task status changes
+    // object taskDiv - a parent div for images
+    // task -  the task which is connected to a task Div
+    var createTaskStatusImages = function(taskDiv, task) {
+        var imgOverdue = createTaskStatusImg(StatusImagesNames.URL_OVERDUE, task, StatusImagesNames.PREFIX_OVERDUE);
+        taskDiv.appendChild(imgOverdue);
+        var imgAlarm = createTaskStatusImg(StatusImagesNames.URL_ALARM, task, StatusImagesNames.PREFIX_ALARM);
+        taskDiv.appendChild(imgAlarm);
+        var imgRepeat = createTaskStatusImg(StatusImagesNames.URL_REPEAT, task, StatusImagesNames.PREFIX_REPEAT);
+        taskDiv.appendChild(imgRepeat);
+        var imgPriorityHigh = createTaskStatusImg(StatusImagesNames.URL_PRIORITY_HIGH, task, StatusImagesNames.PREFIX_PRIORITY_HIGH);
+        taskDiv.appendChild(imgPriorityHigh);
+        var imgPriorityLow = createTaskStatusImg(StatusImagesNames.URL_PRIORITY_LOW, task, StatusImagesNames.PREFIX_PRIORITY_LOW);
+        taskDiv.appendChild(imgPriorityLow);
+    }
+
+    // shows / hides images priority, repeat, alarm in MAIN section
+    // task - a task which is connected to a task div, to which images belong
+    var SetDisplayTaskStatusAddImages = function(task) {
+        if (additionalSectionExist(task)) {
+            var additionalSection = getAdditionalSection(task);
+            $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
+        }
+    }
+
+    // shows / hides overdue image in MAIN section
+    // task - a task which is connected to a task div, to which images belong
+    var SetDisplayStatusOverdue = function(task) {
+        $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
+    }
+
+    // checks / unchecks task checkbox to show task.status
+// task - a task which is connected to a task div, to which checkbox belongs
+    var SetTaskStatusCheckbox = function(task) {
+        var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
+
+        if (checkBox.checked != (task.status == TaskStatuses.COMPLETED)) {
+            checkBox.checked = (task.status == TaskStatuses.COMPLETED);
+            setTimeout(function () { OnChangeTaskStatusCB(checkBox); }, 15);
+        }
+    }
+
+    var OnChangeTaskStatusCB = function(targ) {
+        var taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
+        var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
+
+        document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
+    }
+
+    var OnTaskDivMouseOver = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        targ.style.background='#DFEEFF'; // cyan
+
+        if (targ.task) {
+            $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = '';
+        }
+    }
+
+    var OnTaskDivMouseOut = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        targ.style.background='white';
+
+        if (targ.task) {
+            $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = 'none';
+        }
+    }
+
+    var OnTaskDivClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        targ = targ.parentNode;
+
+        if (targ.task && targ.taskListId) {
+            // removing previous divSubWatch
+
+            $('watch').task = targ.task;
+            $('watch').taskListId = targ.taskListId;
+
+            // TODO this funcs are from watch controller
+            SetWatchFieldsFromTask($('watch').task);
+            SetDisableWatchButtons(true);
+            showOneSection('watch');
+        }
+    }
+
+    // Creates a status img
+    // string url - the Image url
+    // task - the task which is connected to a task Div (to form the unique id)
+    // prefix - the prefix to an image id
+    // returns [object img] which should be added to some parent element
+    var createTaskStatusImg = function(url, task, prefix) {
+        var img = document.createElement('img');
+        img.setAttribute("id", prefix + task.id);
+        img.src = url;
+        img.width = 12;
+        img.height = 12;
+        img.style.display = 'none';
+        return img;
     }
 }
 
