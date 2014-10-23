@@ -122,9 +122,19 @@ var UnicodeSymbols = (function() {
 //  <div id="div-notes" class="new-select-style-wpandyou"> => сюда же привязываются таски
 //      <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
 //      <div id = "divsubwatch_" + taskId> (содержит подзадачи)
-//          <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
+//          <div>
+//              <checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox>
+//              <editbox id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</editbox>
+//              <a id = "a_w_" + taskId + "_" + subTaskNum>X</a> // удаление сабтаска
+//              <a id= "a_wa_" + taskId + "_" + subTaskNum>Plus</a> // добавление сабтаска (виден только последний)
+//          </div>
 //          ...
-//          <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div>
+//          <div>
+//              <checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox>
+//              <editbox id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</editbox>
+//              <a id = "a_w_" + taskId + "_" + subTaskNum>X</a> // удаление сабтаска
+//              <a id= "a_wa_" + taskId + "_" + subTaskNum>Plus</a> // добавление сабтаска
+//          </div>
 //      </div> // div sub
 // </div>
 
