@@ -6,6 +6,7 @@ var taskNodeController = new TaskNodeController();
 var taskListNodeController = new TaskListNodeController();
 var subTaskDivMainController = new SubTaskDivMainController();
 var subTaskDivWatchController = new  SubTaskDivWatchController();
+var requestController = new RequestController();
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
@@ -65,7 +66,8 @@ var UnicodeSymbols = (function() {
         CLOSE: '\u2715',
         PLUS: '\uFF0B',
         ARROW_RIGHT: '\u25B6',
-        GALKA: '\u2714'
+        GALKA: '\u2714',
+        ARROW_DOWN: '\u25BC'
     };})();
 
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
@@ -143,6 +145,8 @@ function init(makePostRequestFunc) {
     $('input-task-date').addEventListener('change', OnSomeEditDone);
     $('input-task-comment').addEventListener('keyup', OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
+
+    $('a-move-to-list').innerText += ' ' + UnicodeSymbols.ARROW_DOWN;
 }
 
 /*generates the tasks tree in a main section*/
@@ -260,7 +264,7 @@ function ActionSaveTask() {
 
         var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
         notes += getAdditionalSection($('watch').task);
-        changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+        requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
     }
 }
 
@@ -385,7 +389,7 @@ function OnMoveToListClick(e) {
     if (targ.taskListId) {
         if ($('watch').taskListId != targ.taskListId) {
             // try to move task to another task list
-            deleteTaskRequest($('watch').taskListId, $('watch').task);
+            requestController.deleteTaskRequest($('watch').taskListId, $('watch').task);
             var date = "";
             if ($('checkbox-with-date').checked) {
                 date = new MyDate();
@@ -394,7 +398,7 @@ function OnMoveToListClick(e) {
 
             var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
             notes += getAdditionalSection($('watch').task);
-            insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+            requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
             ActionBackToList();
         }
     }
@@ -635,135 +639,6 @@ function createMoveToListMenu() {
 // </editor-fold>
 
 
-// <editor-fold desc="Change task requests">
-function changeTaskStatusRequest(taskListId, taskId, isCompleted) {
-    var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
-    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-    var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
-    makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
-}
-
-function changeSubTaskStatusRequest(taskListId, taskId, notes) {
-    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-    var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"}';
-    makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
-}
-
-function changeTaskRequest(taskListId, task, isCompleted, title, dueDate, notes) {
-    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
-    var data = '{"id": "'+ task.id + '"';
-    var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
-    var hasChanges = false;
-
-    if (task.status != status) {
-        data += isCompleted? ',"status":"' + status + '"' : ',"status":"' + status + '", "completed": null';
-        hasChanges = true;
-    }
-
-    if (task.title != title) {
-        title = filterSpecialChar(title);
-        data +=  ',"title":"' + title + '"';
-        hasChanges = true;
-    }
-
-    if ((task.notes == undefined && notes != '') || (task.notes != undefined && task.notes != notes)) {
-        notes = filterSpecialChar(notes);
-        data += ',"notes":"' + notes + '"';
-        hasChanges = true;
-    }
-
-    if ((task.due == undefined && dueDate != '' ) || (task.due != undefined && dueDate != task.due)) {
-        if (dueDate != '') {
-           dueDate = dueDate.toJSON();
-        }
-
-
-        data += dueDate != '' ? ',"due":"' + dueDate + '"' : ',"due": null' ;
-        hasChanges = true;
-    }
-
-    data += '}';
-
-    if (hasChanges) {
-        makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
-    }
-}
-
-function insertTaskRequest(taskListId, isCompleted, title, dueDate, notes) {
-    // https://www.googleapis.com/tasks/v1/lists/' + listId + '/tasks
-    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks?key=' + API_KEY;
-    var data = '{';
-    var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
-    data += isCompleted? '"status":"' + status + '"' : '"status":"' + status + '", "completed": null';
-    title = filterSpecialChar(title);
-    data +=  ',"title":"' + title + '"';
-    notes = filterSpecialChar(notes);
-    data += ',"notes":"' + notes + '"';
-
-    if (dueDate) {
-        dueDate = dueDate.toJSON();
-        data += ',"due":"' + dueDate + '"';
-    }
-
-    data += '}';
-    makePOSTRequest(url, data, OnTaskInserted, "POST");
-}
-
-function deleteTaskRequest(taskListId, task) {
-    var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
-    var shell = TaskDeletedShell(task, taskListId);
-    makePOSTRequest(url, '', shell.OnTaskDeleted, "DELETE");
-}
-
-// calback function for a change task request
-function OnChangeTaskStatus(obj) {
-    if (obj.errors.length > 0) {
-        alert(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
-        return;
-    }
-
-    // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
-    if (obj.text) {
-        var taskFromServer = JSON.parse(obj.text);
-        taskNodeController.UpdateTaskNode(taskFromServer);
-    }
-}
-
-// calback function for a change task request
-function  OnTaskInserted(obj) {
-    if (obj.errors.length > 0) {
-        alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
-        return;
-    }
-
-    if (obj.text) {
-        var taskFromServer = JSON.parse(obj.text);
-        var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
-        taskListId = taskListId.substring(0, taskListId.indexOf('/'));
-        taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
-    }
-}
-
-// обертка для обработчика события удаления таска
-function TaskDeletedShell(taskToDelete, taskListId) {
-    var task = taskToDelete;
-    return {
-        OnTaskDeleted: function(obj) {
-            if (obj.errors.length > 0) {
-                alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
-                return;
-            }
-
-            if (obj.text == '' && obj.rc == 204) {
-                taskNodeController.DeleteTaskNode(task, taskListId);
-            }
-        }
-    };
-
-}
-
-// </editor-fold>
-
 // <editor-fold desc="Utils">
 function filterSpecialChar(data) {
     if (data) {
@@ -868,6 +743,141 @@ function getLangValue(message) {
 }
 
 // </editor-fold>
+
+function RequestController() {
+    this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted) {
+        var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
+        var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
+        makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
+    }
+
+    this.changeSubTaskStatusRequest = function(taskListId, taskId, notes) {
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
+        var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"}';
+        makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
+    }
+
+    this.changeTaskRequest = function(taskListId, task, isCompleted, title, dueDate, notes) {
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
+        var data = '{"id": "'+ task.id + '"';
+        var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
+        var hasChanges = false;
+
+        if (task.status != status) {
+            data += isCompleted? ',"status":"' + status + '"' : ',"status":"' + status + '", "completed": null';
+            hasChanges = true;
+        }
+
+        if (task.title != title) {
+            title = filterSpecialChar(title);
+            data +=  ',"title":"' + title + '"';
+            hasChanges = true;
+        }
+
+        if ((task.notes == undefined && notes != '') || (task.notes != undefined && task.notes != notes)) {
+            notes = filterSpecialChar(notes);
+            data += ',"notes":"' + notes + '"';
+            hasChanges = true;
+        }
+
+        if ((task.due == undefined && dueDate != '' ) || (task.due != undefined && dueDate != task.due)) {
+            if (dueDate != '') {
+                dueDate = dueDate.toJSON();
+            }
+
+
+            data += dueDate != '' ? ',"due":"' + dueDate + '"' : ',"due": null' ;
+            hasChanges = true;
+        }
+
+        data += '}';
+
+        if (hasChanges) {
+            makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
+        }
+    }
+
+    this.insertTaskRequest = function(taskListId, isCompleted, title, dueDate, notes) {
+        // https://www.googleapis.com/tasks/v1/lists/' + listId + '/tasks
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks?key=' + API_KEY;
+        var data = '{';
+        var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
+        data += isCompleted? '"status":"' + status + '"' : '"status":"' + status + '", "completed": null';
+        title = filterSpecialChar(title);
+        data +=  ',"title":"' + title + '"';
+        notes = filterSpecialChar(notes);
+        data += ',"notes":"' + notes + '"';
+
+        if (dueDate) {
+            dueDate = dueDate.toJSON();
+            data += ',"due":"' + dueDate + '"';
+        }
+
+        data += '}';
+        makePOSTRequest(url, data, OnTaskInserted, "POST");
+    }
+
+    this.deleteTaskRequest = function(taskListId, task) {
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
+        var shell = TaskDeletedShell(task, taskListId);
+        makePOSTRequest(url, '', shell.OnTaskDeleted, "DELETE");
+    }
+
+    // calback function for a change task request
+    var OnChangeTaskStatus = function(obj) {
+        if (obj.errors.length > 0) {
+            alert(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
+            return;
+        }
+
+
+        if (obj.text) {
+            var taskFromServer = JSON.parse(obj.text);
+
+            // обновляем секцию Main
+            taskNodeController.UpdateTaskNode(taskFromServer);
+
+            // если получаем таск, который редактируется в данный момент, обновляем привязки в секции Watch
+            if ($('watch').style.display != 'none' && $('watch').task && $('watch').task.id == taskFromServer.id) {
+                $('watch').task = taskFromServer;
+                SetDisableWatchButtons(true);
+            }
+        }
+    }
+
+    // calback function for a change task request
+    var OnTaskInserted = function(obj) {
+        if (obj.errors.length > 0) {
+            alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+            return;
+        }
+
+        if (obj.text) {
+            var taskFromServer = JSON.parse(obj.text);
+            var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
+            taskListId = taskListId.substring(0, taskListId.indexOf('/'));
+            taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
+        }
+    }
+
+// обертка для обработчика события удаления таска
+    var TaskDeletedShell = function(taskToDelete, taskListId) {
+        var task = taskToDelete;
+        return {
+            OnTaskDeleted: function(obj) {
+                if (obj.errors.length > 0) {
+                    alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+                    return;
+                }
+
+                if (obj.text == '' && obj.rc == 204) {
+                    taskNodeController.DeleteTaskNode(task, taskListId);
+                }
+            }
+        };
+    }
+}
 
 function TaskListNodeController() {
     /* Draws child tasks for a task list
@@ -1065,7 +1075,7 @@ function TaskNodeController() {
             var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
             var taskListId = li? li.taskListId: '';
             task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
-            changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
+            requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
         });
 
         return checkBox;
@@ -1287,7 +1297,7 @@ function SubTaskDivMainController() {
             arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
             var newNotes = convertFromSubTasks(arr);
             task.notes = newNotes;
-            changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
+            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
         });
 
         span.appendChild(checkBox);
@@ -1428,6 +1438,7 @@ function SubTaskDivWatchController() {
             if (e.target) targ = e.target;
             else if (e.srcElement) targ = e.srcElement;
             DeleteSubTaskNode(targ);
+            OnSomeEditDone();
         });
 
         divSubTask.appendChild(a);
@@ -1443,6 +1454,7 @@ function SubTaskDivWatchController() {
             if (e.target) targ = e.target;
             else if (e.srcElement) targ = e.srcElement;
             InsertEmptySubTaskNode(targ);
+            OnSomeEditDone();
         });
 
         divSubTask.appendChild(aplus);

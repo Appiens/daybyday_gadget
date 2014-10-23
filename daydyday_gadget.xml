@@ -264,7 +264,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('16:26');
+                 alert('17:15');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -496,7 +496,7 @@
     </div>
     <ul id="navWrapper">
         <li>
-            <a href="pageA.html" aria-haspopup="true">__MSG_action_move_to_list__</a>
+            <a id="a-move-to-list" href="#" aria-haspopup="true">__MSG_action_move_to_list__</a>
             <ul id="taskListsWatch">
             </ul>
         </li>
