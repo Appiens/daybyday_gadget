@@ -3,6 +3,7 @@ var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
 var taskNodeController = new TaskNodeController();
+var taskListNodeController = new TaskListNodeController();
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
@@ -151,8 +152,8 @@ function generateList(taskLists) {
 
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {
-        InsertTaskListNode(taskLists[i], ulMain);
-        DrawTasksForTaskList(taskLists[i], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+        taskListNodeController.InsertTaskListNode(taskLists[i], ulMain);
+        taskListNodeController.InsertTasksNodesForTaskList(taskLists[i], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
     } // for i
 
     isDrawingMainList = false;
@@ -183,7 +184,7 @@ function processTmpList(taskLists) {
         }
         else {
             // таск лист был вставлен
-            InsertTaskListNode(taskLists[i], $('listId'));
+            taskListNodeController.InsertTaskListNode(taskLists[i], $('listId'));
             isNewTaskList = true;
         }
 
@@ -232,82 +233,8 @@ function processTmpList(taskLists) {
         }
     } // for i
 
-    DeleteTaskListNodeNotExist(taskLists, taskListsLast);
+    taskListNodeController.DeleteTaskListNodeNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
-}
-
-// удалить ноды с таск листами, которые были удалены
-// array[] taskListsCurr - последний полученный с сервера список списков задач
-// array[] taskListsOld - предпоследний полученный с сервера список списков задач (изображённый на экране в данный момент)
-function DeleteTaskListNodeNotExist(taskListsCurr, taskListsOld) {
-    // анализируем что было удалено
-    var founded;
-    var toDelete = [];
-    for (var i=0; i < taskListsOld.length; i++) {
-        var taskListId = taskListsOld[i].id;
-
-        founded = false;
-        for (var j=0; j< taskListsCurr.length; j++) {
-            if (taskListsCurr[j].id == taskListId) {
-                founded = true;
-                break;
-            }
-        }
-
-        if (!founded) {
-            toDelete.push(taskListId);
-        }
-    }
-
-    // удаляем то, что было удалено
-    for (var i=0; i< toDelete.length; i++) {
-        var liTaskList = $( MainSectionPrefixes.PREFIX_LI_TASKLIST + toDelete[i]);
-        liTaskList.parentNode.removeChild(liTaskList);
-    }
-}
-
-// рисование нода, соответствующего таск листу
-// object taskList - изображаемый таск лист
-// ulMain - корень дерева, для которого ноды с таск листами являются дочерними
-function InsertTaskListNode(taskList, ulMain) {
-    var li = document.createElement('li');
-    li.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASKLIST + taskList.id);
-    var span = createSimpleTextNode(taskList.title , MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
-    li.appendChild(span);
-    li.taskListId = taskList.id;
-    li.taskList = taskList;
-    ulMain.appendChild(li);
-
-    var ul = document.createElement('ul'); // assume + create <ul>
-    ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskList.id);
-    li.appendChild(ul);
-}
-
-/* Draws child tasks for a task list
- object taskList - a task list to draw
- object ul - an ul section - a parent for <li> sections (which are tasks) */
-function DrawTasksForTaskList(taskList, ul) {
-    AddNoTasksElement(taskList, ul);
-
-    if (taskList.tasks && taskList.tasks.length > 0) {
-
-        for (var j=0; j < taskList.tasks.length; j++) {
-            taskNodeController.InsertTaskNode(taskList.id, taskList.tasks[j], ul);
-        } // for j
-    } // if
-    else {
-        $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = '';
-    }
-}
-
-/*Adds <no task> element to each task List ul section*/
-function AddNoTasksElement(taskList, ul) {
-    var liChild = document.createElement('li');
-    liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
-
-    liChild.appendChild(document.createTextNode('<' +  getLangValue("no_tasks_title") + '>'));
-    liChild.style.display = 'none';
-    ul.appendChild(liChild);
 }
 
 // <editor-fold desc="Creating elements for a MAIN div">
@@ -1148,17 +1075,6 @@ function  OnTaskInserted(obj) {
     }
 }
 
-/*function OnTaskDeleted(obj) {
-    if (obj.errors.length > 0) {
-        alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
-        return;
-    }
-
-    if (obj.text == '' && obj.rc == 204) {
-        // deleted successfully
-    }
-}*/
-
 // обертка для обработчика события удаления таска
 function TaskDeletedShell(taskToDelete, taskListId) {
     var task = taskToDelete;
@@ -1283,6 +1199,82 @@ function getLangValue(message) {
 }
 
 // </editor-fold>
+
+function TaskListNodeController() {
+    /* Draws child tasks for a task list
+     object taskList - a task list to draw
+     object ul - an ul section - a parent for <li> sections (which are tasks) */
+    this.InsertTasksNodesForTaskList = function(taskList, ul) {
+        InsertNoTasksNode(taskList, ul);
+
+        if (taskList.tasks && taskList.tasks.length > 0) {
+
+            for (var j=0; j < taskList.tasks.length; j++) {
+                taskNodeController.InsertTaskNode(taskList.id, taskList.tasks[j], ul);
+            } // for j
+        } // if
+        else {
+            $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id).style.display = '';
+        }
+    }
+
+    // рисование нода, соответствующего таск листу
+    // object taskList - изображаемый таск лист
+    // ulMain - корень дерева, для которого ноды с таск листами являются дочерними
+    this.InsertTaskListNode = function(taskList, ulMain) {
+        var li = document.createElement('li');
+        li.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASKLIST + taskList.id);
+        var span = createSimpleTextNode(taskList.title , MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
+        li.appendChild(span);
+        li.taskListId = taskList.id;
+        li.taskList = taskList;
+        ulMain.appendChild(li);
+
+        var ul = document.createElement('ul'); // assume + create <ul>
+        ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskList.id);
+        li.appendChild(ul);
+    }
+
+    // удалить ноды с таск листами, которые были удалены
+    // array[] taskListsCurr - последний полученный с сервера список списков задач
+    // array[] taskListsOld - предпоследний полученный с сервера список списков задач (изображённый на экране в данный момент)
+    this.DeleteTaskListNodeNotExist = function(taskListsCurr, taskListsOld) {
+        // анализируем что было удалено
+        var founded;
+        var toDelete = [];
+        for (var i=0; i < taskListsOld.length; i++) {
+            var taskListId = taskListsOld[i].id;
+
+            founded = false;
+            for (var j=0; j< taskListsCurr.length; j++) {
+                if (taskListsCurr[j].id == taskListId) {
+                    founded = true;
+                    break;
+                }
+            }
+
+            if (!founded) {
+                toDelete.push(taskListId);
+            }
+        }
+
+        // удаляем то, что было удалено
+        for (var i=0; i< toDelete.length; i++) {
+            var liTaskList = $( MainSectionPrefixes.PREFIX_LI_TASKLIST + toDelete[i]);
+            liTaskList.parentNode.removeChild(liTaskList);
+        }
+    }
+
+    /*Adds <no task> element to each task List ul section*/
+    var InsertNoTasksNode = function(taskList, ul) {
+        var liChild = document.createElement('li');
+        liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
+
+        liChild.appendChild(document.createTextNode('<' +  getLangValue("no_tasks_title") + '>'));
+        liChild.style.display = 'none';
+        ul.appendChild(liChild);
+    }
+}
 
 // can Insert, Update, Delete task nodes
 function TaskNodeController() {
