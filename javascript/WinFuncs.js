@@ -1310,6 +1310,7 @@ function SubTaskDivMainController() {
 }
 
 function SubTaskDivWatchController() {
+    var parent = this;
     // Creates Sub Tasks Div section And Adds it to taskDiv section as a child
     // object taskDiv - the parent div for a subTasksDiv
     // task - the task which is connected to a task Div
@@ -1455,7 +1456,7 @@ function SubTaskDivWatchController() {
     // добавление нового (пустого сабтаска) в секцию divsubwatch
     // object targ - "плюсик" (не используется)
     var InsertEmptySubTaskNode = function(targ) {
-        var subTasks = this.getSubTasksArrFromWatchDiv();
+        var subTasks = parent.getSubTasksArrFromWatchDiv();
         var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
         var subTaskNum = subTasks.length;
 
@@ -1468,7 +1469,7 @@ function SubTaskDivWatchController() {
     var DeleteSubTaskNode = function(targ) {
         // получить номер удаляемого сабтаска
         var subTaskNum = parseInt(targ.id.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
-        var subTasks = this.getSubTasksArrFromWatchDiv();
+        var subTasks = parent.getSubTasksArrFromWatchDiv();
 
         // нельзя удалить единственный сабтаск
         if (subTasks.length == 1) {
@@ -1501,7 +1502,7 @@ function SubTaskDivWatchController() {
     // установить видимость "плюсика" - для добавления сабТаска
     // плюсик всегда виден только у последнего сабтаска
     var setSubTaskAddVisibility = function() {
-        var subTasks = this.getSubTasksArrFromWatchDiv();
+        var subTasks =  parent.getSubTasksArrFromWatchDiv();
 
         for (var i = 0;  i < subTasks.length - 1;i++) {
             $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + $('watch').task.id + "_" + i).style.display = 'none';
