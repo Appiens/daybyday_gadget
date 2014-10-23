@@ -4,6 +4,7 @@ var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
 var taskNodeController = new TaskNodeController();
 var taskListNodeController = new TaskListNodeController();
+var subTaskDivMainController = new SubTaskDivMainController();
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
@@ -233,7 +234,7 @@ function processTmpList(taskLists) {
         }
     } // for i
 
-    taskListNodeController.DeleteTaskListNodeNotExist(taskLists, taskListsLast);
+    taskListNodeController.DeleteTaskListNodesNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
 }
 
@@ -300,27 +301,7 @@ function createTaskStatusImgWatch(url, prefix) {
     return img;
 }
 
-/*
-    Refreshes sub tasks div (removes old section and creates new section)
-    object taskDiv - the parent section for a subTaskDiv
-    task - a task which is connected to a task Div
-*/
-function refreshSubTasksSectionMain(taskDiv, task) {
-    var notesSection = getNotesSection(task);
-    var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
 
-    if (subTaskDiv) {
-        subTaskDiv.parentNode.removeChild(subTaskDiv);
-    }
-
-    taskDiv.subTask = null;
-
-    if (canBeConvertedToSubtasks( notesSection)) {
-        var subTasks = convertToSubTasks(notesSection);
-        createSubTasksDiv(taskDiv, task, subTasks, MainSectionPrefixes.PREFIX_DIV_SUBTASK, true);
-        taskDiv.subTasks = subTasks;
-    }
-}
 
 // </editor-fold>
 
@@ -429,18 +410,6 @@ function OnMoveToListClick(e) {
 
 // <editor-fold desc="Common event handlers">
 
-
-function OnChangeSubTaskStatusCB(targ) {
-    var taskId = targ.id.substring('ch_'.length);
-    var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
-
-    var li = targ;
-    while (li != null && li.taskListId == undefined) li = li.parentNode;
-
-
-    document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
-}
-
 /*  No date checkbox event handler
  Hides input-task-date if checkbox not checked, shows otherwise */
 function OnNoDateCheckChanged() {
@@ -500,61 +469,6 @@ function getSubTasksArrFromWatchDiv() {
     return subTasks;
 }
 
-// Adds a subTask span and a checkbox to a parent task
-// object li - parent node (with task name)
-// string subTask - a name of a subTask
-// string taskId  - parent task`s id
-// int subTaskNum - subtask`s number
-function drawSubTask(li, subTask, taskId, subTaskNum) {
-    var span = document.createElement('div');
-    span.style.paddingLeft = '25px';
-
-    var isDone = subTask.substring(0,1) == 'T';
-    var text = subTask.substring(1);
-    var checkBox = document.createElement("input");
-    checkBox.type = 'checkbox';
-    checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
-
-    checkBox.addEventListener('change', function(e) {
-        var targ;
-
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-        OnChangeSubTaskStatusCB(targ);
-
-        var li = targ;
-
-        while (li != null && li.task == undefined) li = li.parentNode;
-        var m_taskId = li ? li.task.id : '';
-        var oldNotes = li ? li.task.notes : '';
-        var task = li.task;
-
-        while (li != null && li.taskListId == undefined) li = li.parentNode;
-
-
-        var taskListId = li? li.taskListId: '';
-        var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
-
-        var arr = convertToSubTasks(oldNotes);
-        arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
-        var newNotes = convertFromSubTasks(arr);
-        task.notes = newNotes;
-        changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
-    });
-
-    span.appendChild(checkBox);
-    span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
-    li.appendChild(span);
-    //SetSubTaskTitle(taskId, subTaskNum, text);
-
-    if (isDone) {
-        checkBox.checked = true;
-        setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
-    }
-}
-
-
 // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
 // false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
 // Draws subTasks for a task
@@ -569,7 +483,7 @@ function drawSubTasks_new(li, subTasks, taskId, forMain) {
         }
 
         if (forMain) {
-            drawSubTask(li, subTasks[k], taskId, k);
+            // drawSubTask(li, subTasks[k], taskId, k);
         }
         else {
             drawSubTaskWatch(li, subTasks[k], taskId, k);
@@ -1238,7 +1152,7 @@ function TaskListNodeController() {
     // удалить ноды с таск листами, которые были удалены
     // array[] taskListsCurr - последний полученный с сервера список списков задач
     // array[] taskListsOld - предпоследний полученный с сервера список списков задач (изображённый на экране в данный момент)
-    this.DeleteTaskListNodeNotExist = function(taskListsCurr, taskListsOld) {
+    this.DeleteTaskListNodesNotExist = function(taskListsCurr, taskListsOld) {
         // анализируем что было удалено
         var founded;
         var toDelete = [];
@@ -1294,7 +1208,7 @@ function TaskNodeController() {
             if (taskFromServer.notes != taskDiv.task.notes) {
 
                 SetDisplayTaskStatusAddImages(taskFromServer);
-                refreshSubTasksSectionMain(taskDiv, taskFromServer);
+                subTaskDivMainController.RecreateSubTaskDiv(taskDiv, taskFromServer);
             }
 
             taskDiv.task = taskFromServer;
@@ -1329,7 +1243,7 @@ function TaskNodeController() {
         arrow.addEventListener("click", OnTaskDivClick);
         arrow.title = getLangValue("edit_details");
 
-        refreshSubTasksSectionMain(taskDiv, taskFromServer);
+        subTaskDivMainController.RecreateSubTaskDiv(taskDiv, taskFromServer);
         ul.appendChild(liChild);
         $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = 'none';
 
@@ -1522,6 +1436,122 @@ function TaskNodeController() {
         img.style.display = 'none';
         return img;
     }
+}
+
+function SubTaskDivMainController() {
+    /*
+     Refreshes sub tasks div (removes old section and creates new section)
+     object taskDiv - the parent section for a subTaskDiv
+     task - a task which is connected to a task Div
+     */
+    this.RecreateSubTaskDiv = function(taskDiv, task) {
+        var notesSection = getNotesSection(task);
+        var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
+
+        if (subTaskDiv) {
+            subTaskDiv.parentNode.removeChild(subTaskDiv);
+        }
+
+        taskDiv.subTask = null;
+
+        if (canBeConvertedToSubtasks( notesSection)) {
+            var subTasks = convertToSubTasks(notesSection);
+            InsertSubTaskDiv(taskDiv, task, subTasks);
+            taskDiv.subTasks = subTasks;
+        }
+    }
+
+    var InsertSubTaskDiv = function(taskDiv, task, subTasks) {
+        var subTasksDiv = document.createElement('div');
+        subTasksDiv.setAttribute("id", MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
+        InsertSubTaskNodes(subTasksDiv, subTasks, task.id);
+        taskDiv.appendChild(subTasksDiv);
+    }
+
+    // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
+    // false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
+    // Draws subTasks for a task
+    // object li - parent node (with task name)
+    // string[] subTasks - array of subTasks
+    // string taskId - the Task id
+    // bool forMain - true, draw subTasks for main section ; false, draw subTasks for watch section
+    var InsertSubTaskNodes = function(li, subTasks, taskId) {
+        for (var k = 0; k< subTasks.length; k++) {
+            if (subTasks[k].trim() == '') {
+                continue;
+            }
+
+            InsertSubTaskNode(li, subTasks[k], taskId, k);
+        }
+    }
+
+    // Adds a subTask span and a checkbox to a parent task
+    // object li - parent node (with task name)
+    // string subTask - a name of a subTask
+    // string taskId  - parent task`s id
+    // int subTaskNum - subtask`s number
+    var InsertSubTaskNode = function(li, subTask, taskId, subTaskNum) {
+        var span = document.createElement('div');
+        span.style.paddingLeft = '25px';
+
+        var isDone = subTask.substring(0,1) == 'T';
+        var text = subTask.substring(1);
+        var checkBox = document.createElement("input");
+        checkBox.type = 'checkbox';
+        checkBox.setAttribute("id", "ch_" + taskId + "_" + subTaskNum);
+
+        checkBox.addEventListener('change', function(e) {
+            var targ;
+
+            if (!e) var e = window.event;
+            if (e.target) targ = e.target;
+            else if (e.srcElement) targ = e.srcElement;
+            OnChangeSubTaskStatusCB(targ);
+
+            var li = targ;
+
+            while (li != null && li.task == undefined) li = li.parentNode;
+            var m_taskId = li ? li.task.id : '';
+            var oldNotes = li ? li.task.notes : '';
+            var task = li.task;
+
+            while (li != null && li.taskListId == undefined) li = li.parentNode;
+
+
+            var taskListId = li? li.taskListId: '';
+            var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
+
+            var arr = convertToSubTasks(oldNotes);
+            arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
+            var newNotes = convertFromSubTasks(arr);
+            task.notes = newNotes;
+            changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
+        });
+
+        span.appendChild(checkBox);
+        span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
+        li.appendChild(span);
+
+        if (isDone) {
+            checkBox.checked = true;
+            setTimeout(function () { OnChangeSubTaskStatusCB(checkBox);}, 15);
+        }
+    }
+
+    var OnChangeSubTaskStatusCB = function(targ) {
+        var taskId = targ.id.substring('ch_'.length);
+        var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
+
+        var li = targ;
+        while (li != null && li.taskListId == undefined) li = li.parentNode;
+
+
+        $(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
+    }
+}
+
+function SubTaskDivWatchController() {
+
 }
 
 
