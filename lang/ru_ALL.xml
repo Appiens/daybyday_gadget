@@ -11,7 +11,7 @@
     <msg name="action_discard">Отменить изменения</msg>
     <msg name="action_move_to_list">Переместить</msg>
     <msg name="action_refresh">Обновить</msg>
-    <msg name="no_tasks_title">Нет задач</msg>
+    <msg name="no_tasks_title">нет задач</msg>
     <msg name="msg_error_occured">Произошла ошибка!</msg>
     <msg name="msg_move_forbidden">Пожалуйста, сохраните или отмените изменени перед перемещением!</msg>
 </messagebundle>

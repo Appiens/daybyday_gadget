@@ -64,52 +64,42 @@ var UnicodeSymbols = (function() {
         GALKA: '\u2714'
     };})();
 
-// структура дерева
+// структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
 //   <ul id="listId">
-//   <li> (содержит ссылку taskListId, taskList) Название списка задач
-//   <ul id = "ul_" + taskListId> (список задач)
-//   <li id= "emp_" + taskListId> (есть есть другие li в списке - секция скрыта, иначе отображена)
-//   <span> <no tasks> </span>
-//   </li>
-//   <li id="li_" + taskId> (именно его нужно удалить при удалении таска)
-//
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId) ===> Нажатие на DIV вызывает окно редактирования таска
-//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox> ===> Нажатие на CHECKBOX объявляет задачу выполненной/невыполненной (отправляет запрос PUT status)
-//   <img id = "img_alm_" + taskId> // признак напоминания скрыт если нет напоминания, отображён - если есть
-//   <img id = "img_rpt_" + taskId> // признак повторяющейся задачи скрыт если нет, отображён если есть
-//   <img id = "img_ovr_" + taskId> // признак просроченной задачи скрыт если нет, отображён если есть
-//   <img id = "img_phi_" + taskId> // признак высокого приоритета - скрыт если нет, отображён если есть
-//   <img id = "img_plo_" + taskId> // признак низкого приоритета - скрыт если нет, отображён если есть
-//   <span id = "t_" + taskId> Название задачи </span>
-//   <div id = "divsub_" + taskId> (содержит подзадачи)
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
-//   ...
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   </div> // div sub
-//   </div> // div task
-//   </li>
-//   ...
-//   <li>
-//   <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
-//   <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
-//   <img id = "img_alm_" + taskId> // признак напоминания скрыт если нет напоминания, отображён - если есть
-//   <img id = "img_rpt_" + taskId> // признак повторяющейся задачи скрыт если нет, отображён если есть
-//   <img id = "img_ovr_" + taskId> // признак просроченной задачи скрыт если нет, отображён если есть
-//   <img id = "img_phi_" + taskId> // признак высокого приоритета - скрыт если нет, отображён если есть
-//   <img id = "img_plo_" + taskId> // признак низкого приоритета - скрыт если нет, отображён если есть
-//   <span id = "t_" + taskId> Название задачи </span>
-//   <div id = "divsub_" + taskId> (содержит подзадачи)
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   ...
-//   <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
-//   </div> // div sub
-//   </div> // div task
-//   </li>
-//   </ul> // tasks
-//   </li>
-//   ...
-
-
+//      <li id= "litl_" + taskListId> (содержит ссылку taskListId, taskList) Название списка задач
+//          <span id="tl_" + taskListId>Название списка задач
+//          <ul id = "ul_" + taskListId> (список задач)
+//              <li id= "emp_" + taskListId> (есть есть другие li в списке - секция скрыта, иначе отображена)
+//                  <span> <no tasks> </span>
+//              <li id="li_" + taskId> (именно его нужно удалить при удалении таска)
+//                  <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId) ===> Нажатие на DIV вызывает окно редактирования таска
+//                      <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox> ===> Нажатие на CHECKBOX объявляет задачу выполненной/невыполненной (отправляет запрос PUT status)
+//                      <img id = "img_alm_" + taskId> // признак напоминания скрыт если нет напоминания, отображён - если есть
+//                      <img id = "img_rpt_" + taskId> // признак повторяющейся задачи скрыт если нет, отображён если есть
+//                      <img id = "img_ovr_" + taskId> // признак просроченной задачи скрыт если нет, отображён если есть
+//                      <img id = "img_phi_" + taskId> // признак высокого приоритета - скрыт если нет, отображён если есть
+//                      <img id = "img_plo_" + taskId> // признак низкого приоритета - скрыт если нет, отображён если есть
+//                      <span id = "t_" + taskId> Название задачи </span>
+//                      <span id = "ar_" + taskId> Стрелочка для редактирования задачи</span> // отображается при наведении курсора
+//                      <div id = "divsub_" + taskId> (содержит подзадачи)
+//                          <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
+//                          ...
+//                          <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//              ...
+//              <li id="li_" + taskId> (именно его нужно удалить при удалении таска)
+//                  <div id = "div_" + taskId> (содержит ссылки task и subTask и taskListId)
+//                      <checkbox id= "ch_" + taskId> (выполенена задача или нет) </checkbox>
+//                      <img id = "img_alm_" + taskId> // признак напоминания скрыт если нет напоминания, отображён - если есть
+//                      <img id = "img_rpt_" + taskId> // признак повторяющейся задачи скрыт если нет, отображён если есть
+//                      <img id = "img_ovr_" + taskId> // признак просроченной задачи скрыт если нет, отображён если есть
+//                      <img id = "img_phi_" + taskId> // признак высокого приоритета - скрыт если нет, отображён если есть
+//                      <img id = "img_plo_" + taskId> // признак низкого приоритета - скрыт если нет, отображён если есть
+//                      <span id = "t_" + taskId> Название задачи </span>
+//                      <span id = "ar_" + taskId> Стрелочка для редактирования задачи</span> // отображается при наведении курсора
+//                      <div id = "divsub_" + taskId> (содержит подзадачи)
+//                          <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
+//                          ...
+//                          <div><checkbox id= "ch_" + taskId + "_" + subTaskNum></checkbox><span> Название подзадачи</span></div>
 
 // структура секции Watch
 //
@@ -124,12 +114,12 @@ var UnicodeSymbols = (function() {
 //    <img id = "img_plo_watch"> // признак низкого приоритета - скрыт если нет, отображён если есть (показывается то, что получилось в результате редактирования)
 // </div>
 //  <div id="div-notes" class="new-select-style-wpandyou"> => сюда же привязываются таски
-//  <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
-//  <div id = "divsubwatch_" + taskId> (содержит подзадачи)
-//   <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
-//   ...
-//   <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div>
-//   </div> // div sub
+//      <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
+//      <div id = "divsubwatch_" + taskId> (содержит подзадачи)
+//          <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div> ===> Нажатие на CHECKBOX объявляет подзадачу выполненной/невыполненной (отправляет запрос PUT notes)
+//          ...
+//          <div><checkbox id= "ch_w_" + taskId + "_" + subTaskNum></checkbox><span id="t_w_" + taskId + "_" + subTaskNum > Название подзадачи</span></div>
+//      </div> // div sub
 // </div>
 
 function init(makePostRequestFunc) {
@@ -143,7 +133,6 @@ function init(makePostRequestFunc) {
 
     createTaskStatusImagesWatch();
 
-    // TODO add Event listeners to subTasks checkboxes or edit boxes
     $('checkbox-task-completed').addEventListener('change', OnSomeEditDone);
     $('input-task-name').addEventListener('keyup', OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', OnSomeEditDone);
@@ -159,11 +148,6 @@ function generateList(taskLists) {
     isDrawingMainList = true;
     var ulMain = document.getElementById('listId');
 
-    // clear the list
-//    while( ulMain.firstChild ){
-//        ulMain.removeChild( ulMain.firstChild );
-//    }
-
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {
         drawTaskList(taskLists[i], ulMain);
@@ -178,10 +162,10 @@ function generateList(taskLists) {
 
 /* Updates a task list from taskListsTmp asked from server, in this list we get tasks which were created/updated/deleted during last 5 mins*/
 /* Применение изменений, полученных с сервера, к отображаемому списку ul*/
-/*array[] taskLists - task Lists that we got from request*/
+/*array[] taskLists - список списков задач, полученный с сервера*/
 function processTmpList(taskLists) {
     var i;
-    var isNewTaskList;
+    var isNewTaskList; // признак нового таск листа
 
     for (i = 0; i < taskLists.length; ++i) {
         // main list is refreshing, we MUST stop the updating process
@@ -217,7 +201,7 @@ function processTmpList(taskLists) {
 
                 if (taskLists[i].tasks[j].deleted) {
                     try {
-                        DeleteTask(taskLists[i].tasks[j], taskLists[i].id);
+                        DeleteTaskNode(taskLists[i].tasks[j], taskLists[i].id);
                     }
                     catch (e) {
                         console.log("Error deleting task " + taskLists[i].tasks[j].id + ' ' + e);
@@ -228,10 +212,10 @@ function processTmpList(taskLists) {
 
                 try {
                    if ($(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id)) {
-                       UpdateTask(taskLists[i].tasks[j]);
+                       UpdateTaskNode(taskLists[i].tasks[j]);
                    }
                    else {
-                       InsertTask(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+                       InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
                    }
 
                 }
@@ -242,38 +226,48 @@ function processTmpList(taskLists) {
         }
 
         if (isNewTaskList) {
+            // применяем метод только к вновь созданному узлу, а не к существующим
             CollapsibleLists.applyToChild($('listId'), $(MainSectionPrefixes.PREFIX_LI_TASKLIST + taskLists[i].id));
         }
     } // for i
 
+    removeTaskListsNotExist(taskLists, taskListsLast);
+    taskListsLast = taskLists;
+}
+
+// удалить ноды с таск листами, которые были удалены
+// array[] taskListsCurr - последний полученный с сервера список списков задач
+// array[] taskListsOld - предпоследний полученный с сервера список списков задач (изображённый на экране в данный момент)
+function removeTaskListsNotExist(taskListsCurr, taskListsOld) {
     // анализируем что было удалено
-   var founded;
-   var toDelete = [];
-   for (var i=0; i < taskListsLast.length; i++) {
-       var taskListId = taskListsLast[i].id;
+    var founded;
+    var toDelete = [];
+    for (var i=0; i < taskListsOld.length; i++) {
+        var taskListId = taskListsOld[i].id;
 
-       founded = false;
-       for (var j=0; j< taskLists.length; j++) {
-           if (taskLists[j].id == taskListId) {
-               founded = true;
-               break;
-           }
-       }
+        founded = false;
+        for (var j=0; j< taskListsCurr.length; j++) {
+            if (taskListsCurr[j].id == taskListId) {
+                founded = true;
+                break;
+            }
+        }
 
-       if (!founded) {
+        if (!founded) {
             toDelete.push(taskListId);
-       }
-   }
+        }
+    }
 
     // удаляем то, что было удалено
     for (var i=0; i< toDelete.length; i++) {
         var liTaskList = $( MainSectionPrefixes.PREFIX_LI_TASKLIST + toDelete[i]);
         liTaskList.parentNode.removeChild(liTaskList);
     }
-
-    taskListsLast = taskLists;
 }
 
+// рисование нода, соответствующего таск листу
+// object taskList - изображаемый таск лист
+// ulMain - корень дерева, для которого ноды с таск листами являются дочерними
 function drawTaskList(taskList, ulMain) {
     var li = document.createElement('li');
     li.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASKLIST + taskList.id);
@@ -281,7 +275,7 @@ function drawTaskList(taskList, ulMain) {
     li.appendChild(span);
     li.taskListId = taskList.id;
     li.taskList = taskList;
-    ulMain.appendChild(li); // create <li>
+    ulMain.appendChild(li);
 
     var ul = document.createElement('ul'); // assume + create <ul>
     ul.setAttribute("id", MainSectionPrefixes.PREFIX_UL_TASKLIST + taskList.id);
@@ -297,7 +291,7 @@ function DrawTasksForTaskList(taskList, ul) {
     if (taskList.tasks && taskList.tasks.length > 0) {
 
         for (var j=0; j < taskList.tasks.length; j++) {
-            InsertTask(taskList.id, taskList.tasks[j], ul);
+            InsertTaskNode(taskList.id, taskList.tasks[j], ul);
         } // for j
     } // if
     else {
@@ -309,8 +303,8 @@ function DrawTasksForTaskList(taskList, ul) {
 function AddNoTasksElement(taskList, ul) {
     var liChild = document.createElement('li');
     liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
-    // TODO add this to vocabulary
-    liChild.appendChild(document.createTextNode('<no tasks>'));
+
+    liChild.appendChild(document.createTextNode('<' +  getLangValue("no_tasks_title") + '>'));
     liChild.style.display = 'none';
     ul.appendChild(liChild);
 }
@@ -507,13 +501,15 @@ function SetTaskStatusCheckbox(task) {
     }
 }
 
+// sets a task list Title for a task List span
+// taskList - a taskList which is connected to a taskList span
 function SetTaskListTitle(taskList) {
     var taskListSpan = $(MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
     taskListSpan.innerText = taskList.title;
 }
 
-// sets a task Title for a task div
-// task - a task which is connected to a task div
+// sets a task Title for a task span
+// task - a task which is connected to a task span
 function SetTaskTitle(task) {
     var taskSpan = $(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
     taskSpan.innerText = task.title;
@@ -587,7 +583,7 @@ function OnTaskDivMouseOver(e) {
     if (e.target) targ = e.target;
     else if (e.srcElement) targ = e.srcElement;
 
-    targ.style.background='#DFEEFF';
+    targ.style.background='#DFEEFF'; // cyan
 
     if (targ.task) {
         $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = '';
@@ -843,6 +839,7 @@ function convertToSubTasks(text) {
     var subTasksList = [];
     var tmp;
 
+    // TODO make constants from [ ], [x], T, F
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
         if (tmp.substring(0, 3) == '[ ]') {
@@ -869,6 +866,7 @@ function convertToSubTasksLight(text) {
     var subTasksList = [];
     var tmp;
 
+    // TODO make constants from [ ], [x], T, F
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
         if (tmp.substring(0, 3) == '[ ]') {
@@ -893,6 +891,8 @@ function convertToSubTasksLight(text) {
 // Returns [string] notes
 function convertFromSubTasks(arr) {
     var str = arr.join('\n^&^');
+
+    // TODO make constants from [ ], [x], T, F
     str = str.split('^&^F').join('[ ]');
     str = str.split('^&^T').join('[x]');
     return str;
@@ -967,6 +967,8 @@ function ActionDiscard() {
     }
 }
 
+// показать секцию notes / скрыть секцию с сабтасками (для Watch) и наоборот
+// bool showSubTasks - показать секцию с сабтасками
 function changeNotesState(showSubTasks) {
     if (showSubTasks) {
         // проанализировать содержимое поля комментария
@@ -997,7 +999,8 @@ function changeNotesState(showSubTasks) {
     }
 }
 
-
+// заблокировать / разблокировать кнопки сохранения таска и отмены изменений
+// bool disable - заблокировать кнопки
 function SetDisableWatchButtons(disable) {
     if (disable) {
         disableButton($('button-save_task'));
@@ -1009,6 +1012,8 @@ function SetDisableWatchButtons(disable) {
     }
 }
 
+// fills watch section edit fields with info about a task
+// object task - a task to view in a watch section
 function SetWatchFieldsFromTask(task) {
     var myDate = new MyDate();
     myDate.setStartNextHour();
@@ -1027,36 +1032,45 @@ function SetWatchFieldsFromTask(task) {
         addSubTasksDivToWatch(notesOrig);
     }
 
-    // tasklists
+    createMoveToListMenu();
+    OnSomeEditDone();
+}
 
+// creates a menu with task lists
+function createMoveToListMenu() {
     while( $('taskListsWatch').children.length > 0){
         $('taskListsWatch').removeChild( $('taskListsWatch').children[0]);
     }
 
     for (var i = 0 ; i < $('listId').children.length; i++) {
         if ($('listId').children[i].taskList == undefined) {
-           continue;
+            continue;
         }
 
         var taskList = $('listId').children[i].taskList;
         var li = document.createElement('li');
         li.addEventListener("click", OnMoveToListClick);
-        var galka = $('watch').taskListId == taskList.id ? /*'\u2714'*/ UnicodeSymbols.GALKA : '';
+        var galka = $('watch').taskListId == taskList.id ? UnicodeSymbols.GALKA : '';
         li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
         li.taskListId = taskList.id;
         $('taskListsWatch').appendChild(li);
     }
-
-    OnSomeEditDone();
 }
 
 // </editor-fold>
 
 // <editor-fold desc="Drawing in a Watch section">
+
+// создать секцию div для сабтаска в секции Watch и присоединить её к li как дочернюю
+// object li - родительский нод
+// string subTask - название сабтаска
+// string taskId - идентификатор таска
+// int subTaskNum - номер subTaskа
 function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
-    var span = document.createElement('div');
+    var divSubTask = document.createElement('div');
     var isDone = subTask.substring(0,1) == 'T';
     var text = subTask.substring(1);
+    // TODO create checkbox inside another function
     var checkBox = document.createElement("input");
     checkBox.type = 'checkbox';
     checkBox.setAttribute("id", WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + taskId + "_" + subTaskNum);
@@ -1064,8 +1078,9 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
         OnSomeEditDone();
     });
 
-    span.appendChild(checkBox);
+    divSubTask.appendChild(checkBox);
 
+    // TODO create editbox inside another function
     var editBox = document.createElement("input");
     editBox.type = 'text';
     editBox.setAttribute("id", WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
@@ -1079,16 +1094,18 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
         OnSomeEditDone();
     });
 
-    span.appendChild(editBox);
+    divSubTask.appendChild(editBox);
 
     // span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
-    li.appendChild(span);
+    li.appendChild(divSubTask);
     // span.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + taskId);
 
     // удаление сабТакса
+    // TODO create a and aplus inside anoter function
+    // TODO add all elements to watch section structure
     var a = document.createElement('a');
     a.href =  '#';
-    a.innerText = /*' \u2715'*/ ' ' + UnicodeSymbols.CLOSE;
+    a.innerText = ' ' + UnicodeSymbols.CLOSE;
     a.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE + taskId + "_" + subTaskNum);
     a.addEventListener('click', function(e) {
          var targ;
@@ -1098,12 +1115,12 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
          RemoveSubTaskDivFromWatch(targ);
     });
 
-    span.appendChild(a);
+    divSubTask.appendChild(a);
 
     // добавление сабТаска
     var aplus = document.createElement('a');
     aplus.href =  '#';
-    aplus.innerText = /*' \uFF0B'*/ ' ' + UnicodeSymbols.PLUS;
+    aplus.innerText = ' ' + UnicodeSymbols.PLUS;
     aplus.setAttribute("id", WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + taskId + "_" + subTaskNum);
     aplus.addEventListener('click', function(e) {
         var targ;
@@ -1113,7 +1130,7 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
         AddSubTaskDivToWatch(targ);
     });
 
-    span.appendChild(aplus);
+    divSubTask.appendChild(aplus);
 
     if (isDone) {
         checkBox.checked = true;
@@ -1121,6 +1138,8 @@ function drawSubTaskWatch(li, subTask, taskId, subTaskNum) {
     }
 }
 
+// добавление нового (пустого сабтаска) в секцию divsubwatch
+// object targ - "плюсик" (не используется)
 function AddSubTaskDivToWatch(targ) {
     var subTasks = getSubTasksArrFromWatchDiv();
     var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
@@ -1130,6 +1149,8 @@ function AddSubTaskDivToWatch(targ) {
     setSubTaskAddVisibility();
 }
 
+// удаление сабтаска из секции divsubwatch
+// object targ - "крестик", на который нажали
 function RemoveSubTaskDivFromWatch(targ) {
     // получить номер удаляемого сабтаска
     var subTaskNum = parseInt(targ.id.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
@@ -1163,6 +1184,8 @@ function RemoveSubTaskDivFromWatch(targ) {
     setSubTaskAddVisibility();
 }
 
+// установить видимость "плюсика" - для добавления сабТаска
+// плюсик всегда виден только у последнего сабтаска
 function setSubTaskAddVisibility() {
     var subTasks = getSubTasksArrFromWatchDiv();
 
@@ -1265,7 +1288,7 @@ function OnChangeTaskStatus(obj) {
     // обновляем только секцию Main (что делать с секцией Watch пока не понятно)
     if (obj.text) {
         var taskFromServer = JSON.parse(obj.text);
-        UpdateTask(taskFromServer);
+        UpdateTaskNode(taskFromServer);
     }
 }
 
@@ -1280,11 +1303,11 @@ function  OnTaskInserted(obj) {
         var taskFromServer = JSON.parse(obj.text);
         var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
         taskListId = taskListId.substring(0, taskListId.indexOf('/'));
-        InsertTask(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
+        InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
     }
 }
 
-function OnTaskDeleted(obj) {
+/*function OnTaskDeleted(obj) {
     if (obj.errors.length > 0) {
         alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
         return;
@@ -1293,8 +1316,9 @@ function OnTaskDeleted(obj) {
     if (obj.text == '' && obj.rc == 204) {
         // deleted successfully
     }
-}
+}*/
 
+// обертка для обработчика события удаления таска
 function TaskDeletedShell(taskToDelete, taskListId) {
     var task = taskToDelete;
     return {
@@ -1305,14 +1329,16 @@ function TaskDeletedShell(taskToDelete, taskListId) {
             }
 
             if (obj.text == '' && obj.rc == 204) {
-                DeleteTask(task, taskListId);
+                DeleteTaskNode(task, taskListId);
             }
         }
     };
 
 }
 
-function UpdateTask(taskFromServer) {
+// редактирует нод соотетствующий таску в секции Main
+// object taskFromServer - задача с изменениями (пришедшая с сервера)
+function UpdateTaskNode(taskFromServer) {
     if (taskFromServer) {
 
         SetTaskStatusCheckbox(taskFromServer);
@@ -1332,7 +1358,11 @@ function UpdateTask(taskFromServer) {
     }
 }
 
-function InsertTask(taskListId, taskFromServer, ul) {
+// создаёт нод соотетствующий таску в секции Main
+// string taskListId - идентификатор таск листа, которому принадлежит таск
+// object taskFromServer - новая задача (с сервера)
+// object ul - родительский элемент (ul таск листа)
+function InsertTaskNode(taskListId, taskFromServer, ul) {
     var liChild = document.createElement('li');
     liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
     var taskDiv = createTaskDiv(taskFromServer, taskListId);
@@ -1344,9 +1374,10 @@ function InsertTask(taskListId, taskFromServer, ul) {
     taskDiv.appendChild(span);
 
     // стрелочка для перехода в секцию Watch
-    var arrow = createSimpleTextNode(/*'\u25B6'*/ UnicodeSymbols.ARROW_RIGHT, MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
+    var arrow = createSimpleTextNode( UnicodeSymbols.ARROW_RIGHT, MainSectionPrefixes.PREFIX_ARROW_TITLE + taskFromServer.id);
     taskDiv.appendChild(arrow);
     liChild.appendChild(taskDiv);
+    // TODO create a function createArrow
     arrow.style.float = 'right';
     arrow.style.display = 'inline-block';
     arrow.style.margin = '0px';
@@ -1366,20 +1397,16 @@ function InsertTask(taskListId, taskFromServer, ul) {
     SetTaskTitle(taskFromServer);
 }
 
-function DeleteTask(taskFromServer, taskListId) {
+// удаляет нод соотетствующий таску в секции Main
+// string taskListId - идентификатор таск листа, которому принадлежит таск
+// object taskFromServer - удаляемая задача (с сервера)
+function DeleteTaskNode(taskFromServer, taskListId) {
     var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
     if (taskLi) {
         taskLi.parentNode.removeChild(taskLi);
     }
 
     var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId);
-    // console.log("Удалили. Осталось тасков в списке: " + taskListUl.childNodes.length);
-
-    /*for(var k=0; k < taskListUl.childNodes.length; k++) {
-        var child = taskListUl.childNodes[k];
-        console.log(k + ' ' + child.type + ' ' + child.id);
-    }*/
-
 
     if (taskListUl.childNodes.length == 1) {
         // no tasks any more, we should show <no tasks> section
@@ -1408,8 +1435,6 @@ function filterSpecialChar(data) {
 function $(id) {
     return document.getElementById(id);
 }
-
-// </editor-fold>
 
 function additionalSectionExist(task) {
     var text = task.notes;
@@ -1494,6 +1519,8 @@ function getLangValue(message) {
     var prefs = new gadgets.Prefs();
     return prefs.getMsg(message);
 }
+
+// </editor-fold>
 
 
 
