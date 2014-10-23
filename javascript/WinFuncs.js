@@ -2,6 +2,7 @@ var makePOSTRequest = null;
 var API_KEY = 'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
+var taskNodeController = new TaskNodeController();
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
@@ -150,7 +151,7 @@ function generateList(taskLists) {
 
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {
-        drawTaskList(taskLists[i], ulMain);
+        InsertTaskListNode(taskLists[i], ulMain);
         DrawTasksForTaskList(taskLists[i], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
     } // for i
 
@@ -182,7 +183,7 @@ function processTmpList(taskLists) {
         }
         else {
             // таск лист был вставлен
-            drawTaskList(taskLists[i], $('listId'));
+            InsertTaskListNode(taskLists[i], $('listId'));
             isNewTaskList = true;
         }
 
@@ -231,14 +232,14 @@ function processTmpList(taskLists) {
         }
     } // for i
 
-    removeTaskListsNotExist(taskLists, taskListsLast);
+    DeleteTaskListNodeNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
 }
 
 // удалить ноды с таск листами, которые были удалены
 // array[] taskListsCurr - последний полученный с сервера список списков задач
 // array[] taskListsOld - предпоследний полученный с сервера список списков задач (изображённый на экране в данный момент)
-function removeTaskListsNotExist(taskListsCurr, taskListsOld) {
+function DeleteTaskListNodeNotExist(taskListsCurr, taskListsOld) {
     // анализируем что было удалено
     var founded;
     var toDelete = [];
@@ -268,7 +269,7 @@ function removeTaskListsNotExist(taskListsCurr, taskListsOld) {
 // рисование нода, соответствующего таск листу
 // object taskList - изображаемый таск лист
 // ulMain - корень дерева, для которого ноды с таск листами являются дочерними
-function drawTaskList(taskList, ulMain) {
+function InsertTaskListNode(taskList, ulMain) {
     var li = document.createElement('li');
     li.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASKLIST + taskList.id);
     var span = createSimpleTextNode(taskList.title , MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
@@ -508,12 +509,6 @@ function SetTaskListTitle(taskList) {
     taskListSpan.innerText = taskList.title;
 }
 
-// sets a task Title for a task span
-// task - a task which is connected to a task span
-function SetTaskTitle(task) {
-    var taskSpan = $(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
-    taskSpan.innerText = task.title;
-}
 
 // sets a subTask Title
 // string taskId - the id of a task to which subTask belongs
@@ -1342,7 +1337,7 @@ function UpdateTaskNode(taskFromServer) {
     if (taskFromServer) {
 
         SetTaskStatusCheckbox(taskFromServer);
-        SetTaskTitle(taskFromServer);
+        taskNodeController.SetTaskTitle(taskFromServer);
 
         var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
 
@@ -1394,7 +1389,7 @@ function InsertTaskNode(taskListId, taskFromServer, ul) {
     SetDisplayTaskStatusAddImages(taskFromServer);
     SetDisplayStatusOverdue(taskFromServer);
     SetTaskStatusCheckbox(taskFromServer);
-    SetTaskTitle(taskFromServer);
+    taskNodeController.SetTaskTitle(taskFromServer);
 }
 
 // удаляет нод соотетствующий таску в секции Main
@@ -1521,6 +1516,16 @@ function getLangValue(message) {
 }
 
 // </editor-fold>
+
+// can Insert, Update, Delete task nodes
+function TaskNodeController() {
+    // sets a task Title for a task span
+// task - a task which is connected to a task span
+    this.SetTaskTitle = function(task) {
+        var taskSpan = $(MainSectionPrefixes.PREFIX_SPAN_TITLE + task.id);
+        taskSpan.innerText = task.title;
+    }
+}
 
 
 
