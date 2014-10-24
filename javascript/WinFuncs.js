@@ -68,8 +68,8 @@ var UnicodeSymbols = (function() {
         ARROW_RIGHT: '\u25B6',
         GALKA: '\u2714',
         ARROW_DOWN: '\u25BC',
-        hw: function(a, b) { a + b},
-        tw: function(a, b) { a - b}
+        hw: function(a, b) { return a + b},
+        tw: function(a, b) { return a - b}
     };})();
 
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
