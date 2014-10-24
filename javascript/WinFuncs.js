@@ -67,9 +67,7 @@ var UnicodeSymbols = (function() {
         PLUS: '\uFF0B',
         ARROW_RIGHT: '\u25B6',
         GALKA: '\u2714',
-        ARROW_DOWN: '\u25BC',
-        hw: function(a, b) { return a + b},
-        tw: function(a, b) { return a - b}
+        ARROW_DOWN: '\u25BC'
     };})();
 
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
@@ -142,8 +140,6 @@ var UnicodeSymbols = (function() {
 
 function init(makePostRequestFunc) {
     makePOSTRequest = makePostRequestFunc;
-    var c = UnicodeSymbols.hw(1,2);
-    alert(c);
 
     $('checkbox-with-date').addEventListener('change', OnNoDateCheckChanged);
     $('button-back-to-list').addEventListener('click', ActionBackToList);
@@ -373,10 +369,10 @@ function SetDisplayTaskStatusAddImagesWatch() {
 
     if (additionalSectionExist(task)) {
         var additionalSection = getAdditionalSection(task);
-        $(StatusImagesNames.PREFIX_ALARM + 'watch').style.display = isAlarmedTask(additionalSection) ? '' : 'none';
-        $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display = isRepeatableTask(additionalSection) ? '' : 'none';
-        $(StatusImagesNames.PREFIX_PRIORITY_HIGH + 'watch').style.display = isHighPriorityTask(additionalSection) ? '' : 'none';
-        $(StatusImagesNames.PREFIX_PRIORITY_LOW + 'watch').style.display = isLowPriorityTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_ALARM + 'watch').style.display = TaskUtils.isAlarmedTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display = TaskUtils.isRepeatableTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_HIGH + 'watch').style.display = TaskUtils.isHighPriorityTask(additionalSection) ? '' : 'none';
+        $(StatusImagesNames.PREFIX_PRIORITY_LOW + 'watch').style.display = TaskUtils.isLowPriorityTask(additionalSection) ? '' : 'none';
     }
     else {
         $(StatusImagesNames.PREFIX_ALARM + 'watch').style.display = 'none';
@@ -706,21 +702,7 @@ function getNotesSection(task) {
     return text.substring(0, index);
 }
 
-function isLowPriorityTask(additionalSection) {
-    return additionalSection.indexOf('PRIORITY:-1') > 0;
-}
 
-function isHighPriorityTask(additionalSection) {
-    return additionalSection.indexOf('PRIORITY:1') > 0;
-}
-
-function isRepeatableTask(additionalSection) {
-    return additionalSection.indexOf('DTSTART:') > 0 && additionalSection.indexOf('RRULE:') > 0;
-}
-
-function isAlarmedTask(additionalSection) {
-    return additionalSection.indexOf('REMINDER:') > 0;
-}
 
 function isOverdueTask(task) {
     if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
@@ -757,6 +739,25 @@ function getLangValue(message) {
 }
 
 // </editor-fold>
+
+var TaskUtils = (function() {
+    return {
+        isLowPriorityTask: function(additionalSection) {
+                                return additionalSection.indexOf('PRIORITY:-1') > 0;
+                            },
+
+        isHighPriorityTask: function(additionalSection) {
+                                return additionalSection.indexOf('PRIORITY:1') > 0;
+                            },
+
+        isRepeatableTask: function(additionalSection) {
+                                return additionalSection.indexOf('DTSTART:') > 0 && additionalSection.indexOf('RRULE:') > 0;
+                            },
+
+        isAlarmedTask: function(additionalSection) {
+                                return additionalSection.indexOf('REMINDER:') > 0;
+                            }
+    };})();
 
 function RequestController() {
     this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted) {
@@ -1130,10 +1131,10 @@ function TaskNodeController() {
     var SetDisplayTaskStatusAddImages = function(task) {
         if (additionalSectionExist(task)) {
             var additionalSection = getAdditionalSection(task);
-            $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = isAlarmedTask(additionalSection) ? '': 'none';
-            $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = isRepeatableTask(additionalSection) ? '': 'none';
-            $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = isHighPriorityTask(additionalSection) ? '': 'none';
-            $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = isLowPriorityTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = TaskUtils.isAlarmedTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = TaskUtils.isRepeatableTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = TaskUtils.isHighPriorityTask(additionalSection) ? '': 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = TaskUtils.isLowPriorityTask(additionalSection) ? '': 'none';
         }
     }
 
