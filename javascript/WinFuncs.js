@@ -67,7 +67,9 @@ var UnicodeSymbols = (function() {
         PLUS: '\uFF0B',
         ARROW_RIGHT: '\u25B6',
         GALKA: '\u2714',
-        ARROW_DOWN: '\u25BC'
+        ARROW_DOWN: '\u25BC',
+        hw: function(a, b) { a + b},
+        tw: function(a, b) { a - b}
     };})();
 
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
@@ -140,6 +142,8 @@ var UnicodeSymbols = (function() {
 
 function init(makePostRequestFunc) {
     makePOSTRequest = makePostRequestFunc;
+    var c = UnicodeSymbols.hw(1,2);
+    alert(c);
 
     $('checkbox-with-date').addEventListener('change', OnNoDateCheckChanged);
     $('button-back-to-list').addEventListener('click', ActionBackToList);
