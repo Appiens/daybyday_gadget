@@ -1118,6 +1118,7 @@ function TaskNodeController() {
         targ = targ.parentNode;
 
         console.log(targ.id);
+        console.log(targ.id.substring(MainSectionPrefixes.PREFIX_DIV_TASK.length) + ' - ' + MainSectionPrefixes.PREFIX_DIV_TASK);
         if (targ.id.substring(MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
             return;
         }
