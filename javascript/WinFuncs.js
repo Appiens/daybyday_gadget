@@ -1341,7 +1341,7 @@ function SubTaskDivWatchController() {
         var checkBox =  createCheckBox(taskId, subTaskNum);
         divSubTask.appendChild(checkBox);
 
-        var editBox = createEditBox(taskId, subTaskNum);
+        var editBox = createEditBox(taskId, subTaskNum, text);
         divSubTask.appendChild(editBox);
 
         // span.appendChild(createSimpleTextNode(text, WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
@@ -1431,7 +1431,7 @@ function SubTaskDivWatchController() {
         return checkBox;
     }
 
-    var createEditBox = function(taskId, subTaskNum) {
+    var createEditBox = function(taskId, subTaskNum, text) {
         var editBox = document.createElement("input");
         editBox.type = 'text';
         editBox.setAttribute("id", WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
