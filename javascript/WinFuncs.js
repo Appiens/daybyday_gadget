@@ -490,7 +490,7 @@ function SetWatchFieldsFromTask(task) {
     $('checkbox-task-completed').checked = task.status == TaskStatuses.COMPLETED;
     $('input-task-name').value = task.title;
     $('input-task-date').value = task.due != null ? new MyDate(new Date(task.due)).toInputValue() : myDate.toInputValue();
-    var notesOrig = task.notes != undefined ? getNotesSection(task) : '';
+    var notesOrig = task.notes != undefined ? TaskUtils.getNotesSection(task) : '';
     $('input-task-comment').value = notesOrig;
     $('input-task-comment').style.display = '';
     $('checkbox-with-date').checked = task.due != null;
@@ -1168,7 +1168,7 @@ function SubTaskDivMainController() {
      task - a task which is connected to a task Div
      */
     this.RecreateSubTaskDiv = function(taskDiv, task) {
-        var notesSection = getNotesSection(task);
+        var notesSection = TaskUtils.getNotesSection(task);
         var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
 
         if (subTaskDiv) {
