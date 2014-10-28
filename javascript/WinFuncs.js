@@ -376,6 +376,8 @@ function convertToSubTasksLight(text) {
 
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
+
+        console.log(tmp.substring(0, len) + ' ' + SubTaskStatuses.NEEDS_ACTION_NOTES);
         if (tmp.substring(0, len) == /*'[ ]'*/ SubTaskStatuses.NEEDS_ACTION_NOTES) {
             tmp = /*'F'*/ SubTaskStatuses.NEEDS_ACTION_LIST + tmp.substring(len);
         }
@@ -387,7 +389,7 @@ function convertToSubTasksLight(text) {
              tmp = /*'F'*/ SubTaskStatuses.NEEDS_ACTION_LIST + tmp;
         }
 
-        console.log(tmp.substring(0, len) + ' ' + SubTaskStatuses.NEEDS_ACTION_NOTES);
+
 
         subTasksList.push(tmp);
     }
