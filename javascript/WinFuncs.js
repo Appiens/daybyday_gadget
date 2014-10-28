@@ -1114,6 +1114,10 @@ function TaskNodeController() {
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
 
+        if (targ.task == undefined || targ.taskList == undefined) {
+            return;
+        }
+
         if (parent.selectedTaskDiv) {
             parent.selectedTaskDiv.style.background = 'white';
         }
