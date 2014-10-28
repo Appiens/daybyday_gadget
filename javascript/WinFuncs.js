@@ -402,6 +402,7 @@ function convertToSubTasksLight(text) {
 // Returns [string] notes
 function convertFromSubTasks(arr) {
     var str = arr.join('\n^&^');
+    console.log("convertFromSubTasks " + str);
 
     str = str.split('^&^' + SubTaskStatuses.NEEDS_ACTION_LIST).join(SubTaskStatuses.NEEDS_ACTION_NOTES);
     str = str.split('^&^' + SubTaskStatuses.COMPLETED_LIST).join(SubTaskStatuses.COMPLETED_NOTES);
@@ -1250,7 +1251,7 @@ function SubTaskDivMainController() {
             var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
 
             var arr = convertToSubTasks(oldNotes);
-            arr[subTaskId] = (targ.checked ? 'T' : 'F') + arr[subTaskId].substring('T'.length);
+            arr[subTaskId] = (targ.checked ? SubTaskStatuses.COMPLETED_LIST : SubTaskStatuses.NEEDS_ACTION_LIST) + arr[subTaskId].substring(SubTaskStatuses.COMPLETED_LIST.length);
             var newNotes = convertFromSubTasks(arr);
             task.notes = newNotes;
             requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
