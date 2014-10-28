@@ -1317,7 +1317,7 @@ function SubTaskDivWatchController() {
             var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + i);
             var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
 
-            var subTask = checkBox.checked ? '[x]':'[ ]';
+            var subTask = checkBox.checked ? SubTaskStatuses.COMPLETED_NOTES: SubTaskStatuses.NEEDS_ACTION_NOTES;
             subTask = subTask + textNode.value;
             subTasks.push(subTask);
         }
@@ -1534,8 +1534,8 @@ var TaskStatuses = (function() {
 
 var SubTaskStatuses = (function() {
     return {
-       COMPLETED_NOTES: "[ ]", // в комментарии к задаче
-       NEEDS_ACTION_NOTES: "[x]", // в комментарии к задаче
+       COMPLETED_NOTES: "[x]", // в комментарии к задаче
+       NEEDS_ACTION_NOTES: "[ ]", // в комментарии к задаче
        COMPLETED_LIST: "T", // в списке subTaskList
        NEEDS_ACTION_LIST: "F" // в списке subTaskList
     };})();
