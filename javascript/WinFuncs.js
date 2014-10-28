@@ -939,6 +939,8 @@ function TaskNodeController() {
         var taskDiv = createTaskDiv(taskFromServer, taskListId);
 
         var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
+        span.addEventListener("click", OnTaskDivClick, false);
+
         var checkBox = createCheckBoxForTask(taskFromServer);
         taskDiv.appendChild(checkBox);
         createTaskStatusImages(taskDiv, taskFromServer);
@@ -1026,7 +1028,6 @@ function TaskNodeController() {
         taskDiv.taskListId = taskListId;
         taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
         taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
-        taskDiv.addEventListener("click", OnTaskDivClick, false);
         return taskDiv;
     }
 
@@ -1113,6 +1114,8 @@ function TaskNodeController() {
         if (!e) var e = window.event;
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
+        // получить div
+        targ = targ.parentNode;
 
         if (targ.id.substring(MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
             return;
