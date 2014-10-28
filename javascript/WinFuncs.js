@@ -1117,6 +1117,7 @@ function TaskNodeController() {
         // получить div
         targ = targ.parentNode;
 
+        console.log(targ.id);
         if (targ.id.substring(MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
             return;
         }
