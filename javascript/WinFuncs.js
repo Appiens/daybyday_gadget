@@ -904,6 +904,9 @@ function TaskListNodeController() {
 // can Insert, Update, Delete task nodes
 function TaskNodeController() {
 
+    var parent = this;
+    this.selectedTaskDiv = null; // выбранный таск
+
     // редактирует нод соотетствующий таску в секции Main
     // object taskFromServer - задача с изменениями (пришедшая с сервера)
      this.UpdateTaskNode = function(taskFromServer) {
@@ -1023,6 +1026,7 @@ function TaskNodeController() {
         taskDiv.taskListId = taskListId;
         taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
         taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
+        taskDiv.addEventListener("click", OnTaskDivClick, false);
         return taskDiv;
     }
 
@@ -1097,7 +1101,7 @@ function TaskNodeController() {
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
 
-        targ.style.background='white';
+        targ.style.background = parent.selectedTaskDiv && targ == parent.selectedTaskDiv ? '#F3E2A9' : 'white';
 
         if (targ.task) {
             $(MainSectionPrefixes.PREFIX_ARROW_TITLE + targ.task.id).style.display = 'none';
@@ -1105,6 +1109,20 @@ function TaskNodeController() {
     }
 
     var OnTaskDivClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        if (parent.selectedTaskDiv) {
+            parent.selectedTaskDiv.style.background = 'white';
+        }
+
+        parent.selectedTaskDiv = targ;
+        parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
+    }
+
+    var OnArrowClick = function(e) {
         var targ;
         if (!e) var e = window.event;
         if (e.target) targ = e.target;
@@ -1146,7 +1164,7 @@ function TaskNodeController() {
         arrow.style.margin = '0px';
         arrow.style.cursor = 'pointer';
         arrow.style.display = 'none';
-        arrow.addEventListener("click", OnTaskDivClick);
+        arrow.addEventListener("click",OnArrowClick);
         arrow.title = getLangValue("edit_details");
         return arrow;
     }
