@@ -402,6 +402,7 @@ function convertToSubTasksLight(text) {
 // Returns [string] notes
 function convertFromSubTasks(arr) {
     var str = arr.join('\n^&^');
+    str += '^&^';
     console.log("convertFromSubTasks " + str);
 
     str = str.split('^&^' + SubTaskStatuses.NEEDS_ACTION_LIST).join(SubTaskStatuses.NEEDS_ACTION_NOTES);
