@@ -387,6 +387,8 @@ function convertToSubTasksLight(text) {
              tmp = /*'F'*/ SubTaskStatuses.NEEDS_ACTION_LIST + tmp;
         }
 
+        console.log(tmp.substring(0, len) + ' ' + SubTaskStatuses.NEEDS_ACTION_NOTES);
+
         subTasksList.push(tmp);
     }
 
@@ -457,8 +459,9 @@ function changeNotesState(showSubTasks) {
     else {
         var subTasks = subTaskDivWatchController.getSubTasksArrFromWatchDiv();
         for (var i=0; i < subTasks.length; i++) {
-            if (subTasks[i].substring(0, 3) == '[ ]') {
-                subTasks[i] = subTasks[i].substring(3);
+            var len = SubTaskStatuses.COMPLETED_NOTES.length;
+            if (subTasks[i].substring(0, len) == SubTaskStatuses.NEEDS_ACTION_NOTES) {
+                subTasks[i] = subTasks[i].substring(len);
             }
         }
 
