@@ -8,68 +8,6 @@ var subTaskDivMainController = new SubTaskDivMainController();
 var subTaskDivWatchController = new  SubTaskDivWatchController();
 var requestController = new RequestController();
 
-var StatusImagesNames = (function() {
-    var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
-    var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
-    var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
-    var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
-    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
-    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
-
-    return {
-        PREFIX_ALARM : "img_alm_",
-        PREFIX_REPEAT: "img_rpt_",
-        PREFIX_OVERDUE: "img_ovr_",
-        PREFIX_PRIORITY_HIGH: "img_phi_",
-        PREFIX_PRIORITY_LOW: "img_plo",
-        URL_ALARM: urlAlarm,
-        URL_OVERDUE: urlOverdue,
-        URL_REPEAT: urlRepeat,
-        URL_PRIORITY_HIGH: urlPriorityHigh,
-        URL_PRIORITY_LOW: urlPriorityLow
-    };})();
-
-var MainSectionPrefixes = (function() {
-    return {
-        PREFIX_LI_TASKLIST: "litl_",
-        PREFIX_SPAN_TASKLIST: "tl_",
-        PREFIX_UL_TASKLIST: "ul_",
-        PREFIX_LI_TASK: "li_",
-        PREFIX_LI_NO_TASKS: "emp_",
-        PREFIX_DIV_TASK: "div_",
-        PREFIX_SPAN_TITLE: "t_",
-        PREFIX_CB_COMPLETED: "ch_",
-        PREFIX_DIV_SUBTASK: "divsub_",
-        PREFIX_CB_SUBTASK_COMPLETED: "ch_",
-        PREFIX_SPAN_SUBTASK_TITLE: "t_",
-        PREFIX_ARROW_TITLE: 'ar_'
-    };})();
-
-var WatchSectionPrefixes = (function() {
-    return {
-        PREFIX_DIV_SUBTASK: "divsubwatch_",
-        PREFIX_CB_SUBTASK_COMPLETED: "ch_w_",
-        PREFIX_SPAN_SUBTASK_TITLE: "t_w_",
-        PREFIX_A_SUBTASK_REMOVE: "a_w_",
-        PREFIX_A_SUBTASK_ADD: "a_wa_"
-    };})();
-
-var TaskStatuses = (function() {
-    return {
-        COMPLETED: "completed",
-        NEEDS_ACTION: "needsAction"
-    };})();
-
-
-var UnicodeSymbols = (function() {
-    return {
-        CLOSE: '\u2715',
-        PLUS: '\uFF0B',
-        ARROW_RIGHT: '\u25B6',
-        GALKA: '\u2714',
-        ARROW_DOWN: '\u25BC'
-    };})();
-
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
 //   <ul id="listId">
 //      <li id= "litl_" + taskListId> (содержит ссылку taskListId, taskList) Название списка задач
@@ -142,10 +80,10 @@ function init(makePostRequestFunc) {
     makePOSTRequest = makePostRequestFunc;
 
     $('checkbox-with-date').addEventListener('change', OnNoDateCheckChanged);
-    $('button-back-to-list').addEventListener('click', ActionBackToList);
-    $('button-save_task').addEventListener('click', ActionSaveTask);
-    $('button-to-subtasks').addEventListener('click', ActionToSubtasks);
-    $('button-discard').addEventListener('click', ActionDiscard);
+    $('button-back-to-list').addEventListener('click', Actions.ActionBackToList);
+    $('button-save_task').addEventListener('click', Actions.ActionSaveTask);
+    $('button-to-subtasks').addEventListener('click', Actions.ActionToSubtasks);
+    $('button-discard').addEventListener('click', Actions.ActionDiscard);
 
     createTaskStatusImagesWatch();
 
@@ -214,7 +152,7 @@ function processTmpList(taskLists) {
 
                 // если получаем таск, который редактируется в данный момент, выбрасываем пользователя в секцию Main, если были в секции Watch
                 if ($('watch').style.display != 'none' && $('watch').task && $('watch').task.id == taskLists[i].tasks[j].id) {
-                    ActionBackToList();
+                    Actions.ActionBackToList();
                 }
 
                 if (taskLists[i].tasks[j].deleted) {
@@ -251,61 +189,6 @@ function processTmpList(taskLists) {
 
     taskListNodeController.DeleteTaskListNodesNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
-}
-
-// <editor-fold desc="Actions for a Watch section">
-// Return to Main section from Watch section
-function ActionBackToList() {
-    subTaskDivWatchController.DeleteSubTasksDiv();
-    showOneSection('main');
-}
-
-// Save changes
-function ActionSaveTask() {
-    if ($('watch').task != undefined && $('watch').taskListId != undefined) {
-        var task = $('watch').task;
-        var taskListId = $('watch').taskListId;
-
-        var date = "";
-        if ($('checkbox-with-date').checked) {
-            date = new MyDate();
-            date.setFromInputValue( $('input-task-date').value);
-        }
-
-        var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-        notes += getAdditionalSection($('watch').task);
-        requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
-    }
-}
-
-// Convert notes to subTaks
-function ActionToSubtasks() {
-    changeNotesState($('input-task-comment').style.display == '');
-}
-
-// Cancel changes = go back to server state
-function ActionDiscard() {
-    if ($('watch').task != undefined && $('watch').taskListId != undefined) {
-        subTaskDivWatchController.DeleteSubTasksDiv();
-        SetDisableWatchButtons(true);
-        SetWatchFieldsFromTask($('watch').task);
-    }
-}
-
-// <editor-fold desc="Creating elements for a MAIN div">
-
-
-
-// Creates a span with id = id and innerText = text
-// string text - a text to write in a span
-// id - the id of a span, which allows to change innerText later
-// returns an [object span] which should be added to some parent element
-function createSimpleTextNode(text, id) {
-    var span = document.createElement('span');
-    span.appendChild(document.createTextNode(text));
-    span.setAttribute("id", id);
-    span.style.backgroundColor = 'inherit';
-    return span;
 }
 
 // Creates status images and adds them to a div-status-images div, we should show/hide them when task status changes
@@ -357,18 +240,18 @@ function SetDisplayStatusOverdueWatch() {
 
     var task = date? {status: status, due: date}: {status: status};
 
-    $(StatusImagesNames.PREFIX_OVERDUE + 'watch').style.display = isOverdueTask(task) ? '': 'none';
+    $(StatusImagesNames.PREFIX_OVERDUE + 'watch').style.display = TaskUtils.isOverdueTask(task) ? '': 'none';
 }
 
 // shows or hides alarm, repeat, priority_high, priority_low images in Watch section
 function SetDisplayTaskStatusAddImagesWatch() {
     var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-    notes += getAdditionalSection($('watch').task);
+    notes += TaskUtils.getAdditionalSection($('watch').task);
 
     var task = {notes: notes};
 
-    if (additionalSectionExist(task)) {
-        var additionalSection = getAdditionalSection(task);
+    if (TaskUtils.additionalSectionExist(task)) {
+        var additionalSection = TaskUtils.getAdditionalSection(task);
         $(StatusImagesNames.PREFIX_ALARM + 'watch').style.display = TaskUtils.isAlarmedTask(additionalSection) ? '' : 'none';
         $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display = TaskUtils.isRepeatableTask(additionalSection) ? '' : 'none';
         $(StatusImagesNames.PREFIX_PRIORITY_HIGH + 'watch').style.display = TaskUtils.isHighPriorityTask(additionalSection) ? '' : 'none';
@@ -407,9 +290,9 @@ function OnMoveToListClick(e) {
             }
 
             var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-            notes += getAdditionalSection($('watch').task);
+            notes += TaskUtils.getAdditionalSection($('watch').task);
             requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
-            ActionBackToList();
+            Actions.ActionBackToList();
         }
     }
 }
@@ -443,7 +326,7 @@ function canBeConvertedToSubtasks(text) {
     var mas = textCpy.split('\n');
 
     for (var i = 0; i < mas.length; i++) {
-        if (mas[i].indexOf('[ ]') != 0 && mas[i].indexOf('[x]') != 0) {
+        if (mas[i].indexOf(/*'[ ]'*/ SubTaskStatuses.NEEDS_ACTION_NOTES) != 0 && mas[i].indexOf(/*'[x]'*/ SubTaskStatuses.COMPLETED_NOTES) != 0) {
             return false;
         }
     }
@@ -462,15 +345,15 @@ function convertToSubTasks(text) {
     var mas = textCpy.split('\n');
     var subTasksList = [];
     var tmp;
+    var len = SubTaskStatuses.COMPLETED_NOTES.length;
 
-    // TODO make constants from [ ], [x], T, F
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
-        if (tmp.substring(0, 3) == '[ ]') {
-            tmp = 'F' + tmp.substring(3);
+        if (tmp.substring(0, len) == SubTaskStatuses.NEEDS_ACTION_NOTES /*'[ ]'*/) {
+            tmp = /*'F'*/ SubTaskStatuses.NEEDS_ACTION_LIST + tmp.substring(len);
         }
-        else if (tmp.substring(0, 3) == '[x]') {
-            tmp = 'T' + tmp.substring(3);
+        else if (tmp.substring(0, len) == SubTaskStatuses.COMPLETED_NOTES /*'[x]'*/) {
+            tmp = /*'T'*/ SubTaskStatuses.COMPLETED_LIST + tmp.substring(len);
         }
 
         subTasksList.push(tmp);
@@ -489,19 +372,19 @@ function convertToSubTasksLight(text) {
     var mas = textCpy.split('\n');
     var subTasksList = [];
     var tmp;
+    var len = SubTaskStatuses.COMPLETED_NOTES.length;
 
-    // TODO make constants from [ ], [x], T, F
     for (var i=0; i < mas.length; i++) {
         tmp = mas[i].trim();
-        if (tmp.substring(0, 3) == '[ ]') {
-            tmp = 'F' + tmp.substring(3);
+        if (tmp.substring(0, len) == /*'[ ]'*/ SubTaskStatuses.NEEDS_ACTION_NOTES) {
+            tmp = /*'F'*/ SubTaskStatuses.NEEDS_ACTION_LIST + tmp.substring(len);
         }
         else
-         if (tmp.substring(0, 3) == '[x]') {
-            tmp = 'T' + tmp.substring(3);
+         if (tmp.substring(0, len) == /*'[x]'*/ SubTaskStatuses.COMPLETED_NOTES) {
+            tmp = /*'T'*/ SubTaskStatuses.COMPLETED_LIST + tmp.substring(len);
         }
         else {
-             tmp = 'F' + tmp;
+             tmp = /*'F'*/ SubTaskStatuses.NEEDS_ACTION_LIST + tmp;
         }
 
         subTasksList.push(tmp);
@@ -516,9 +399,8 @@ function convertToSubTasksLight(text) {
 function convertFromSubTasks(arr) {
     var str = arr.join('\n^&^');
 
-    // TODO make constants from [ ], [x], T, F
-    str = str.split('^&^F').join('[ ]');
-    str = str.split('^&^T').join('[x]');
+    str = str.split('^&^' + SubTaskStatuses.NEEDS_ACTION_LIST).join(SubTaskStatuses.NEEDS_ACTION_NOTES);
+    str = str.split('^&^' + SubTaskStatuses.COMPLETED_LIST).join(SubTaskStatuses.COMPLETED_NOTES);
     return str;
 }
 
@@ -668,55 +550,6 @@ function $(id) {
     return document.getElementById(id);
 }
 
-function additionalSectionExist(task) {
-    var text = task.notes;
-
-    if (text == undefined) {
-        return false;
-    }
-
-    return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('\n=!>') > text.indexOf('\n<!=\n'));
-}
-
-function getAdditionalSection(task) {
-    if (!additionalSectionExist(task)) {
-        return '';
-    }
-
-    var text = task.notes;
-    var index = text.indexOf('\n<!=\n');
-    return text.substring(index);
-}
-
-function getNotesSection(task) {
-    if (task.notes == undefined) {
-        return '';
-    }
-
-    if (!additionalSectionExist(task)) {
-        return task.notes;
-    }
-
-    var text = task.notes;
-    var index = text.indexOf('\n<!=\n');
-    return text.substring(0, index);
-}
-
-
-
-function isOverdueTask(task) {
-    if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
-        var today = new Date();
-        var due = new Date(task.due);
-
-        if (today - due > 0) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 /* make button disabled
  Button (getElementById) button*/
 function disableButton(button) {
@@ -738,7 +571,64 @@ function getLangValue(message) {
     return prefs.getMsg(message);
 }
 
+// Creates a span with id = id and innerText = text
+// string text - a text to write in a span
+// id - the id of a span, which allows to change innerText later
+// returns an [object span] which should be added to some parent element
+function createSimpleTextNode(text, id) {
+    var span = document.createElement('span');
+    span.appendChild(document.createTextNode(text));
+    span.setAttribute("id", id);
+    span.style.backgroundColor = 'inherit';
+    return span;
+}
+
 // </editor-fold>
+
+var Actions = ( function() {
+    return {
+        // <editor-fold desc="Actions for a Watch section">
+        // Return to Main section from Watch section
+        ActionBackToList: function() {
+                            subTaskDivWatchController.DeleteSubTasksDiv();
+                            showOneSection('main');
+                          },
+
+        // Save changes
+        ActionSaveTask: function() {
+                            if ($('watch').task != undefined && $('watch').taskListId != undefined)
+                            {
+                                var task = $('watch').task;
+                                var taskListId = $('watch').taskListId;
+
+                                var date = "";
+                                if ($('checkbox-with-date').checked) {
+                                    date = new MyDate();
+                                    date.setFromInputValue( $('input-task-date').value);
+                                }
+
+                                var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
+                                notes += TaskUtils.getAdditionalSection($('watch').task);
+                                requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+                             }
+                          },
+
+        // Convert notes to subTaks
+        ActionToSubtasks:  function () {
+                                // TODO this function should be in notes controller
+                                changeNotesState($('input-task-comment').style.display == '');
+                            },
+
+        // Cancel changes = go back to server state
+        ActionDiscard: function () {
+                                if ($('watch').task != undefined && $('watch').taskListId != undefined)
+                                {
+                                    subTaskDivWatchController.DeleteSubTasksDiv();
+                                    SetDisableWatchButtons(true);
+                                    SetWatchFieldsFromTask($('watch').task);
+                                }
+                        }
+    };})();
 
 var TaskUtils = (function() {
     return {
@@ -756,7 +646,53 @@ var TaskUtils = (function() {
 
         isAlarmedTask: function(additionalSection) {
                                 return additionalSection.indexOf('REMINDER:') > 0;
-                            }
+                            },
+
+        isOverdueTask: function(task) {
+                                if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
+                                    var today = new Date();
+                                    var due = new Date(task.due);
+
+                                    if (today - due > 0) {
+                                        return true;
+                                    }
+                                }
+
+                                return false;
+                            },
+
+        additionalSectionExist: function (task) {
+                                           var text = task.notes;
+                                           if (text == undefined) {
+                                                return false;
+                                            }
+
+                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('\n=!>') > text.indexOf('\n<!=\n'));
+                                },
+
+        getAdditionalSection: function (task) {
+                                        if (!TaskUtils.additionalSectionExist(task)) {
+                                            return '';
+                                        }
+
+                                        var text = task.notes;
+                                        var index = text.indexOf('\n<!=\n');
+                                        return text.substring(index);
+                                },
+
+        getNotesSection: function(task) {
+                                        if (task.notes == undefined) {
+                                            return '';
+                                        }
+
+                                        if (!TaskUtils.additionalSectionExist(task)) {
+                                            return task.notes;
+                                        }
+
+                                        var text = task.notes;
+                                        var index = text.indexOf('\n<!=\n');
+                                        return text.substring(0, index);
+                                }
     };})();
 
 function RequestController() {
@@ -1129,8 +1065,8 @@ function TaskNodeController() {
     // shows / hides images priority, repeat, alarm in MAIN section
     // task - a task which is connected to a task div, to which images belong
     var SetDisplayTaskStatusAddImages = function(task) {
-        if (additionalSectionExist(task)) {
-            var additionalSection = getAdditionalSection(task);
+        if (TaskUtils.additionalSectionExist(task)) {
+            var additionalSection = TaskUtils.getAdditionalSection(task);
             $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = TaskUtils.isAlarmedTask(additionalSection) ? '': 'none';
             $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = TaskUtils.isRepeatableTask(additionalSection) ? '': 'none';
             $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = TaskUtils.isHighPriorityTask(additionalSection) ? '': 'none';
@@ -1141,7 +1077,7 @@ function TaskNodeController() {
     // shows / hides overdue image in MAIN section
     // task - a task which is connected to a task div, to which images belong
     var SetDisplayStatusOverdue = function(task) {
-        $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = isOverdueTask(task) ? '': 'none';
+        $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = TaskUtils.isOverdueTask(task) ? '': 'none';
     }
 
     // checks / unchecks task checkbox to show task.status
@@ -1538,6 +1474,76 @@ function SubTaskDivWatchController() {
         $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + $('watch').task.id + "_" + (subTasks.length - 1)).style.display = '';
     }
 }
+
+var StatusImagesNames = (function() {
+    var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
+    var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
+    var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
+    var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
+    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
+    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
+
+    return {
+        PREFIX_ALARM : "img_alm_",
+        PREFIX_REPEAT: "img_rpt_",
+        PREFIX_OVERDUE: "img_ovr_",
+        PREFIX_PRIORITY_HIGH: "img_phi_",
+        PREFIX_PRIORITY_LOW: "img_plo",
+        URL_ALARM: urlAlarm,
+        URL_OVERDUE: urlOverdue,
+        URL_REPEAT: urlRepeat,
+        URL_PRIORITY_HIGH: urlPriorityHigh,
+        URL_PRIORITY_LOW: urlPriorityLow
+    };})();
+
+var MainSectionPrefixes = (function() {
+    return {
+        PREFIX_LI_TASKLIST: "litl_",
+        PREFIX_SPAN_TASKLIST: "tl_",
+        PREFIX_UL_TASKLIST: "ul_",
+        PREFIX_LI_TASK: "li_",
+        PREFIX_LI_NO_TASKS: "emp_",
+        PREFIX_DIV_TASK: "div_",
+        PREFIX_SPAN_TITLE: "t_",
+        PREFIX_CB_COMPLETED: "ch_",
+        PREFIX_DIV_SUBTASK: "divsub_",
+        PREFIX_CB_SUBTASK_COMPLETED: "ch_",
+        PREFIX_SPAN_SUBTASK_TITLE: "t_",
+        PREFIX_ARROW_TITLE: 'ar_'
+    };})();
+
+var WatchSectionPrefixes = (function() {
+    return {
+        PREFIX_DIV_SUBTASK: "divsubwatch_",
+        PREFIX_CB_SUBTASK_COMPLETED: "ch_w_",
+        PREFIX_SPAN_SUBTASK_TITLE: "t_w_",
+        PREFIX_A_SUBTASK_REMOVE: "a_w_",
+        PREFIX_A_SUBTASK_ADD: "a_wa_"
+    };})();
+
+var TaskStatuses = (function() {
+    return {
+        COMPLETED: "completed",
+        NEEDS_ACTION: "needsAction"
+    };})();
+
+var SubTaskStatuses = (function() {
+    return {
+       COMPLETED_NOTES: "[ ]", // в комментарии к задаче
+       NEEDS_ACTION_NOTES: "[x]", // в комментарии к задаче
+       COMPLETED_LIST: "T", // в списке subTaskList
+       NEEDS_ACTION_LIST: "F" // в списке subTaskList
+    };})();
+
+
+var UnicodeSymbols = (function() {
+    return {
+        CLOSE: '\u2715',
+        PLUS: '\uFF0B',
+        ARROW_RIGHT: '\u25B6',
+        GALKA: '\u2714',
+        ARROW_DOWN: '\u25BC'
+    };})();
 
 
 
