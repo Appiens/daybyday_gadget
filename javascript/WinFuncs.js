@@ -1114,7 +1114,7 @@ function TaskNodeController() {
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
 
-        if (targ.task == undefined || targ.taskList == undefined) {
+        if (targ.id.substring(MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
             return;
         }
 
