@@ -363,13 +363,12 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                if (taskNodeController.selectedTaskDiv.task == null) {
+                                if (taskNodeController.selectedTaskDiv.task == null ||
+                                    taskNodeController.selectedTaskDiv.taskListId == null) {
                                     return;
                                 }
 
-                                var task = taskNodeController.selectedTaskDiv.task;
-
-                                alert('ActionModifyTask ' + task.title);
+                                taskNodeController.EditTask(taskNodeController.selectedTaskDiv);
                         }
     };})();
 
@@ -1052,8 +1051,12 @@ function TaskNodeController() {
         var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
         if (taskLi) {
             if (parent.selectedTaskDiv == $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id)) {
+                // TODO unite this in one func "ResetSelectedTask"
                 parent.selectedTaskDiv = null;
-            }
+                disableButton($('button-insert-task'));
+                disableButton($('button-delete-task'));
+                disableButton($('button-modify-task'));
+        }
 
             taskLi.parentNode.removeChild(taskLi);
         }
@@ -1066,6 +1069,19 @@ function TaskNodeController() {
         }
 
 
+    }
+
+    this.EditTask = function(taskDiv) {
+        if (taskDiv.task && taskDiv.taskListId) {
+            // removing previous divSubWatch
+
+            $('watch').task = taskDiv.task;
+            $('watch').taskListId = taskDiv.taskListId;
+
+            watchSectionController.SetWatchFieldsFromTask($('watch').task);
+            watchSectionController.SetDisableWatchButtons(true);
+            showOneSection('watch');
+        }
     }
 
     // sets a task Title for a task span
@@ -1240,16 +1256,7 @@ function TaskNodeController() {
 
         targ = targ.parentNode;
 
-        if (targ.task && targ.taskListId) {
-            // removing previous divSubWatch
-
-            $('watch').task = targ.task;
-            $('watch').taskListId = targ.taskListId;
-
-            watchSectionController.SetWatchFieldsFromTask($('watch').task);
-            watchSectionController.SetDisableWatchButtons(true);
-            showOneSection('watch');
-        }
+        parent.EditTask(targ);
     }
 
     // Creates a status img
