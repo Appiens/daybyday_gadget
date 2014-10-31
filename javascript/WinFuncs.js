@@ -117,6 +117,10 @@ function generateList(taskLists) {
     isDrawingMainList = false;
     taskListsLast = taskLists;
 
+    disableButton($('button-insert-task'));
+    disableButton($('button-delete-task'));
+    disableButton($('button-modify-task'));
+
     return ulMain;
 }
 
@@ -1137,7 +1141,7 @@ function TaskNodeController() {
         }
 
         if (parent.selectedTaskDiv) {
-            parent.selectedTaskDiv.style.background = 'white';
+            parent.selectedTaskDiv = null;
 
             // нажатие на тот же самый таск отменяет выбор таска
             if (parent.selectedTaskDiv == targ) {
