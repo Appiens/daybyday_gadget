@@ -264,7 +264,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('12:08');
+                 alert('12:19');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -455,7 +455,7 @@
             <input type="button" id="button-refresh" name="button-refresh" value="&#x267B" title="__MSG_action_refresh__"/>
         </td>
         <td style="width: 25%; text-align:left; vertical-align:middle;">
-            <input type="button" id="button-insert-task" name="button-insert-task" value="&#FF0B" title="__MSG_action_insert_task__"/>
+            <input type="button" id="button-insert-task" name="button-insert-task" value="&#x2295" title="__MSG_action_insert_task__"/>
         </td>
         <td style="width: 25%; text-align:left; vertical-align:middle;">
             <input type="button" id="button-delete-task" name="button-delete-task" value="&#x2717" title="__MSG_action_delete_task__"/>
