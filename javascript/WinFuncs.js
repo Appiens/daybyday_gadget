@@ -905,9 +905,9 @@ function RequestController() {
         var parent = taskDiv;
         var result = 0;
 
-            while (parent != $(main)) {
-                result += parent.offsettop;
-                parent = parent.parentnode;
+            while (parent != $('main')) {
+                result += parent.offsetTop;
+                parent = parent.parentNode;
             }
 
         return result;
