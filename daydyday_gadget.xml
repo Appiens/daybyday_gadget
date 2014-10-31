@@ -146,6 +146,10 @@
         text-decoration: none;
     }
 
+    td {
+        padding: 10px;
+    }
+
     ul#navWrapper {
         border: 0 black dashed;
         margin-left: 9px;
@@ -264,7 +268,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('12:19');
+                 alert('12:41');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
