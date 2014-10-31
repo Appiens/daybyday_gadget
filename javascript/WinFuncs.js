@@ -328,15 +328,45 @@ var Actions = ( function() {
                         },
 
         ActionInsertTask: function() {
-                                alert('ActionInsertTask');
+                                if (taskNodeController.selectedTaskDiv == null) {
+                                    return;
+                                }
+
+                                if (taskNodeController.selectedTaskDiv.task == null) {
+                                    return;
+                                }
+
+                                var task = taskNodeController.selectedTaskDiv.task;
+
+                                alert('ActionInsertTask ' + task.title);
                         },
 
         ActionDeleteTask: function() {
-                                alert('ActionDeleteTask');
+                                if (taskNodeController.selectedTaskDiv == null) {
+                                    return;
+                                }
+
+                                if (taskNodeController.selectedTaskDiv.task == null) {
+                                    return;
+                                }
+
+                                var task = taskNodeController.selectedTaskDiv.task;
+
+                                alert('ActionDeleteTask ' + task.title);
                         },
 
         ActionModifyTask: function() {
-                                alert('ActionEditTask');
+                                if (taskNodeController.selectedTaskDiv == null) {
+                                    return;
+                                }
+
+                                if (taskNodeController.selectedTaskDiv.task == null) {
+                                    return;
+                                }
+
+                                var task = taskNodeController.selectedTaskDiv.task;
+
+                                alert('ActionModifyTask ' + task.title);
                         }
     };})();
 
@@ -1141,15 +1171,17 @@ function TaskNodeController() {
         }
 
         if (parent.selectedTaskDiv) {
-            parent.selectedTaskDiv = null;
 
             // нажатие на тот же самый таск отменяет выбор таска
             if (parent.selectedTaskDiv == targ) {
+                parent.selectedTaskDiv = null;
                 disableButton($('button-insert-task'));
                 disableButton($('button-delete-task'));
                 disableButton($('button-modify-task'));
                 return;
             }
+
+            parent.selectedTaskDiv.style.background = 'white';
         }
 
         parent.selectedTaskDiv = targ;
