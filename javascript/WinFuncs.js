@@ -347,13 +347,15 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                if (taskNodeController.selectedTaskDiv.task == null) {
+                                if (taskNodeController.selectedTaskDiv.task == null ||
+                                    taskNodeController.selectedTaskDiv.taskListId == null) {
                                     return;
                                 }
 
                                 var task = taskNodeController.selectedTaskDiv.task;
+                                var taskListId = taskNodeController.selectedTaskDiv.taskListId;
 
-                                alert('ActionDeleteTask ' + task.title);
+                                requestController.deleteTaskRequest(taskListId, task);
                         },
 
         ActionModifyTask: function() {
@@ -977,6 +979,8 @@ function TaskListNodeController() {
         taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
 
         enableButton($('button-insert-task'));
+        disableButton($('button-delete-task'));
+        disableButton($('button-modify-task'));
     }
 }
 
@@ -1047,6 +1051,10 @@ function TaskNodeController() {
     this.DeleteTaskNode = function(taskFromServer, taskListId) {
         var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
         if (taskLi) {
+            if (parent.selectedTaskDiv == $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id)) {
+                parent.selectedTaskDiv = null;
+            }
+
             taskLi.parentNode.removeChild(taskLi);
         }
 
@@ -1056,6 +1064,8 @@ function TaskNodeController() {
             // no tasks any more, we should show <no tasks> section
             $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = '';
         }
+
+
     }
 
     // sets a task Title for a task span
