@@ -888,7 +888,7 @@ function RequestController() {
                     taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
 
                     if (gotoTask) {
-                        // TODO goto task
+                        $('main').scrollTop = $('main').scrollHeight;
                     }
 
                     if (selectTask) {
