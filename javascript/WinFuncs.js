@@ -85,6 +85,9 @@ function init(makePostRequestFunc) {
     $('button-save_task').addEventListener('click', Actions.ActionSaveTask);
     $('button-to-subtasks').addEventListener('click', Actions.ActionToSubtasks);
     $('button-discard').addEventListener('click', Actions.ActionDiscard);
+    $('button-insert-task').addEventListener('click', Actions.ActionInsertTask);
+    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
+    $('button-modify-task').addEventListener('click', Actions.ActionModifyTask);
 
     watchSectionController.createTaskStatusImagesWatch();
 
@@ -318,6 +321,18 @@ var Actions = ( function() {
                                     watchSectionController.SetDisableWatchButtons(true);
                                     watchSectionController.SetWatchFieldsFromTask($('watch').task);
                                 }
+                        },
+
+        ActionInsertTask: function() {
+                                alert('ActionInsertTask');
+                        },
+
+        ActionDeleteTask: function() {
+                                alert('ActionDeleteTask');
+                        },
+
+        ActionModifyTask: function() {
+                                alert('ActionEditTask');
                         }
     };})();
 
@@ -1123,10 +1138,22 @@ function TaskNodeController() {
 
         if (parent.selectedTaskDiv) {
             parent.selectedTaskDiv.style.background = 'white';
+
+            // нажатие на тот же самый таск отменяет выбор таска
+            if (parent.selectedTaskDiv == targ) {
+                disableButton($('button-insert-task'));
+                disableButton($('button-delete-task'));
+                disableButton($('button-modify-task'));
+                return;
+            }
         }
 
         parent.selectedTaskDiv = targ;
         parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
+
+        enableButton($('button-insert-task'));
+        enableButton($('button-delete-task'));
+        enableButton($('button-modify-task'));
     }
 
     var OnArrowClick = function(e) {

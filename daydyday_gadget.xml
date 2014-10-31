@@ -268,7 +268,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('12:51');
+                 alert('14:40');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -452,7 +452,7 @@
     gadgets.util.registerOnLoadHandler(startGadget);
   </script>
 
-  <div id="footer" style="background: #DFEEFF">
+  <div id="footer">
     <table cellpadding=0 width=50%>
        <tr>
         <td style="width: 25%; text-align:left; vertical-align:middle;">
