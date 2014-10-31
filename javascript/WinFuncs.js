@@ -333,6 +333,7 @@ var Actions = ( function() {
                                 }
 
                                 if (taskNodeController.selectedTaskDiv.task == null) {
+                                    alert('ActionInsertTask no title Task');
                                     return;
                                 }
 
@@ -946,7 +947,36 @@ function TaskListNodeController() {
 
         liChild.appendChild(document.createTextNode('<' +  getLangValue("no_tasks_title") + '>'));
         liChild.style.display = 'none';
+
+        liChild.addEventListener('click', OnTaskDivClick, false);
+
         ul.appendChild(liChild);
+    }
+
+    var OnTaskDivClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        if (taskNodeController.selectedTaskDiv) {
+
+            // нажатие на тот же самый таск отменяет выбор таска
+            if (taskNodeController.selectedTaskDiv == targ) {
+                taskNodeController.selectedTaskDiv = null;
+                disableButton($('button-insert-task'));
+                disableButton($('button-delete-task'));
+                disableButton($('button-modify-task'));
+                return;
+            }
+
+            taskNodeController.selectedTaskDiv.style.background = 'white';
+        }
+
+        taskNodeController.selectedTaskDiv = targ;
+        taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
+
+        enableButton($('button-insert-task'));
     }
 }
 
