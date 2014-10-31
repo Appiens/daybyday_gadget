@@ -889,7 +889,7 @@ function RequestController() {
 
                     if (gotoTask) {
                         var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
-                        $('main').scrollTop = taskDiv.style.top;
+                        $('main').scrollTop = getOffset(taskDiv);
                     }
 
                     if (selectTask) {
@@ -899,6 +899,18 @@ function RequestController() {
             }
 
         };
+    }
+
+    var getOffset = function(taskDiv) {
+        var parent = taskDiv;
+        var result = 0;
+
+            while (parent != $(main)) {
+                result += parent.offsettop;
+                parent = parent.parentnode;
+            }
+
+        return result;
     }
 }
 
