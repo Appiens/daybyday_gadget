@@ -332,14 +332,17 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                if (taskNodeController.selectedTaskDiv.task == null) {
-                                    alert('ActionInsertTask no title Task');
-                                    return;
+                                var taskListId;
+
+                                if (taskNodeController.selectedTaskDiv.taskListId == null) {
+                                    var noTaskLi = taskNodeController.selectedTaskDiv;
+                                    taskListId =  noTaskLi.id.substring(MainSectionPrefixes.PREFIX_LI_NO_TASKS.length);
+                                }
+                                else {
+                                    taskListId = taskNodeController.selectedTaskDiv.taskListId;
                                 }
 
-                                var task = taskNodeController.selectedTaskDiv.task;
-
-                                alert('ActionInsertTask ' + task.title);
+                                requestController.insertTaskRequest(taskListId, false, '<untitled>', null, '', true, true);
                         },
 
         ActionDeleteTask: function() {
@@ -676,7 +679,7 @@ function WatchSectionController() {
 
                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
                 notes += TaskUtils.getAdditionalSection($('watch').task);
-                requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
+                requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes, true, true);
                 Actions.ActionBackToList();
             }
         }
@@ -788,7 +791,7 @@ function RequestController() {
         }
     }
 
-    this.insertTaskRequest = function(taskListId, isCompleted, title, dueDate, notes) {
+    this.insertTaskRequest = function(taskListId, isCompleted, title, dueDate, notes, gotoTask, selectTask) {
         // https://www.googleapis.com/tasks/v1/lists/' + listId + '/tasks
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks?key=' + API_KEY;
         var data = '{';
@@ -805,7 +808,9 @@ function RequestController() {
         }
 
         data += '}';
-        makePOSTRequest(url, data, OnTaskInserted, "POST");
+
+        var shell = TaskInsertedShell(gotoTask, selectTask);
+        makePOSTRequest(url, data, shell.OnTaskInserted, "POST");
     }
 
     this.deleteTaskRequest = function(taskListId, task) {
@@ -865,6 +870,33 @@ function RequestController() {
                     taskNodeController.DeleteTaskNode(task, taskListId);
                 }
             }
+        };
+    }
+
+    var TaskInsertedShell = function(gotoTask, selectTask) {
+        return {
+            OnTaskInserted : function(obj) {
+                if (obj.errors.length > 0) {
+                    alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+                    return;
+                }
+
+                if (obj.text) {
+                    var taskFromServer = JSON.parse(obj.text);
+                    var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
+                    taskListId = taskListId.substring(0, taskListId.indexOf('/'));
+                    taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
+
+                    if (gotoTask) {
+                        // TODO goto task
+                    }
+
+                    if (selectTask) {
+                        taskNodeController.selectTaskDiv($(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id));
+                    }
+                }
+            }
+
         };
     }
 }
@@ -961,17 +993,17 @@ function TaskListNodeController() {
         else if (e.srcElement) targ = e.srcElement;
 
         if (taskNodeController.selectedTaskDiv) {
+            taskNodeController.selectedTaskDiv.style.background = 'white';
 
             // нажатие на тот же самый таск отменяет выбор таска
             if (taskNodeController.selectedTaskDiv == targ) {
                 taskNodeController.selectedTaskDiv = null;
+
                 disableButton($('button-insert-task'));
                 disableButton($('button-delete-task'));
                 disableButton($('button-modify-task'));
                 return;
             }
-
-            taskNodeController.selectedTaskDiv.style.background = 'white';
         }
 
         taskNodeController.selectedTaskDiv = targ;
@@ -1051,12 +1083,8 @@ function TaskNodeController() {
         var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
         if (taskLi) {
             if (parent.selectedTaskDiv == $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id)) {
-                // TODO unite this in one func "ResetSelectedTask"
-                parent.selectedTaskDiv = null;
-                disableButton($('button-insert-task'));
-                disableButton($('button-delete-task'));
-                disableButton($('button-modify-task'));
-        }
+                parent.deselectTaskDiv();
+            }
 
             taskLi.parentNode.removeChild(taskLi);
         }
@@ -1082,6 +1110,34 @@ function TaskNodeController() {
             watchSectionController.SetDisableWatchButtons(true);
             showOneSection('watch');
         }
+    }
+
+    this.selectTaskDiv = function(taskDiv) {
+
+        if (parent.selectedTaskDiv) {
+
+            // нажатие на тот же самый таск отменяет выбор таска
+            if (parent.selectedTaskDiv == taskDiv) {
+                parent.deselectTaskDiv();
+                return;
+            }
+
+            parent.selectedTaskDiv.style.background = 'white';
+        }
+
+        parent.selectedTaskDiv = taskDiv;
+        parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
+
+        enableButton($('button-insert-task'));
+        enableButton($('button-delete-task'));
+        enableButton($('button-modify-task'));
+    }
+
+    this.deselectTaskDiv = function() {
+        parent.selectedTaskDiv = null;
+        disableButton($('button-insert-task'));
+        disableButton($('button-delete-task'));
+        disableButton($('button-modify-task'));
     }
 
     // sets a task Title for a task span
@@ -1226,26 +1282,7 @@ function TaskNodeController() {
             return;
         }
 
-        if (parent.selectedTaskDiv) {
-
-            // нажатие на тот же самый таск отменяет выбор таска
-            if (parent.selectedTaskDiv == targ) {
-                parent.selectedTaskDiv = null;
-                disableButton($('button-insert-task'));
-                disableButton($('button-delete-task'));
-                disableButton($('button-modify-task'));
-                return;
-            }
-
-            parent.selectedTaskDiv.style.background = 'white';
-        }
-
-        parent.selectedTaskDiv = targ;
-        parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
-
-        enableButton($('button-insert-task'));
-        enableButton($('button-delete-task'));
-        enableButton($('button-modify-task'));
+        parent.selectTaskDiv(targ);
     }
 
     var OnArrowClick = function(e) {
