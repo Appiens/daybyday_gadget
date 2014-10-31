@@ -1117,8 +1117,6 @@ function TaskNodeController() {
         // получить div
         targ = targ.parentNode;
 
-        console.log(targ.id);
-        console.log(targ.id.substring(0, MainSectionPrefixes.PREFIX_DIV_TASK.length) + ' - ' + MainSectionPrefixes.PREFIX_DIV_TASK);
         if (targ.id.substring(0, MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
             return;
         }
