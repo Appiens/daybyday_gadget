@@ -11,6 +11,9 @@
     <msg name="action_discard">Cancel changes</msg>
     <msg name="action_move_to_list">Move to list</msg>
     <msg name="action_refresh">Refresh</msg>
+    <msg name="action_insert_task">Add new task</msg>
+    <msg name="action_delete_task">Remove selected task</msg>
+    <msg name="action_modify_task">Edit selected task</msg>
     <msg name="no_tasks_title">no tasks</msg>
     <msg name="msg_error_occured">Error occured!</msg>
     <msg name="msg_move_forbidden">Please, save or discard this task before moving it!</msg>
