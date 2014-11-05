@@ -179,7 +179,7 @@ function processTmpList(taskLists) {
                        taskNodeController.UpdateTaskNode(taskLists[i].tasks[j]);
                    }
                    else {
-                       taskNodeController.InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
+                       taskNodeController.InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id), true);
                    }
 
                 }
@@ -841,21 +841,6 @@ function RequestController() {
         }
     }
 
-    // calback function for a change task request
-    var OnTaskInserted = function(obj) {
-        if (obj.errors.length > 0) {
-            alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
-            return;
-        }
-
-        if (obj.text) {
-            var taskFromServer = JSON.parse(obj.text);
-            var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
-            taskListId = taskListId.substring(0, taskListId.indexOf('/'));
-            taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
-        }
-    }
-
 // обертка для обработчика события удаления таска
     var TaskDeletedShell = function(taskToDelete, taskListId) {
         var task = taskToDelete;
@@ -885,7 +870,7 @@ function RequestController() {
                     var taskFromServer = JSON.parse(obj.text);
                     var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
                     taskListId = taskListId.substring(0, taskListId.indexOf('/'));
-                    taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId));
+                    taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId), true);
 
                     if (gotoTask) {
                         var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
@@ -924,7 +909,7 @@ function TaskListNodeController() {
         if (taskList.tasks && taskList.tasks.length > 0) {
 
             for (var j=0; j < taskList.tasks.length; j++) {
-                taskNodeController.InsertTaskNode(taskList.id, taskList.tasks[j], ul);
+                taskNodeController.InsertTaskNode(taskList.id, taskList.tasks[j], ul, false);
             } // for j
         } // if
         else {
@@ -1060,7 +1045,7 @@ function TaskNodeController() {
     // string taskListId - идентификатор таск листа, которому принадлежит таск
     // object taskFromServer - новая задача (с сервера)
     // object ul - родительский элемент (ul таск листа)
-    this.InsertTaskNode = function(taskListId, taskFromServer, ul) {
+    this.InsertTaskNode = function(taskListId, taskFromServer, ul, insertBefore) {
         var liChild = document.createElement('li');
         liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
         var taskDiv = createTaskDiv(taskFromServer, taskListId);
@@ -1079,7 +1064,14 @@ function TaskNodeController() {
         liChild.appendChild(taskDiv);
 
         subTaskDivMainController.RecreateSubTaskDiv(taskDiv, taskFromServer);
-        ul.appendChild(liChild);
+
+        if (insertBefore) {
+            ul.insertBefore(liChild, ul.firstChild);
+        }
+        else {
+            ul.appendChild(liChild);
+        }
+
         $(MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskListId).style.display = 'none';
 
         // set task statuses
