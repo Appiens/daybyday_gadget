@@ -3,6 +3,7 @@
   <ModulePrefs title="daybyday_gadget" scrolling="true" author_email="info@appiens.com" height="400">
     <Require feature="opensocial-0.8" />
     <Require feature="locked-domain"/>
+    <Require feature='auth-refresh'/>
       <OAuth>
       <Service name="google">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" /> 
@@ -268,7 +269,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('12:59');
+                 alert('19:14');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
