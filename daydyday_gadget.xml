@@ -242,7 +242,7 @@
 
     function fetchOnlyNewData() {
         var d = new Date();
-        console.log(d + ' fetchOnlyNewData');
+        console.log(d + ' fetchOnlyNewData ' + shindig.auth.getSecurityToken());
         errorOccuredTmp = false;
         fetchData(OnFetchDataDoneNew);
     }
@@ -269,7 +269,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('19:14');
+                 alert('14:33');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
