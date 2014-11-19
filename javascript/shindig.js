@@ -63,6 +63,11 @@
 var shindig = shindig || {};
 shindig.oauth = shindig.oauth || {};
 
+function ResetShindig() {
+    shindig = {};
+    shindig.oauth = shindig.oauth || {};     
+}
+
 /**
  * Initialize a new OAuth popup manager.  Parameters must be specified as
  * an object, e.g. shindig.oauth.popup({destination: somewhere,...});
