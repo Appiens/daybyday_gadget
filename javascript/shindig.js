@@ -65,7 +65,7 @@ shindig.oauth = shindig.oauth || {};
 
 function ResetShindig() {
     shindig = {};
-    shindig.oauth = shindig.oauth || {};     
+    shindig.oauth = shindig.oauth || {};
 }
 
 /**
