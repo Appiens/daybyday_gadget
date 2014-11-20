@@ -1071,13 +1071,6 @@ function TaskNodeController() {
         createTaskStatusImages(taskDiv, taskFromServer);
         taskDiv.appendChild(span);
 
-        // disabling checkBox for repeatable task
-        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
-
-        if (checkBox.disabled) {
-            checkBox.title = 'If task is repeatable, we can`t change its status! Please use Day by Day for this purpose!';
-        }
-
         // стрелочка для перехода в секцию Watch
         var arrow = createArrow(taskFromServer);
         taskDiv.appendChild(arrow);
@@ -1099,6 +1092,13 @@ function TaskNodeController() {
         SetDisplayStatusOverdue(taskFromServer);
         SetTaskStatusCheckbox(taskFromServer);
         SetTaskTitle(taskFromServer);
+
+        // disabling checkBox for repeatable task
+        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
+
+        if (checkBox.disabled) {
+            checkBox.title = 'If task is repeatable, we can`t change its status! Please use Day by Day for this purpose!';
+        }
     }
 
     // удаляет нод соотетствующий таску в секции Main
