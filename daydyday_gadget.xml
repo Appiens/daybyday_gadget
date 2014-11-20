@@ -278,10 +278,9 @@
                  }
             }
          else {
-                var main = document.getElementById('main');
                 $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
                 $('label-oauth-error').style.display = '';
-                showOneSection('main');
+                showOneSection('error');
                 errorOccured = true;
         }
     }
@@ -300,6 +299,10 @@
             }
         else {
                taskListsTmp = null;
+                $('label-oauth-error').innerText = 'Oops! We don`t know how to solve this... Press F5';
+                $('label-oauth-error').style.display = '';
+                showOneSection('error');
+
                console.log('Error loading task lists');
         }
 
@@ -349,12 +352,9 @@
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
         } else {
-            // The response.oauthError and response.oauthErrorText values may help debug
-            // problems with your gadget.
-            var main = document.getElementById('main');
             $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
             $('label-oauth-error').style.display = '';
-            showOneSection('main');
+            showOneSection('error');
             errorOccured = true;
         }
       }, "&showCompleted=true");
@@ -374,10 +374,19 @@
 
                 if (allTasksLoaded(taskListsTmp)) {
                     processTmpList(taskListsTmp);
+
+                    // если отображается ошибка, нужно отобразить main
+                    if isSectionVisible('error') {
+                       showOneSection('main');
+                    }
                     setTimeLastAsk();
                 }
             }
             else {
+                    taskListsTmp = null;
+                    $('label-oauth-error').innerText = 'Oops! We don`t know how to solve this... Press F5';
+                    $('label-oauth-error').style.display = '';
+                    showOneSection('error');
                     console.log("Error for " + taskList.title);
                     errorOccuredTmp = true;
             }
@@ -474,7 +483,10 @@
   
   <div id="main" style="display: none; height: 80%; overflow-y: scroll;">
 	<ul id="listId" class="collapsibleList"></ul>
-	<label id="label-oauth-error" style="display:none;"></label>
+  </div>
+
+  <div id="error" style="display: none">
+    <label id="label-oauth-error" style="display:none;"></label>
   </div>
 
   <div id="approval" style="display: none">

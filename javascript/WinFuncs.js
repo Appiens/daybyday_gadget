@@ -214,7 +214,7 @@ function processTmpList(taskLists) {
 // When the user confirms access, the fetchData() function is invoked again to
 // obtain and display the user's data.
 function showOneSection(toshow) {
-    var sections = [ 'main', 'approval', 'waiting', 'watch' ];
+    var sections = [ 'main', 'approval', 'waiting', 'watch', 'error' ];
 
     for (var i=0; i < sections.length; ++i) {
         var s = sections[i];
@@ -227,6 +227,11 @@ function showOneSection(toshow) {
     }
 
     $('footer').style.display = toshow == 'main'? "": "none";
+}
+
+function isSectionVisible(section) {
+    var el = document.getElementById(section);
+    return el.style.display == "block";
 }
 
 
@@ -570,6 +575,14 @@ function WatchSectionController() {
     this.OnSomeEditDone = function() {
         SetDisplayStatusOverdueWatch();
         SetDisplayTaskStatusAddImagesWatch();
+
+        var checkBox = $('checkbox-task-completed');
+        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display == '';
+
+        if (checkBox.disabled) {
+            checkBox.title = 'If task is repeatable, we can`t change its status! Please use Day by Day for this purpose!';
+        }
+
         parent.SetDisableWatchButtons(false);
     }
 
@@ -1058,6 +1071,13 @@ function TaskNodeController() {
         createTaskStatusImages(taskDiv, taskFromServer);
         taskDiv.appendChild(span);
 
+        // disabling checkBox for repeatable task
+        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
+
+        if (checkBox.disabled) {
+            checkBox.title = 'If task is repeatable, we can`t change its status! Please use Day by Day for this purpose!';
+        }
+
         // стрелочка для перехода в секцию Watch
         var arrow = createArrow(taskFromServer);
         taskDiv.appendChild(arrow);
@@ -1166,11 +1186,10 @@ function TaskNodeController() {
             if (!e) var e = window.event;
             if (e.target) targ = e.target;
             else if (e.srcElement) targ = e.srcElement;
-            OnChangeTaskStatusCB(targ);
-
             var li = targ;
             while (li != null && li.task == undefined) li = li.parentNode;
             var task = li.task;
+            OnChangeTaskStatusCB(targ);
 
             while (li != null && li.taskListId == undefined) li = li.parentNode;
 
