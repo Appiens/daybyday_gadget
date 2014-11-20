@@ -269,7 +269,7 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('13:51');
+                 alert('14:00');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
@@ -376,7 +376,7 @@
                     processTmpList(taskListsTmp);
 
                     // если отображается ошибка, нужно отобразить main
-                    if isSectionVisible('error') {
+                    if  (document.getElementById('error').style.display == "block") {
                        showOneSection('main');
                     }
                     setTimeLastAsk();

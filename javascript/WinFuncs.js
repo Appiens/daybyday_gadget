@@ -229,12 +229,6 @@ function showOneSection(toshow) {
     $('footer').style.display = toshow == 'main'? "": "none";
 }
 
-function isSectionVisible(section) {
-    var el = document.getElementById(section);
-    return el.style.display == "block";
-}
-
-
 function filterSpecialChar(data) {
     if (data) {
         data = data.replace(/"/g, "\\\"");
