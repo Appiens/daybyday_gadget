@@ -50,7 +50,7 @@
 
     li.collapsibleListOpen{
          cursor:pointer;
-         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/release/images/button-minus.png'); <!--no-repeat top left;-->
+         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/Release/images/button-minus.png'); <!--no-repeat top left;-->
          background-position: 0 5px;
          background-size: 12px 12px;
          background-repeat: no-repeat;
@@ -61,7 +61,7 @@
 
     li.collapsibleListClosed{
          cursor:pointer;
-         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/release/images/button-plus.png'); <!--no-repeat top left;-->
+         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/Release/images/button-plus.png'); <!--no-repeat top left;-->
          background-position: 0 5px;
          background-size: 12px 12px;
          background-repeat: no-repeat;
@@ -198,10 +198,10 @@
         background-color: #33B5E5;
     }
   </style>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/release/javascript/CollapsibleLists.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/release/javascript/shindig.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/release/javascript/WinFuncs.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/release/javascript/DateTimeClass.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/shindig.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
     var taskLists = []; // полный список задач
@@ -213,8 +213,8 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 18:17');
-        var gadgetURL = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
+        console.log('starting gadget 18:39');
+        var gadgetURL = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/Release/images/';
         init(makePOSTRequest, gadgetURL);
         $('button-refresh').addEventListener('click', fetchDataAll);
         fetchDataAll();
