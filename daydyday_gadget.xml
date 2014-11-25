@@ -11,8 +11,8 @@
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" /> 
       </Service>
     </OAuth>
-    <Locale messages="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/lang/ALL_ALL.xml"/>
-    <Locale lang="ru" messages="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/lang/ru_ALL.xml"/>
+    <Locale messages="lang/ALL_ALL.xml"/>
+    <Locale lang="ru" messages="lang/ru_ALL.xml"/>
   </ModulePrefs>
   <Content type="html">
   <![CDATA[
@@ -213,7 +213,9 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        init(makePOSTRequest);
+        console.log('starting gadget 18:17');
+        var gadgetURL = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
+        init(makePOSTRequest, gadgetURL);
         $('button-refresh').addEventListener('click', fetchDataAll);
         fetchDataAll();
     }
@@ -269,7 +271,6 @@
           approvaldone.onclick = popup.createApprovedOnClick();
           showOneSection('approval');
         } else if (response.data) {
-                 alert('14:00');
                  taskLists = [];
                  taskLists = response.data.items;
                  for(var i=0; i< taskLists.length; i++) {
