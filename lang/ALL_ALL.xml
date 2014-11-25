@@ -22,5 +22,5 @@
     <msg name="approval_part_2">I've approved access</msg>
     <msg name="approval_part_3">once you've approved access to your data.</msg>
     <msg name="msg_error_hour">Oops! We don`t know how to solve this... Press F5</msg>
-    <msg name="day_by_day">Day By Day</msg>
+    <msg name="day_by_day">Day by day</msg>
 </messagebundle>
