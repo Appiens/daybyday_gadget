@@ -213,9 +213,8 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 18:17');
-        var gadgetURL = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
-        init(makePOSTRequest, gadgetURL);
+        console.log('starting gadget 19:08');
+        init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         fetchDataAll();
     }
