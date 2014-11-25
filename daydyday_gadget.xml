@@ -198,10 +198,10 @@
         background-color: #33B5E5;
     }
   </style>
-  <script type="text/javascript" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
-  <script type="text/javascript" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
-  <script type="text/javascript" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/javascript/WinFuncs.js"></script>
-  <script type="text/javascript" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/javascript/DateTimeClass.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
     var taskLists = []; // полный список задач
