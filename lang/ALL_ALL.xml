@@ -17,4 +17,9 @@
     <msg name="no_tasks_title">no tasks</msg>
     <msg name="msg_error_occured">Error occured!</msg>
     <msg name="msg_move_forbidden">Please, save or discard this task before moving it!</msg>
+    <msg name="personalize">Click me to start</msg>
+    <msg name="approval_part_1">Please click</msg>
+    <msg name="approval_part_2">I've approved access</msg>
+    <msg name="approval_part_3">once you've approved access to your data.</msg>
+    <msg name="msg_error_hour">Oops! We don`t know how to solve this... Press F5</msg>
 </messagebundle>

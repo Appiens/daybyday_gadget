@@ -16,5 +16,10 @@
     <msg name="action_modify_task">Редактировать задачу</msg>
     <msg name="no_tasks_title">нет задач</msg>
     <msg name="msg_error_occured">Произошла ошибка!</msg>
-    <msg name="msg_move_forbidden">Пожалуйста, сохраните или отмените изменени перед перемещением!</msg>
+    <msg name="msg_move_forbidden">Пожалуйста, сохраните или отмените изменения перед перемещением!</msg>
+    <msg name="personalize">Нажмите сюда для старта</msg>
+    <msg name="approval_part_1">Пожалуйста, нажмите</msg>
+    <msg name="approval_part_2">Я одобрил доступ</msg>
+    <msg name="approval_part_3">если вы одобрили доступ к вашим данным.</msg>
+    <msg name="msg_error_hour">Упс! Мы не знаем решения этой проблемы... Нажмите F5</msg>
 </messagebundle>
