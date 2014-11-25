@@ -213,9 +213,10 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
+        console.log('starting gadget 18:07');
         var gadgetURL = _args()["url"];
-        var baseURL=gadgetURL.replace(/[a-zA-Z0-9_]+.xml(?.*)?/,"")
-        init(makePOSTRequest, baseUrl);
+        //var baseURL=gadgetURL.replace(/[a-zA-Z0-9_]+.xml(?.*)?/,"")
+        init(makePOSTRequest, gadgetUrl);
         $('button-refresh').addEventListener('click', fetchDataAll);
         fetchDataAll();
     }
