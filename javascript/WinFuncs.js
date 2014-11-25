@@ -1,4 +1,5 @@
 var makePOSTRequest = null;
+var baseUrlImg = null;
 var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
@@ -78,7 +79,7 @@ var watchSectionController = new WatchSectionController();
 // </div>
 
 function init(makePostRequestFunc, baseUrl) {
-    console.log("baseUrl = " + baseUrl);
+    baseUrlImg = baseUrl;
     makePOSTRequest = makePostRequestFunc;
 
     $('checkbox-with-date').addEventListener('change', watchSectionController.OnNoDateCheckChanged);
@@ -1675,7 +1676,7 @@ function SubTaskDivWatchController() {
 }
 
 var StatusImagesNames = (function() {
-    var URL_IMAGES_FOLDER = "images/";
+    var URL_IMAGES_FOLDER = baseUrlImg;
     var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
     var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
     var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";

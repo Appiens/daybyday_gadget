@@ -214,8 +214,7 @@
 
     function startGadget() {
         console.log('starting gadget 18:07');
-        var gadgetURL = _args()["url"];
-        //var baseURL=gadgetURL.replace(/[a-zA-Z0-9_]+.xml(?.*)?/,"")
+        var gadgetURL = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
         init(makePOSTRequest, gadgetUrl);
         $('button-refresh').addEventListener('click', fetchDataAll);
         fetchDataAll();
