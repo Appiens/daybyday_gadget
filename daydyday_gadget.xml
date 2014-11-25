@@ -213,7 +213,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 18:58');
+        console.log('starting gadget 19:54');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         fetchDataAll();
@@ -299,7 +299,7 @@
             }
         else {
                taskListsTmp = null;
-                $('label-oauth-error').innerText = 'Oops! We don`t know how to solve this... Press F5';
+                $('label-oauth-error').innerText = getLangValue('msg_error_hour');
                 $('label-oauth-error').style.display = '';
                 showOneSection('error');
 
@@ -384,7 +384,7 @@
             }
             else {
                     taskListsTmp = null;
-                    $('label-oauth-error').innerText = 'Oops! We don`t know how to solve this... Press F5';
+                    $('label-oauth-error').innerText = getLangValue('msg_error_hour');
                     $('label-oauth-error').style.display = '';
                     showOneSection('error');
                     console.log("Error for " + taskList.title);
@@ -490,13 +490,15 @@
   </div>
 
   <div id="approval" style="display: none">
-    <a href="#" id="personalize">Personalize this gadget</a>
+    <br>
+    <a href="#" id="personalize">__MSG_personalize__</a>
   </div>
 
   <div id="waiting" style="display: none">
-    Please click
-    <a href="#" id="approvaldone">I've approved access</a>
-    once you've approved access to your data.
+    <br>
+    __MSG_approval_part_1__
+    <a href="#" id="approvaldone">__MSG_approval_part_2__</a>
+    __MSG_approval_part_3__
   </div>
 
   <div id="watch" style="display: none">

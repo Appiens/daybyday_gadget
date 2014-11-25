@@ -1,5 +1,7 @@
 var makePOSTRequest = null;
+
 var baseUrlImg = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/Release/images/';
+
 var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
