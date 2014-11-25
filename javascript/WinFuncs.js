@@ -77,7 +77,8 @@ var watchSectionController = new WatchSectionController();
 //      </div> // div sub
 // </div>
 
-function init(makePostRequestFunc) {
+function init(makePostRequestFunc, baseUrl) {
+    console.log("baseUrl = " + baseUrl);
     makePOSTRequest = makePostRequestFunc;
 
     $('checkbox-with-date').addEventListener('change', watchSectionController.OnNoDateCheckChanged);
