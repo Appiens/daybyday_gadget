@@ -22,4 +22,5 @@
     <msg name="approval_part_2">Я одобрил доступ</msg>
     <msg name="approval_part_3">если вы одобрили доступ к вашим данным.</msg>
     <msg name="msg_error_hour">Упс! Мы не знаем решения этой проблемы... Нажмите F5</msg>
+    <msg name="day_by_day">Day By Day</msg>
 </messagebundle>
