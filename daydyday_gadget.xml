@@ -213,7 +213,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 21:00');
+        console.log('starting gadget 21:06');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('a-daybyday-add').addEventListener('click', openDayByDayPage);
