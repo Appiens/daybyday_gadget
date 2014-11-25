@@ -50,7 +50,7 @@
 
     li.collapsibleListOpen{
          cursor:pointer;
-         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-minus.png'); <!--no-repeat top left;-->
+         background: url('images/button-minus.png'); <!--no-repeat top left;-->
          background-position: 0 5px;
          background-size: 12px 12px;
          background-repeat: no-repeat;
@@ -61,7 +61,7 @@
 
     li.collapsibleListClosed{
          cursor:pointer;
-         background: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/button-plus.png'); <!--no-repeat top left;-->
+         background: url('images/button-plus.png'); <!--no-repeat top left;-->
          background-position: 0 5px;
          background-size: 12px 12px;
          background-repeat: no-repeat;
@@ -198,10 +198,10 @@
         background-color: #33B5E5;
     }
   </style>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/CollapsibleLists.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/shindig.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/WinFuncs.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/master/javascript/DateTimeClass.js"></script>
+  <script type="text/javascript" src="javascript/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="javascript/shindig.js"></script>
+  <script type="text/javascript" src="javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
     var taskLists = []; // полный список задач

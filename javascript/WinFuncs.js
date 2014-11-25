@@ -1674,7 +1674,7 @@ function SubTaskDivWatchController() {
 }
 
 var StatusImagesNames = (function() {
-    var URL_IMAGES_FOLDER = "https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/";
+    var URL_IMAGES_FOLDER = "images/";
     var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
     var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
     var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
