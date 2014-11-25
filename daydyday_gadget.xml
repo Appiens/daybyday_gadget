@@ -213,7 +213,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 20:18');
+        console.log('starting gadget 20:23');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('a-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -482,9 +482,12 @@
         <td style="width: 25%; text-align:left; vertical-align:middle;">
             <input type="button" id="button-modify-task" name="button-modify-task" value="&#x270E" title="__MSG_action_modify_task__"/>
         </td>
+        <td style="text-align:left; vertical-align:middle;">
+          <a href="#" id="a-daybyday-add">__MSG_day_by_day__</a>
+        </td>
        </tr>
     </table>
-    <a href="#" id="a-daybyday-add">__MSG_day_by_day__</a>
+
   </div>
   
   <div id="main" style="display: none; height: 80%; overflow-y: scroll;">
