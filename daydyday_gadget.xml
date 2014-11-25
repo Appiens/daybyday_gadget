@@ -11,8 +11,8 @@
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" /> 
       </Service>
     </OAuth>
-    <Locale messages="/lang/ALL_ALL.xml"/>
-    <Locale lang="ru" messages="/lang/ru_ALL.xml"/>
+    <Locale messages="lang/ALL_ALL.xml"/>
+    <Locale lang="ru" messages="lang/ru_ALL.xml"/>
   </ModulePrefs>
   <Content type="html">
   <![CDATA[
