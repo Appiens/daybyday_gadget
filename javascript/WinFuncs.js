@@ -836,6 +836,7 @@ function RequestController() {
 
 
         if (obj.text) {
+            console.log(obj.text);
             var taskFromServer = JSON.parse(obj.text);
 
             // обновляем секцию Main
