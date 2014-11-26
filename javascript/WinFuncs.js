@@ -1679,8 +1679,8 @@ var StatusImagesNames = (function() {
     var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
     var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
     var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
-    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
-    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
+    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
+    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
 
     return {
         PREFIX_ALARM : "img_alm_",
