@@ -306,7 +306,7 @@ var Actions = ( function() {
                                 }
 
                                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-                                notes += TaskUtils.getAdditionalSection($('watch').task);
+                                notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
                                 requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
                              }
                           },
@@ -405,6 +405,45 @@ var TaskUtils = (function() {
 
                                 return false;
                             },
+        // возвращает количество аттрибутов в добавочной секции
+        getNumberAttribs: function(additionalSection) {
+                                var n = additionalSection.split('\n').length;
+                                var empty = '\n<!=\n=!>'.split('\n').length;
+                                return n - empty;
+        },
+
+        removeRepeatable: function(notes) {
+                                var task = {"notes" : notes};
+                                if (!TaskUtils.additionalSectionExist(task)) {
+                                    return notes;
+                                }
+
+                                var additionalSection = TaskUtils.getAdditionalSection(task);
+                                var notesSection = TaskUtils.getNotesSection(task);
+
+                                if (!TaskUtils.isRepeatableTask(additionalSection)) {
+                                    return notes;
+                                }
+
+                                var indexDTSTART = additionalSection.indexOf('DTSTART:');
+                                var indexRRULE = additionalSection.indexOf('RRULE:');
+
+                                var indexDTSTARTf = additionalSection.indexOf('\n', indexDTSTART);
+                                var indexRRULEf = additionalSection.indexOf('\n', indexRRULE);
+
+                                var strDTSTART = additionalSection.substring(indexDTSTART, indexDTSTARTf);
+                                var strRRULE = additionalSection.substring(indexRRULE, indexRRULEf);
+
+                                additionalSection = additionalSection.replace(strDTSTART, '');
+                                additionalSection = additionalSection.replace(strRRULE, '');
+
+                                if (TaskUtils.getNumberAttribs(additionalSection) == 0) {
+                                    // добавочной секции больше нет
+                                    return notesSection;
+                                }
+
+                                return notesSection + additionalSection;
+                            },
 
         additionalSectionExist: function (task) {
                                            var text = task.notes;
@@ -412,7 +451,7 @@ var TaskUtils = (function() {
                                                 return false;
                                             }
 
-                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('\n=!>') > text.indexOf('\n<!=\n'));
+                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('=!>') > text.indexOf('\n<!=\n'));
                                 },
 
         getAdditionalSection: function (task) {
@@ -564,6 +603,7 @@ function WatchSectionController() {
      Hides input-task-date if checkbox not checked, shows otherwise */
     this.OnNoDateCheckChanged = function() {
         $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
+
     }
 
     // Update status images when some editing was done
@@ -686,7 +726,7 @@ function WatchSectionController() {
                 }
 
                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-                notes += TaskUtils.getAdditionalSection($('watch').task);
+                notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
                 requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes, true, true);
                 Actions.ActionBackToList();
             }
@@ -711,7 +751,7 @@ function WatchSectionController() {
     // shows or hides alarm, repeat, priority_high, priority_low images in Watch section
     var SetDisplayTaskStatusAddImagesWatch = function() {
         var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-        notes += TaskUtils.getAdditionalSection($('watch').task);
+        notes += $('watch').additionalSection; // TaskUtils.getAdditionalSection($('watch').task);
 
         var task = {notes: notes};
 
@@ -1129,6 +1169,7 @@ function TaskNodeController() {
 
             $('watch').task = taskDiv.task;
             $('watch').taskListId = taskDiv.taskListId;
+            $('watch').additionalSection = TaskUtils.getAdditionalSection($('watch').task);
 
             watchSectionController.SetWatchFieldsFromTask($('watch').task);
             watchSectionController.SetDisableWatchButtons(true);
