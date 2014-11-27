@@ -746,16 +746,18 @@ function WatchSectionController() {
 }
 
 function RequestController() {
-    this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted) {
+    this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted, dueDate) {
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-        var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
+        var duePart = dueDate != undefined ? ',"due":"' + dueDate + '"' : ',"due": null';
+        var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"' + duePart + '}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"' + duePart + '}';
         makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
     }
 
-    this.changeSubTaskStatusRequest = function(taskListId, taskId, notes) {
+    this.changeSubTaskStatusRequest = function(taskListId, taskId, notes, dueDate) {
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-        var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"}';
+        var duePart = dueDate != undefined ? ',"due":"' + dueDate + '"' : ',"due": null';
+        var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"' + duePart + '}';
         makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
     }
 
@@ -836,6 +838,7 @@ function RequestController() {
 
 
         if (obj.text) {
+            // TODO delete this string when done
             console.log(obj.text);
             var taskFromServer = JSON.parse(obj.text);
 
@@ -1192,7 +1195,7 @@ function TaskNodeController() {
             var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
             var taskListId = li? li.taskListId: '';
             task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
-            requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
+            requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked, task.due);
         });
 
         return checkBox;
@@ -1431,7 +1434,7 @@ function SubTaskDivMainController() {
             arr[subTaskId] = (targ.checked ? SubTaskStatuses.COMPLETED_LIST : SubTaskStatuses.NEEDS_ACTION_LIST) + arr[subTaskId].substring(SubTaskStatuses.COMPLETED_LIST.length);
             var newNotes = watchSectionController.convertFromSubTasks(arr);
             task.notes = newNotes;
-            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
+            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes, task.due);
         });
 
         span.appendChild(checkBox);
