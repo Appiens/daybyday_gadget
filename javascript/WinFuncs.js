@@ -397,6 +397,9 @@ var TaskUtils = (function() {
         isOverdueTask: function(task) {
                                 if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
                                     var today = new Date();
+                                    today.setHours(0);
+                                    today.setMinutes(0);
+                                    today.setSeconds(0);
                                     var due = new Date(task.due);
 
                                     if (today - due > 0) {
@@ -422,28 +425,12 @@ var TaskUtils = (function() {
                                     return additionalSection;
                                 }
 
-//                                var indexDTSTART = additionalSection.indexOf('DTSTART:');
-//                                var indexRRULE = additionalSection.indexOf('RRULE:');
-//
-//                                var indexDTSTARTf = additionalSection.indexOf('\n', indexDTSTART);
-//                                var indexRRULEf = additionalSection.indexOf('\n', indexRRULE);
-//
-//                                var strDTSTART = additionalSection.substring(indexDTSTART, indexDTSTARTf);
-//                                var strRRULE = additionalSection.substring(indexRRULE, indexRRULEf);
-//
-//                                additionalSection = additionalSection.replace(strDTSTART, '');
-//                                additionalSection = additionalSection.replace(strRRULE, '');
-//
-//                                if (TaskUtils.getNumberAttribs(additionalSection) == 0) {
-//                                    // добавочной секции больше нет
-//                                    return notesSection;
-//                                }
-
                                 additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'DTSTART:');
                                 additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'RRULE:');
 
                                 return additionalSection;
                             },
+
         removeSectionByWord: function(additionalSection, keyWord) {
                                 var indStart = additionalSection.indexOf(keyWord);
                                 var indEnd =  additionalSection.indexOf('\n', indStart);
@@ -1300,6 +1287,12 @@ function TaskNodeController() {
             $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = TaskUtils.isRepeatableTask(additionalSection) ? '': 'none';
             $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = TaskUtils.isHighPriorityTask(additionalSection) ? '': 'none';
             $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = TaskUtils.isLowPriorityTask(additionalSection) ? '': 'none';
+        }
+        else {
+            $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = 'none';
+            $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display =  'none';
         }
     }
 
