@@ -419,7 +419,7 @@ var TaskUtils = (function() {
                                 }
 
                                 if (!TaskUtils.isRepeatableTask(additionalSection)) {
-                                    return notes;
+                                    return additionalSection;
                                 }
 
 //                                var indexDTSTART = additionalSection.indexOf('DTSTART:');
@@ -442,7 +442,7 @@ var TaskUtils = (function() {
                                 additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'DTSTART:');
                                 additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'RRULE:');
 
-                                return notesSection + additionalSection;
+                                return additionalSection;
                             },
         removeSectionByWord: function(additionalSection, keyWord) {
                                 var indStart = additionalSection.indexOf(keyWord);
