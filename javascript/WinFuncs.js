@@ -1476,8 +1476,8 @@ function SubTaskDivMainController() {
             var arr = watchSectionController.convertToSubTasks(/*oldNotes*/ notesSection);
             arr[subTaskId] = (targ.checked ? SubTaskStatuses.COMPLETED_LIST : SubTaskStatuses.NEEDS_ACTION_LIST) + arr[subTaskId].substring(SubTaskStatuses.COMPLETED_LIST.length);
             var newNotes = watchSectionController.convertFromSubTasks(arr);
-            task.notes = newNotes + additionalSection;
-            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes, task.due);
+            // task.notes = newNotes + additionalSection;
+            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes + additionalSection, task.due);
         });
 
         span.appendChild(checkBox);
