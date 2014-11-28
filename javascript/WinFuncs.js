@@ -50,6 +50,7 @@ var watchSectionController = new WatchSectionController();
 // структура секции Watch
 //
 // $('watch').task  содержат задачу
+// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр.
 // $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
 // у гугла происходит выброс в секцию списка
 // <div id='div-status-images'> дочерние img создаются динамически
@@ -412,37 +413,50 @@ var TaskUtils = (function() {
                                 return n - empty;
         },
 
-        removeRepeatable: function(notes) {
-                                var task = {"notes" : notes};
-                                if (!TaskUtils.additionalSectionExist(task)) {
-                                    return notes;
+        removeRepeatable: function(additionalSection) {
+                                if (additionalSection == '') {
+                                    return '';
                                 }
-
-                                var additionalSection = TaskUtils.getAdditionalSection(task);
-                                var notesSection = TaskUtils.getNotesSection(task);
 
                                 if (!TaskUtils.isRepeatableTask(additionalSection)) {
                                     return notes;
                                 }
 
-                                var indexDTSTART = additionalSection.indexOf('DTSTART:');
-                                var indexRRULE = additionalSection.indexOf('RRULE:');
+//                                var indexDTSTART = additionalSection.indexOf('DTSTART:');
+//                                var indexRRULE = additionalSection.indexOf('RRULE:');
+//
+//                                var indexDTSTARTf = additionalSection.indexOf('\n', indexDTSTART);
+//                                var indexRRULEf = additionalSection.indexOf('\n', indexRRULE);
+//
+//                                var strDTSTART = additionalSection.substring(indexDTSTART, indexDTSTARTf);
+//                                var strRRULE = additionalSection.substring(indexRRULE, indexRRULEf);
+//
+//                                additionalSection = additionalSection.replace(strDTSTART, '');
+//                                additionalSection = additionalSection.replace(strRRULE, '');
+//
+//                                if (TaskUtils.getNumberAttribs(additionalSection) == 0) {
+//                                    // добавочной секции больше нет
+//                                    return notesSection;
+//                                }
 
-                                var indexDTSTARTf = additionalSection.indexOf('\n', indexDTSTART);
-                                var indexRRULEf = additionalSection.indexOf('\n', indexRRULE);
-
-                                var strDTSTART = additionalSection.substring(indexDTSTART, indexDTSTARTf);
-                                var strRRULE = additionalSection.substring(indexRRULE, indexRRULEf);
-
-                                additionalSection = additionalSection.replace(strDTSTART, '');
-                                additionalSection = additionalSection.replace(strRRULE, '');
-
-                                if (TaskUtils.getNumberAttribs(additionalSection) == 0) {
-                                    // добавочной секции больше нет
-                                    return notesSection;
-                                }
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'DTSTART:');
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'RRULE:');
 
                                 return notesSection + additionalSection;
+                            },
+        removeSectionByWord: function(additionalSection, keyWord) {
+                                var indStart = additionalSection.indexOf(keyWord);
+                                var indEnd =  additionalSection.indexOf('\n', indStart);
+                                var strToReplace = additionalSection.substring(indStart, indEnd);
+                                var result = additionalSection.replace(strToReplace, '');
+
+                                if (TaskUtils.getNumberAttribs(result) == 0) {
+                                    // добавочной секции больше нет
+                                    return '';
+                                }
+
+                                return result;
+
                             },
 
         additionalSectionExist: function (task) {
@@ -604,6 +618,10 @@ function WatchSectionController() {
     this.OnNoDateCheckChanged = function() {
         $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
 
+        // задача без даты не может быть повторяющейся
+        if ($('checkbox-with-date').checked == false) {
+            TaskUtils.removeRepeatable($('watch').additionalSection);
+        }
     }
 
     // Update status images when some editing was done
