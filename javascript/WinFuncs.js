@@ -1462,7 +1462,7 @@ function SubTaskDivMainController() {
 
             while (li != null && li.task == undefined) li = li.parentNode;
             var m_taskId = li ? li.task.id : '';
-            var oldNotes = li ? li.task.notes : '';
+            // var oldNotes = li ? li.task.notes : '';
             var task = li.task;
 
             while (li != null && li.taskListId == undefined) li = li.parentNode;
@@ -1471,10 +1471,12 @@ function SubTaskDivMainController() {
             var taskListId = li? li.taskListId: '';
             var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
 
-            var arr = watchSectionController.convertToSubTasks(oldNotes);
+            var additionalSection = TaskUtils.getAdditionalSection(li.task);
+            var notesSection = TaskUtils.getNotesSection(li.task);
+            var arr = watchSectionController.convertToSubTasks(/*oldNotes*/ notesSection);
             arr[subTaskId] = (targ.checked ? SubTaskStatuses.COMPLETED_LIST : SubTaskStatuses.NEEDS_ACTION_LIST) + arr[subTaskId].substring(SubTaskStatuses.COMPLETED_LIST.length);
             var newNotes = watchSectionController.convertFromSubTasks(arr);
-            task.notes = newNotes;
+            task.notes = newNotes + additionalSection;
             requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes, task.due);
         });
 
