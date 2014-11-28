@@ -620,7 +620,8 @@ function WatchSectionController() {
 
         // задача без даты не может быть повторяющейся
         if ($('checkbox-with-date').checked == false) {
-            console.log(TaskUtils.removeRepeatable($('watch').additionalSection));
+            $('watch').additionalSection = TaskUtils.removeRepeatable($('watch').additionalSection);
+            SetDisplayTaskStatusAddImagesWatch();
         }
     }
 
