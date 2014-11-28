@@ -447,7 +447,7 @@ var TaskUtils = (function() {
         removeSectionByWord: function(additionalSection, keyWord) {
                                 var indStart = additionalSection.indexOf(keyWord);
                                 var indEnd =  additionalSection.indexOf('\n', indStart);
-                                var strToReplace = additionalSection.substring(indStart, indEnd);
+                                var strToReplace = additionalSection.substring(indStart, indEnd + 1);
                                 var result = additionalSection.replace(strToReplace, '');
 
                                 if (TaskUtils.getNumberAttribs(result) == 0) {
@@ -620,7 +620,7 @@ function WatchSectionController() {
 
         // задача без даты не может быть повторяющейся
         if ($('checkbox-with-date').checked == false) {
-            TaskUtils.removeRepeatable($('watch').additionalSection);
+            console.log(TaskUtils.removeRepeatable($('watch').additionalSection));
         }
     }
 
