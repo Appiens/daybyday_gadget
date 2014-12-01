@@ -119,13 +119,13 @@
         font-style:normal;
         font-size: medium;
         height:25px;
+        width: 25px;
         text-decoration:none;
         text-align:center;
         vertical-align:center;
         margin-bottom:0px;
         margin-top:0px;
         border-radius: 5px; /* Скругление */
-        padding: 0;
         border: none;
         background: none;
     }
@@ -220,7 +220,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 14:50');
+        console.log('starting gadget 15:00');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('a-daybyday-add').addEventListener('click', openDayByDayPage);
