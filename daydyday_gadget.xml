@@ -119,11 +119,10 @@
         font-weight:normal;
         font-style:normal;
         font-size: medium;
-        height:20px;
-        line-height:20px;
+        height:25px;
         text-decoration:none;
         text-align:center;
-        vertical-align:top;
+        vertical-align:center;
         margin-bottom:0px;
         margin-top:0px;
         border-radius: 5px; /* Скругление */
@@ -219,7 +218,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 14:21');
+        console.log('starting gadget 14:43');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('a-daybyday-add').addEventListener('click', openDayByDayPage);
