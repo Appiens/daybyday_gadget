@@ -346,7 +346,7 @@ var Actions = ( function() {
                              }
                           },
 
-        // Convert notes to subTaks
+        // Convert notes to subTasks
         ActionToSubtasks:  function () {
                                 watchSectionController.changeNotesState($('input-task-comment').style.display == '');
                                 watchSectionController.OnSomeEditDone();
@@ -364,24 +364,11 @@ var Actions = ( function() {
 
         ActionInsertTask: function() {
                                 // TODO lastUpdatedTaskListId should be inside taskNodeController
-//                                if (taskNodeController.selectedTaskDiv == null) {
-//                                    return;
-//                                }
-
                                 if (lastUpdatedTaskListId == null) {
                                     return;
                                 }
 
                                 var taskListId = lastUpdatedTaskListId;
-
-//                                if (taskNodeController.selectedTaskDiv.taskListId == null) {
-//                                    var noTaskLi = taskNodeController.selectedTaskDiv;
-//                                    taskListId =  noTaskLi.id.substring(MainSectionPrefixes.PREFIX_LI_NO_TASKS.length);
-//                                }
-//                                else {
-//                                    taskListId = taskNodeController.selectedTaskDiv.taskListId;
-//                                }
-
                                 requestController.insertTaskRequest(taskListId, false, '<untitled>', null, '', true, true);
                         },
 
@@ -1089,26 +1076,18 @@ function TaskListNodeController() {
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
 
-        if (taskNodeController.selectedTaskDiv) {
-            taskNodeController.selectedTaskDiv.style.background = 'white';
-
-            // нажатие на тот же самый таск отменяет выбор таска
-            if (taskNodeController.selectedTaskDiv == targ) {
-                taskNodeController.selectedTaskDiv = null;
-
-//                disableButton($('button-insert-task'));
-//                disableButton($('button-delete-task'));
-//                disableButton($('button-modify-task'));
-                return;
-            }
-        }
-
-        taskNodeController.selectedTaskDiv = targ;
-        taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
-
-//        enableButton($('button-insert-task'));
-//        disableButton($('button-delete-task'));
-//        disableButton($('button-modify-task'));
+//        if (taskNodeController.selectedTaskDiv) {
+//            taskNodeController.selectedTaskDiv.style.background = 'white';
+//
+//            // нажатие на тот же самый таск отменяет выбор таска
+//            if (taskNodeController.selectedTaskDiv == targ) {
+//                taskNodeController.selectedTaskDiv = null;
+//                return;
+//            }
+//        }
+//
+//        taskNodeController.selectedTaskDiv = targ;
+//        taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
     }
 }
 
@@ -1401,7 +1380,8 @@ function TaskNodeController() {
             return;
         }
 
-        parent.selectTaskDiv(targ);
+        parent.EditTask(targ);
+        // parent.selectTaskDiv(targ);
     }
 
     var OnArrowClick = function(e) {
