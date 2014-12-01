@@ -363,19 +363,24 @@ var Actions = ( function() {
                         },
 
         ActionInsertTask: function() {
-                                if (taskNodeController.selectedTaskDiv == null) {
+                                // TODO lastUpdatedTaskListId should be inside taskNodeController
+//                                if (taskNodeController.selectedTaskDiv == null) {
+//                                    return;
+//                                }
+
+                                if (lastUpdatedTaskListId == null) {
                                     return;
                                 }
 
-                                var taskListId;
+                                var taskListId = lastUpdatedTaskListId;
 
-                                if (taskNodeController.selectedTaskDiv.taskListId == null) {
-                                    var noTaskLi = taskNodeController.selectedTaskDiv;
-                                    taskListId =  noTaskLi.id.substring(MainSectionPrefixes.PREFIX_LI_NO_TASKS.length);
-                                }
-                                else {
-                                    taskListId = taskNodeController.selectedTaskDiv.taskListId;
-                                }
+//                                if (taskNodeController.selectedTaskDiv.taskListId == null) {
+//                                    var noTaskLi = taskNodeController.selectedTaskDiv;
+//                                    taskListId =  noTaskLi.id.substring(MainSectionPrefixes.PREFIX_LI_NO_TASKS.length);
+//                                }
+//                                else {
+//                                    taskListId = taskNodeController.selectedTaskDiv.taskListId;
+//                                }
 
                                 requestController.insertTaskRequest(taskListId, false, '<untitled>', null, '', true, true);
                         },
