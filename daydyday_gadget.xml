@@ -220,7 +220,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:23');
+        console.log('starting gadget 16:27');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -332,7 +332,7 @@
     function fetchData(onDone) {
 
         var params = {};
-        url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY;
+        url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY + "&fields=items(id%2Ctitle%2Cupdated)";
         params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
         params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
         params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
@@ -360,6 +360,7 @@
               showOneSection('main');
               // alert('done');
 
+              setLastUpdatedTaskList(taskLists);
               setTimeLastAsk();
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
@@ -391,6 +392,7 @@
                     if  (document.getElementById('error').style.display == "block") {
                        showOneSection('main');
                     }
+
                     setTimeLastAsk();
                 }
             }

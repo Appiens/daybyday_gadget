@@ -2,6 +2,7 @@ var makePOSTRequest = null;
 var baseUrlImg = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
 var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
+var lastUpdatedTaskListId; // последний редактируемый таск лист
 var taskListsLast = []; // последний полученный список таскЛистов
 var taskNodeController = new TaskNodeController();
 var taskListNodeController = new TaskListNodeController();
@@ -201,6 +202,37 @@ function processTmpList(taskLists) {
     taskListsLast = taskLists;
 }
 
+function setLastUpdatedTaskList(taskLists) {
+    lastUpdatedTaskListId = null;
+
+//    if (taskLists.length == 0) {
+//        disableButton($('button-insert-task'));
+//    }
+//    else {
+//        enableButton($('button-insert-task'));
+//    }
+
+    if (taskLists.length > 0) {
+        lastUpdatedTaskListId = taskLists[0].id;
+        var dateCurr = new Date();
+        dateCurr.setFullYear(1950, 1, 1); // любая очень древняя дата
+
+        if (taskLists[0].updated) {
+            dateCurr = new Date(taskLists[0].updated);
+        }
+
+        for (var i = 1; i < taskLists.length; i++) {
+            var d = new Date(taskLists[i].updated);
+            if (dateCurr < d) {
+                dateCurr = d;
+                lastUpdatedTaskListId = taskLists[i].id;
+            }
+        }
+
+        console.log(lastUpdatedTaskListId);
+    }
+}
+
 
 // <editor-fold desc="Utils">
 // Display UI depending on OAuth access state of the gadget (see <divs> above).
@@ -308,6 +340,8 @@ var Actions = ( function() {
 
                                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
                                 notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
+
+                                lastUpdatedTaskListId = taskListId;
                                 requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
                              }
                           },
@@ -359,6 +393,7 @@ var Actions = ( function() {
                                 var task = taskNodeController.selectedTaskDiv.task;
                                 var taskListId = taskNodeController.selectedTaskDiv.taskListId;
 
+                                lastUpdatedTaskListId = taskListId;
                                 requestController.deleteTaskRequest(taskListId, task);
                         },
 
@@ -372,6 +407,7 @@ var Actions = ( function() {
                                     return;
                                 }
 
+                                lastUpdatedTaskListId =  taskNodeController.selectedTaskDiv.taskListId ;
                                 taskNodeController.EditTask(taskNodeController.selectedTaskDiv);
                         }
     };})();
@@ -1242,6 +1278,8 @@ function TaskNodeController() {
             var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
             var taskListId = li? li.taskListId: '';
             task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
+
+            lastUpdatedTaskListId = taskListId;
             requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked, task.due);
         });
 
@@ -1489,6 +1527,8 @@ function SubTaskDivMainController() {
             arr[subTaskId] = (targ.checked ? SubTaskStatuses.COMPLETED_LIST : SubTaskStatuses.NEEDS_ACTION_LIST) + arr[subTaskId].substring(SubTaskStatuses.COMPLETED_LIST.length);
             var newNotes = watchSectionController.convertFromSubTasks(arr);
             // task.notes = newNotes + additionalSection;
+
+            lastUpdatedTaskListId = taskListId;
             requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes + additionalSection, task.due);
         });
 
