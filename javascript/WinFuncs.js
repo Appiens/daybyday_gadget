@@ -2,7 +2,6 @@ var makePOSTRequest = null;
 var baseUrlImg = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
 var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
-var lastUpdatedTaskListId; // последний редактируемый таск лист
 var taskListsLast = []; // последний полученный список таскЛистов
 var taskNodeController = new TaskNodeController();
 var taskListNodeController = new TaskListNodeController();
@@ -203,7 +202,7 @@ function processTmpList(taskLists) {
 }
 
 function setLastUpdatedTaskList(taskLists) {
-    lastUpdatedTaskListId = null;
+    taskListNodeController.lastUpdatedTaskListId = null;
 
 //    if (taskLists.length == 0) {
 //        disableButton($('button-insert-task'));
@@ -213,7 +212,7 @@ function setLastUpdatedTaskList(taskLists) {
 //    }
 
     if (taskLists.length > 0) {
-        lastUpdatedTaskListId = taskLists[0].id;
+        taskListNodeController.lastUpdatedTaskListId = taskLists[0].id;
         var dateCurr = new Date();
         dateCurr.setFullYear(1950, 1, 1); // любая очень древняя дата
 
@@ -225,11 +224,9 @@ function setLastUpdatedTaskList(taskLists) {
             var d = new Date(taskLists[i].updated);
             if (dateCurr < d) {
                 dateCurr = d;
-                lastUpdatedTaskListId = taskLists[i].id;
+                taskListNodeController.lastUpdatedTaskListId = taskLists[i].id;
             }
         }
-
-        console.log(lastUpdatedTaskListId);
     }
 }
 
@@ -341,7 +338,7 @@ var Actions = ( function() {
                                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
                                 notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
 
-                                lastUpdatedTaskListId = taskListId;
+                                taskListNodeController.lastUpdatedTaskListId = taskListId;
                                 requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
                              }
                           },
@@ -363,12 +360,11 @@ var Actions = ( function() {
                         },
 
         ActionInsertTask: function() {
-                                // TODO lastUpdatedTaskListId should be inside taskNodeController
-                                if (lastUpdatedTaskListId == null) {
+                                if (taskListNodeController.lastUpdatedTaskListId == null) {
                                     return;
                                 }
 
-                                var taskListId = lastUpdatedTaskListId;
+                                var taskListId = taskListNodeController.lastUpdatedTaskListId;
                                 requestController.insertTaskRequest(taskListId, false, '<untitled>', null, '', true, true);
                         },
 
@@ -385,7 +381,7 @@ var Actions = ( function() {
                                 var task = taskNodeController.selectedTaskDiv.task;
                                 var taskListId = taskNodeController.selectedTaskDiv.taskListId;
 
-                                lastUpdatedTaskListId = taskListId;
+                                taskListNodeController.lastUpdatedTaskListId = taskListId;
                                 requestController.deleteTaskRequest(taskListId, task);
                         },
 
@@ -399,7 +395,7 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                lastUpdatedTaskListId =  taskNodeController.selectedTaskDiv.taskListId ;
+                                taskListNodeController.lastUpdatedTaskListId =  taskNodeController.selectedTaskDiv.taskListId ;
                                 taskNodeController.EditTask(taskNodeController.selectedTaskDiv);
                         }
     };})();
@@ -1096,6 +1092,7 @@ function TaskNodeController() {
 
     var parent = this;
     this.selectedTaskDiv = null; // выбранный таск
+    this.lastUpdatedTaskListId = null; // последний редактируемый таск лист
 
     // редактирует нод соотетствующий таску в секции Main
     // object taskFromServer - задача с изменениями (пришедшая с сервера)
@@ -1263,7 +1260,7 @@ function TaskNodeController() {
             var taskListId = li? li.taskListId: '';
             task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
 
-            lastUpdatedTaskListId = taskListId;
+            taskListNodeController.lastUpdatedTaskListId = taskListId;
             requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked, task.due);
         });
 
@@ -1513,7 +1510,7 @@ function SubTaskDivMainController() {
             var newNotes = watchSectionController.convertFromSubTasks(arr);
             // task.notes = newNotes + additionalSection;
 
-            lastUpdatedTaskListId = taskListId;
+            taskListNodeController.lastUpdatedTaskListId = taskListId;
             requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes + additionalSection, task.due);
         });
 
