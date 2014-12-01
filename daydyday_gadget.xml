@@ -205,10 +205,10 @@
         background-color: #33B5E5;
     }
   </style>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/CollapsibleLists.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/shindig.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/WinFuncs.js"></script>
-  <script type="text/javascript" src="https://rawgit.com/Appiens/daybyday_gadget/Release/javascript/DateTimeClass.js"></script>
+  <script type="text/javascript" src="https://liubovast.github.io/javascript/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="https://liubovast.github.io/javascript/shindig.js"></script>
+  <script type="text/javascript" src="https://liubovast.github.io/javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="https://liubovast.github.io/javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
     var taskLists = []; // полный список задач
