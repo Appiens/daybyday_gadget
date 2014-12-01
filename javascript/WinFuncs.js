@@ -1,6 +1,6 @@
 var makePOSTRequest = null;
 
-var baseUrlImg = 'http://liubovast.github.io/images/';
+var baseUrlImg = 'https://liubovast.github.io/images/';
 
 var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
 var isDrawingMainList = false;
