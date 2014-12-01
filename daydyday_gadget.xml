@@ -4,6 +4,7 @@
     <Require feature="opensocial-0.8" />
     <Require feature="locked-domain"/>
     <Require feature='auth-refresh'/>
+    <Require feature="dynamic-height"/>
       <OAuth>
       <Service name="google">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" /> 
@@ -19,7 +20,12 @@
   <style>
     html {height: 100%;}
     body {height:auto !important; min-height:100%; height:100%; position:relative; }
-    #footer {position:absolute; bottom:0; width:100%; background:white; border-top:thin solid slategray; height: 30px}
+    #footer {
+      background:white;
+      border-top: thin solid slategray;
+      border-bottom: thin solid slategray;
+      height: 35px
+      }
 
   	#main {
 	  margin: 0px;
@@ -106,21 +112,22 @@
     }
 
     input[type=button] {
-        background-color: #DFEEFF;
         text-indent:0px;
-        border:1px solid #0099CC;
         display:inline-block;
         color:#14396a;
         font-weight:normal;
         font-style:normal;
         font-size: medium;
-        height:20px;
-        line-height:20px;
+        height:25px;
+        width: 25px;
         text-decoration:none;
         text-align:center;
-        vertical-align:top;
+        vertical-align:center;
         margin-bottom:0px;
         margin-top:0px;
+        border-radius: 5px; /* Скругление */
+        border: none;
+        background: none;
     }
 
     input[type=button]:hover {
@@ -213,9 +220,10 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 19:54');
+        console.log('starting gadget 17:10');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
+        $('img-daybyday-add').addEventListener('click', openDayByDayPage);
         fetchDataAll();
     }
 
@@ -246,6 +254,10 @@
         console.log(d + ' fetchOnlyNewData ' + shindig.auth.getSecurityToken());
         errorOccuredTmp = false;
         fetchData(OnFetchDataDoneNew);
+    }
+
+    function openDayByDayPage() {
+        window.open("https://play.google.com/store/apps/details?id=ru.infteh.organizer.trial", "_blank", null);
     }
 
     function OnFetchDataDoneAll(response) {
@@ -320,7 +332,7 @@
     function fetchData(onDone) {
 
         var params = {};
-        url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY;
+        url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY + "&fields=items(id%2Ctitle%2Cupdated)";
         params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
         params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
         params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
@@ -348,6 +360,7 @@
               showOneSection('main');
               // alert('done');
 
+              setLastUpdatedTaskList(taskLists);
               setTimeLastAsk();
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
@@ -379,6 +392,7 @@
                     if  (document.getElementById('error').style.display == "block") {
                        showOneSection('main');
                     }
+
                     setTimeLastAsk();
                 }
             }
@@ -463,25 +477,24 @@
   </script>
 
   <div id="footer">
-    <table cellpadding=0 width=50%>
+    <table cellpadding=0 width=100%>
        <tr>
-        <td style="width: 25%; text-align:left; vertical-align:middle;">
+        <td style="width: 15%; text-align:left; vertical-align:middle;">
             <input type="button" id="button-refresh" name="button-refresh" value="↺" title="__MSG_action_refresh__"/>
         </td>
-        <td style="width: 25%; text-align:left; vertical-align:middle;">
+        <td style="width: 15%; text-align:left; vertical-align:middle;">
             <input type="button" id="button-insert-task" name="button-insert-task" value="&#x2295" title="__MSG_action_insert_task__"/>
         </td>
-        <td style="width: 25%; text-align:left; vertical-align:middle;">
-            <input type="button" id="button-delete-task" name="button-delete-task" value="&#x2717" title="__MSG_action_delete_task__"/>
-        </td>
-        <td style="width: 25%; text-align:left; vertical-align:middle;">
-            <input type="button" id="button-modify-task" name="button-modify-task" value="&#x270E" title="__MSG_action_modify_task__"/>
+        <td style="width: 70%; text-align: right; vertical-align:middle;">
+          <!--<a href="#" id="a-daybyday-add" style="font-size: 9px; text-decoration: none">__MSG_day_by_day__</a>-->
+          <img id="img-daybyday-add" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/daybyday16.png" width="16" height="16">
         </td>
        </tr>
     </table>
   </div>
-  
+
   <div id="main" style="display: none; height: 80%; overflow-y: scroll;">
+    <br>
 	<ul id="listId" class="collapsibleList"></ul>
   </div>
 

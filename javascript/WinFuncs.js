@@ -52,6 +52,7 @@ var watchSectionController = new WatchSectionController();
 // структура секции Watch
 //
 // $('watch').task  содержат задачу
+// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр.
 // $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
 // у гугла происходит выброс в секцию списка
 // <div id='div-status-images'> дочерние img создаются динамически
@@ -89,8 +90,8 @@ function init(makePostRequestFunc) {
     $('button-to-subtasks').addEventListener('click', Actions.ActionToSubtasks);
     $('button-discard').addEventListener('click', Actions.ActionDiscard);
     $('button-insert-task').addEventListener('click', Actions.ActionInsertTask);
-    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
-    $('button-modify-task').addEventListener('click', Actions.ActionModifyTask);
+//    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
+//    $('button-modify-task').addEventListener('click', Actions.ActionModifyTask);
 
     watchSectionController.createTaskStatusImagesWatch();
 
@@ -120,9 +121,9 @@ function generateList(taskLists) {
     isDrawingMainList = false;
     taskListsLast = taskLists;
 
-    disableButton($('button-insert-task'));
-    disableButton($('button-delete-task'));
-    disableButton($('button-modify-task'));
+//    disableButton($('button-insert-task'));
+//    disableButton($('button-delete-task'));
+//    disableButton($('button-modify-task'));
 
     return ulMain;
 }
@@ -200,6 +201,35 @@ function processTmpList(taskLists) {
 
     taskListNodeController.DeleteTaskListNodesNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
+}
+
+function setLastUpdatedTaskList(taskLists) {
+    taskListNodeController.lastUpdatedTaskListId = null;
+
+//    if (taskLists.length == 0) {
+//        disableButton($('button-insert-task'));
+//    }
+//    else {
+//        enableButton($('button-insert-task'));
+//    }
+
+    if (taskLists.length > 0) {
+        taskListNodeController.lastUpdatedTaskListId = taskLists[0].id;
+        var dateCurr = new Date();
+        dateCurr.setFullYear(1950, 1, 1); // любая очень древняя дата
+
+        if (taskLists[0].updated) {
+            dateCurr = new Date(taskLists[0].updated);
+        }
+
+        for (var i = 1; i < taskLists.length; i++) {
+            var d = new Date(taskLists[i].updated);
+            if (dateCurr < d) {
+                dateCurr = d;
+                taskListNodeController.lastUpdatedTaskListId = taskLists[i].id;
+            }
+        }
+    }
 }
 
 
@@ -308,12 +338,14 @@ var Actions = ( function() {
                                 }
 
                                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-                                notes += TaskUtils.getAdditionalSection($('watch').task);
+                                notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
+
+                                taskListNodeController.lastUpdatedTaskListId = taskListId;
                                 requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
                              }
                           },
 
-        // Convert notes to subTaks
+        // Convert notes to subTasks
         ActionToSubtasks:  function () {
                                 watchSectionController.changeNotesState($('input-task-comment').style.display == '');
                                 watchSectionController.OnSomeEditDone();
@@ -330,20 +362,11 @@ var Actions = ( function() {
                         },
 
         ActionInsertTask: function() {
-                                if (taskNodeController.selectedTaskDiv == null) {
+                                if (taskListNodeController.lastUpdatedTaskListId == null) {
                                     return;
                                 }
 
-                                var taskListId;
-
-                                if (taskNodeController.selectedTaskDiv.taskListId == null) {
-                                    var noTaskLi = taskNodeController.selectedTaskDiv;
-                                    taskListId =  noTaskLi.id.substring(MainSectionPrefixes.PREFIX_LI_NO_TASKS.length);
-                                }
-                                else {
-                                    taskListId = taskNodeController.selectedTaskDiv.taskListId;
-                                }
-
+                                var taskListId = taskListNodeController.lastUpdatedTaskListId;
                                 requestController.insertTaskRequest(taskListId, false, '<untitled>', null, '', true, true);
                         },
 
@@ -360,6 +383,7 @@ var Actions = ( function() {
                                 var task = taskNodeController.selectedTaskDiv.task;
                                 var taskListId = taskNodeController.selectedTaskDiv.taskListId;
 
+                                taskListNodeController.lastUpdatedTaskListId = taskListId;
                                 requestController.deleteTaskRequest(taskListId, task);
                         },
 
@@ -373,6 +397,7 @@ var Actions = ( function() {
                                     return;
                                 }
 
+                                taskListNodeController.lastUpdatedTaskListId =  taskNodeController.selectedTaskDiv.taskListId ;
                                 taskNodeController.EditTask(taskNodeController.selectedTaskDiv);
                         }
     };})();
@@ -398,6 +423,9 @@ var TaskUtils = (function() {
         isOverdueTask: function(task) {
                                 if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
                                     var today = new Date();
+                                    today.setHours(0);
+                                    today.setMinutes(0);
+                                    today.setSeconds(0);
                                     var due = new Date(task.due);
 
                                     if (today - due > 0) {
@@ -407,6 +435,42 @@ var TaskUtils = (function() {
 
                                 return false;
                             },
+        // возвращает количество аттрибутов в добавочной секции
+        getNumberAttribs: function(additionalSection) {
+                                var n = additionalSection.split('\n').length;
+                                var empty = '\n<!=\n=!>'.split('\n').length;
+                                return n - empty;
+        },
+
+        removeRepeatable: function(additionalSection) {
+                                if (additionalSection == '') {
+                                    return '';
+                                }
+
+                                if (!TaskUtils.isRepeatableTask(additionalSection)) {
+                                    return additionalSection;
+                                }
+
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'DTSTART:');
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'RRULE:');
+
+                                return additionalSection;
+                            },
+
+        removeSectionByWord: function(additionalSection, keyWord) {
+                                var indStart = additionalSection.indexOf(keyWord);
+                                var indEnd =  additionalSection.indexOf('\n', indStart);
+                                var strToReplace = additionalSection.substring(indStart, indEnd + 1);
+                                var result = additionalSection.replace(strToReplace, '');
+
+                                if (TaskUtils.getNumberAttribs(result) == 0) {
+                                    // добавочной секции больше нет
+                                    return '';
+                                }
+
+                                return result;
+
+                            },
 
         additionalSectionExist: function (task) {
                                            var text = task.notes;
@@ -414,7 +478,7 @@ var TaskUtils = (function() {
                                                 return false;
                                             }
 
-                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('\n=!>') > text.indexOf('\n<!=\n'));
+                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('=!>') > text.indexOf('\n<!=\n'));
                                 },
 
         getAdditionalSection: function (task) {
@@ -566,6 +630,12 @@ function WatchSectionController() {
      Hides input-task-date if checkbox not checked, shows otherwise */
     this.OnNoDateCheckChanged = function() {
         $('input-task-date').style.display = $('checkbox-with-date').checked ? '' : 'none';
+
+        // задача без даты не может быть повторяющейся
+        if ($('checkbox-with-date').checked == false) {
+            $('watch').additionalSection = TaskUtils.removeRepeatable($('watch').additionalSection);
+            SetDisplayTaskStatusAddImagesWatch();
+        }
     }
 
     // Update status images when some editing was done
@@ -688,7 +758,7 @@ function WatchSectionController() {
                 }
 
                 var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-                notes += TaskUtils.getAdditionalSection($('watch').task);
+                notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
                 requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes, true, true);
                 Actions.ActionBackToList();
             }
@@ -713,7 +783,7 @@ function WatchSectionController() {
     // shows or hides alarm, repeat, priority_high, priority_low images in Watch section
     var SetDisplayTaskStatusAddImagesWatch = function() {
         var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-        notes += TaskUtils.getAdditionalSection($('watch').task);
+        notes += $('watch').additionalSection; // TaskUtils.getAdditionalSection($('watch').task);
 
         var task = {notes: notes};
 
@@ -748,16 +818,18 @@ function WatchSectionController() {
 }
 
 function RequestController() {
-    this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted) {
+    this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted, dueDate) {
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-        var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"}';
+        var duePart = dueDate != undefined ? ',"due":"' + dueDate + '"' : ',"due": null';
+        var data =  isCompleted? '{"status":"' + status + '", "id": "'+ taskId + '"' + duePart + '}' : '{"status":"' + status + '", "completed": null, "id": "' + taskId + '"' + duePart + '}';
         makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
     }
 
-    this.changeSubTaskStatusRequest = function(taskListId, taskId, notes) {
+    this.changeSubTaskStatusRequest = function(taskListId, taskId, notes, dueDate) {
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
-        var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"}';
+        var duePart = dueDate != undefined ? ',"due":"' + dueDate + '"' : ',"due": null';
+        var data =  '{"notes": "' + filterSpecialChar(notes) + '", "id": "'+ taskId + '"' + duePart + '}';
         makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
     }
 
@@ -838,6 +910,8 @@ function RequestController() {
 
 
         if (obj.text) {
+            // TODO delete this string when done
+            console.log(obj.text);
             var taskFromServer = JSON.parse(obj.text);
 
             // обновляем секцию Main
@@ -1000,26 +1074,18 @@ function TaskListNodeController() {
         if (e.target) targ = e.target;
         else if (e.srcElement) targ = e.srcElement;
 
-        if (taskNodeController.selectedTaskDiv) {
-            taskNodeController.selectedTaskDiv.style.background = 'white';
-
-            // нажатие на тот же самый таск отменяет выбор таска
-            if (taskNodeController.selectedTaskDiv == targ) {
-                taskNodeController.selectedTaskDiv = null;
-
-                disableButton($('button-insert-task'));
-                disableButton($('button-delete-task'));
-                disableButton($('button-modify-task'));
-                return;
-            }
-        }
-
-        taskNodeController.selectedTaskDiv = targ;
-        taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
-
-        enableButton($('button-insert-task'));
-        disableButton($('button-delete-task'));
-        disableButton($('button-modify-task'));
+//        if (taskNodeController.selectedTaskDiv) {
+//            taskNodeController.selectedTaskDiv.style.background = 'white';
+//
+//            // нажатие на тот же самый таск отменяет выбор таска
+//            if (taskNodeController.selectedTaskDiv == targ) {
+//                taskNodeController.selectedTaskDiv = null;
+//                return;
+//            }
+//        }
+//
+//        taskNodeController.selectedTaskDiv = targ;
+//        taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
     }
 }
 
@@ -1028,6 +1094,7 @@ function TaskNodeController() {
 
     var parent = this;
     this.selectedTaskDiv = null; // выбранный таск
+    this.lastUpdatedTaskListId = null; // последний редактируемый таск лист
 
     // редактирует нод соотетствующий таску в секции Main
     // object taskFromServer - задача с изменениями (пришедшая с сервера)
@@ -1127,6 +1194,7 @@ function TaskNodeController() {
 
             $('watch').task = taskDiv.task;
             $('watch').taskListId = taskDiv.taskListId;
+            $('watch').additionalSection = TaskUtils.getAdditionalSection($('watch').task);
 
             watchSectionController.SetWatchFieldsFromTask($('watch').task);
             watchSectionController.SetDisableWatchButtons(true);
@@ -1150,16 +1218,16 @@ function TaskNodeController() {
         parent.selectedTaskDiv = taskDiv;
         parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
 
-        enableButton($('button-insert-task'));
-        enableButton($('button-delete-task'));
-        enableButton($('button-modify-task'));
+//        enableButton($('button-insert-task'));
+//        enableButton($('button-delete-task'));
+//        enableButton($('button-modify-task'));
     }
 
     this.deselectTaskDiv = function() {
         parent.selectedTaskDiv = null;
-        disableButton($('button-insert-task'));
-        disableButton($('button-delete-task'));
-        disableButton($('button-modify-task'));
+//        disableButton($('button-insert-task'));
+//        disableButton($('button-delete-task'));
+//        disableButton($('button-modify-task'));
     }
 
     // sets a task Title for a task span
@@ -1193,7 +1261,9 @@ function TaskNodeController() {
             var m_taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
             var taskListId = li? li.taskListId: '';
             task.status = targ.checked ? TaskStatuses.COMPLETED : TaskStatuses.NEEDS_ACTION;
-            requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked);
+
+            taskListNodeController.lastUpdatedTaskListId = taskListId;
+            requestController.changeTaskStatusRequest(taskListId, m_taskId, targ.checked, task.due);
         });
 
         return checkBox;
@@ -1238,6 +1308,12 @@ function TaskNodeController() {
             $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = TaskUtils.isRepeatableTask(additionalSection) ? '': 'none';
             $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = TaskUtils.isHighPriorityTask(additionalSection) ? '': 'none';
             $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display = TaskUtils.isLowPriorityTask(additionalSection) ? '': 'none';
+        }
+        else {
+            $(StatusImagesNames.PREFIX_ALARM + task.id).style.display = 'none';
+            $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display = 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_HIGH + task.id).style.display = 'none';
+            $(StatusImagesNames.PREFIX_PRIORITY_LOW + task.id).style.display =  'none';
         }
     }
 
@@ -1303,7 +1379,8 @@ function TaskNodeController() {
             return;
         }
 
-        parent.selectTaskDiv(targ);
+        parent.EditTask(targ);
+        // parent.selectTaskDiv(targ);
     }
 
     var OnArrowClick = function(e) {
@@ -1419,7 +1496,7 @@ function SubTaskDivMainController() {
 
             while (li != null && li.task == undefined) li = li.parentNode;
             var m_taskId = li ? li.task.id : '';
-            var oldNotes = li ? li.task.notes : '';
+            // var oldNotes = li ? li.task.notes : '';
             var task = li.task;
 
             while (li != null && li.taskListId == undefined) li = li.parentNode;
@@ -1428,11 +1505,15 @@ function SubTaskDivMainController() {
             var taskListId = li? li.taskListId: '';
             var subTaskId = parseInt(targ.id.substring('ch_'.length).substring(m_taskId.length + 1));
 
-            var arr = watchSectionController.convertToSubTasks(oldNotes);
+            var additionalSection = TaskUtils.getAdditionalSection(li.task);
+            var notesSection = TaskUtils.getNotesSection(li.task);
+            var arr = watchSectionController.convertToSubTasks(/*oldNotes*/ notesSection);
             arr[subTaskId] = (targ.checked ? SubTaskStatuses.COMPLETED_LIST : SubTaskStatuses.NEEDS_ACTION_LIST) + arr[subTaskId].substring(SubTaskStatuses.COMPLETED_LIST.length);
             var newNotes = watchSectionController.convertFromSubTasks(arr);
-            task.notes = newNotes;
-            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes);
+            // task.notes = newNotes + additionalSection;
+
+            taskListNodeController.lastUpdatedTaskListId = taskListId;
+            requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes + additionalSection, task.due);
         });
 
         span.appendChild(checkBox);
@@ -1681,8 +1762,8 @@ var StatusImagesNames = (function() {
     var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
     var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
     var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
-    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
-    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
+    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
+    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
 
     return {
         PREFIX_ALARM : "img_alm_",
