@@ -223,7 +223,7 @@
         console.log('starting gadget 15:23');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
-        $('a-daybyday-add').addEventListener('click', openDayByDayPage);
+        $('img-daybyday-add').addEventListener('click', openDayByDayPage);
         fetchDataAll();
     }
 
@@ -485,7 +485,7 @@
         </td>
         <td style="width: 70%; text-align: right; vertical-align:middle;">
           <!--<a href="#" id="a-daybyday-add" style="font-size: 9px; text-decoration: none">__MSG_day_by_day__</a>-->
-          <img src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/daybyday16.png" width="16" height="16">
+          <img id="img-daybyday-add" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/daybyday16.png" width="16" height="16">
         </td>
        </tr>
     </table>
