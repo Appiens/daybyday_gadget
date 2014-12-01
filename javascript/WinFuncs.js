@@ -88,8 +88,8 @@ function init(makePostRequestFunc) {
     $('button-to-subtasks').addEventListener('click', Actions.ActionToSubtasks);
     $('button-discard').addEventListener('click', Actions.ActionDiscard);
     $('button-insert-task').addEventListener('click', Actions.ActionInsertTask);
-    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
-    $('button-modify-task').addEventListener('click', Actions.ActionModifyTask);
+//    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
+//    $('button-modify-task').addEventListener('click', Actions.ActionModifyTask);
 
     watchSectionController.createTaskStatusImagesWatch();
 
@@ -120,8 +120,8 @@ function generateList(taskLists) {
     taskListsLast = taskLists;
 
     disableButton($('button-insert-task'));
-    disableButton($('button-delete-task'));
-    disableButton($('button-modify-task'));
+//    disableButton($('button-delete-task'));
+//    disableButton($('button-modify-task'));
 
     return ulMain;
 }
@@ -1056,8 +1056,8 @@ function TaskListNodeController() {
                 taskNodeController.selectedTaskDiv = null;
 
                 disableButton($('button-insert-task'));
-                disableButton($('button-delete-task'));
-                disableButton($('button-modify-task'));
+//                disableButton($('button-delete-task'));
+//                disableButton($('button-modify-task'));
                 return;
             }
         }
@@ -1066,8 +1066,8 @@ function TaskListNodeController() {
         taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
 
         enableButton($('button-insert-task'));
-        disableButton($('button-delete-task'));
-        disableButton($('button-modify-task'));
+//        disableButton($('button-delete-task'));
+//        disableButton($('button-modify-task'));
     }
 }
 
@@ -1200,15 +1200,15 @@ function TaskNodeController() {
         parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
 
         enableButton($('button-insert-task'));
-        enableButton($('button-delete-task'));
-        enableButton($('button-modify-task'));
+//        enableButton($('button-delete-task'));
+//        enableButton($('button-modify-task'));
     }
 
     this.deselectTaskDiv = function() {
         parent.selectedTaskDiv = null;
         disableButton($('button-insert-task'));
-        disableButton($('button-delete-task'));
-        disableButton($('button-modify-task'));
+//        disableButton($('button-delete-task'));
+//        disableButton($('button-modify-task'));
     }
 
     // sets a task Title for a task span
