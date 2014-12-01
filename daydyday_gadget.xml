@@ -24,7 +24,7 @@
       background:white;
       border-top: thin solid slategray;
       border-bottom: thin solid slategray;
-      height: 30px
+      height: 40px
       }
 
   	#main {
@@ -112,6 +112,7 @@
     }
 
     input[type=button] {
+        background-color: white;
         text-indent:0px;
         display:inline-block;
         color:#14396a;
@@ -125,7 +126,7 @@
         vertical-align:top;
         margin-bottom:0px;
         margin-top:0px;
-        border-radius: 3px; /* Скругление */
+        border-radius: 5px; /* Скругление */
     }
 
     input[type=button]:hover {
@@ -218,7 +219,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 14:01');
+        console.log('starting gadget 14:21');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('a-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -495,6 +496,7 @@
   </div>
 
   <div id="main" style="display: none; height: 80%; overflow-y: scroll;">
+    <br><br>
 	<ul id="listId" class="collapsibleList"></ul>
   </div>
 

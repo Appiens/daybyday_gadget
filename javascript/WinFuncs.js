@@ -119,7 +119,7 @@ function generateList(taskLists) {
     isDrawingMainList = false;
     taskListsLast = taskLists;
 
-    disableButton($('button-insert-task'));
+//    disableButton($('button-insert-task'));
 //    disableButton($('button-delete-task'));
 //    disableButton($('button-modify-task'));
 
@@ -1055,7 +1055,7 @@ function TaskListNodeController() {
             if (taskNodeController.selectedTaskDiv == targ) {
                 taskNodeController.selectedTaskDiv = null;
 
-                disableButton($('button-insert-task'));
+//                disableButton($('button-insert-task'));
 //                disableButton($('button-delete-task'));
 //                disableButton($('button-modify-task'));
                 return;
@@ -1065,7 +1065,7 @@ function TaskListNodeController() {
         taskNodeController.selectedTaskDiv = targ;
         taskNodeController.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
 
-        enableButton($('button-insert-task'));
+//        enableButton($('button-insert-task'));
 //        disableButton($('button-delete-task'));
 //        disableButton($('button-modify-task'));
     }
@@ -1199,14 +1199,14 @@ function TaskNodeController() {
         parent.selectedTaskDiv = taskDiv;
         parent.selectedTaskDiv.style.background = '#F3E2A9'; // light yellow
 
-        enableButton($('button-insert-task'));
+//        enableButton($('button-insert-task'));
 //        enableButton($('button-delete-task'));
 //        enableButton($('button-modify-task'));
     }
 
     this.deselectTaskDiv = function() {
         parent.selectedTaskDiv = null;
-        disableButton($('button-insert-task'));
+//        disableButton($('button-insert-task'));
 //        disableButton($('button-delete-task'));
 //        disableButton($('button-modify-task'));
     }
