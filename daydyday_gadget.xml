@@ -12,8 +12,8 @@
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" /> 
       </Service>
     </OAuth>
-    <Locale messages="lang/ALL_ALL.xml"/>
-    <Locale lang="ru" messages="lang/ru_ALL.xml"/>
+    <Locale messages="http://liubovast.github.io/lang/ALL_ALL.xml"/>
+    <Locale lang="ru" messages="http://liubovast.github.io/lang/ru_ALL.xml"/>
   </ModulePrefs>
   <Content type="html">
   <![CDATA[
@@ -487,7 +487,7 @@
         </td>
         <td style="width: 70%; text-align: right; vertical-align:middle;">
           <!--<a href="#" id="a-daybyday-add" style="font-size: 9px; text-decoration: none">__MSG_day_by_day__</a>-->
-          <img id="img-daybyday-add" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/daybyday16.png" width="16" height="16">
+          <img id="img-daybyday-add" src="http://liubovast.github.io/images/daybyday16.png" width="16" height="16">
         </td>
        </tr>
     </table>
