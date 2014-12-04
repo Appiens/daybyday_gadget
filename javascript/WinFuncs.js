@@ -411,7 +411,7 @@ var Actions = ( function() {
                                 requestController.deleteTaskRequest(taskListId, task);
 
                                 Actions.ActionBackToList();
-                        },
+                        }
 
 //        ActionModifyTask: function() {
 //                                if (taskNodeController.selectedTaskDiv == null) {
@@ -1606,19 +1606,19 @@ function SubTaskDivWatchController() {
     //       false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
     this.InsertSubTaskDiv = function(taskDiv, task, subTasks) {
         var subTasksDiv = document.createElement('div');
-        subTasksDiv.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
-        InsertSubTaskNodes(subTasksDiv, subTasks, task.id);
+        subTasksDiv.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + /*task.id*/ getWatchTaskId(task));
+        InsertSubTaskNodes(subTasksDiv, subTasks, /*task.id*/ getWatchTaskId(task));
         taskDiv.appendChild(subTasksDiv);
         setSubTaskAddVisibility();
     }
 
     // Removes Sub Tasks div section from Watch section
     this.DeleteSubTasksDiv = function() {
-        if ($('watch').task == undefined) {
-            return;
-        }
+//        if ($('watch').task == undefined) {
+//            return;
+//        }
 
-        var subTaskDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
+        var subTaskDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + /*$('watch').task.id*/ getWatchTaskId($('watch').task));
 
         if (subTaskDiv) {
             subTaskDiv.parentNode.removeChild(subTaskDiv);
@@ -1628,14 +1628,14 @@ function SubTaskDivWatchController() {
     // Make subTasks array from a sub Tasks Div
     // Returns string[] subTasks - array of subTasks
     this.getSubTasksArrFromWatchDiv = function() {
-        var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
+        var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + /*$('watch').task.id*/ getWatchTaskId($('watch').task));
 
         var num = subTasksDiv.children.length;
         var subTasks = [];
 
         for (var i=0; i<num; i++) {
-            var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + i);
-            var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
+            var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + getWatchTaskId($('watch').task)/*$('watch').task.id*/ + "_" + i);
+            var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + getWatchTaskId($('watch').task)/*$('watch').task.id*/ + "_" + i);
 
             var subTask = checkBox.checked ? SubTaskStatuses.COMPLETED_NOTES: SubTaskStatuses.NEEDS_ACTION_NOTES;
             subTask = subTask + textNode.value;
@@ -1700,10 +1700,10 @@ function SubTaskDivWatchController() {
     // object targ - "плюсик" (не используется)
     var InsertEmptySubTaskNode = function(targ) {
         var subTasks = parent.getSubTasksArrFromWatchDiv();
-        var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + $('watch').task.id);
+        var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + /*$('watch').task.id*/ getWatchTaskId($('watch').task));
         var subTaskNum = subTasks.length;
 
-        InsertSubTaskNode(subTasksDiv , 'F', $('watch').task.id, subTaskNum);
+        InsertSubTaskNode(subTasksDiv , 'F', /*$('watch').task.id*/ getWatchTaskId($('watch').task), subTaskNum);
         setSubTaskAddVisibility();
     }
 
@@ -1721,16 +1721,16 @@ function SubTaskDivWatchController() {
 
         // пердвинуть все значения вверх, потеряв удаляемое, но сохранив имена элементов
         for (var i = subTaskNum;  i < subTasks.length - 1;i++) {
-            var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + i);
-            var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + i);
-            var checkBoxNext = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + $('watch').task.id + "_" + (i + 1).toString());
-            var textNodeNext = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + (i + 1).toString());
+            var checkBox = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + i);
+            var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + i);
+            var checkBoxNext = $(WatchSectionPrefixes.PREFIX_CB_SUBTASK_COMPLETED + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + (i + 1).toString());
+            var textNodeNext = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + (i + 1).toString());
 
             checkBox.checked = checkBoxNext.checked;
             textNode.value = textNodeNext.value;
         }
 
-        var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + $('watch').task.id + "_" + (subTasks.length - 1).toString());
+        var textNode = $(WatchSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + (subTasks.length - 1).toString());
 
         // удалить последний div
         var subTaskDiv = textNode.parentNode;
@@ -1748,10 +1748,10 @@ function SubTaskDivWatchController() {
         var subTasks =  parent.getSubTasksArrFromWatchDiv();
 
         for (var i = 0;  i < subTasks.length - 1;i++) {
-            $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + $('watch').task.id + "_" + i).style.display = 'none';
+            $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + i).style.display = 'none';
         }
 
-        $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + $('watch').task.id + "_" + (subTasks.length - 1)).style.display = '';
+        $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + /*$('watch').task.id*/ getWatchTaskId($('watch').task) + "_" + (subTasks.length - 1)).style.display = '';
     }
 
     var createCheckBox = function(taskId, subTaskNum) {
@@ -1814,6 +1814,14 @@ function SubTaskDivWatchController() {
         });
 
         return aplus;
+    }
+
+    var getWatchTaskId = function(task) {
+        if (task != undefined) {
+            return task.id;
+        }
+
+        return "unknown";
     }
 }
 
