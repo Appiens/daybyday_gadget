@@ -78,6 +78,14 @@ var watchSectionController = new WatchSectionController();
 //          </div>
 //      </div> // div sub
 // </div>
+// <ul id="navWrapper">
+//<li>
+//
+//    <a id="a-move-to-list" href="#" aria-haspopup="true"></a> ($('a-move-to-list').taskListId содержит идентификатор выбранного таск листа (в комбобоксе))
+//    <ul id="taskListsWatch">
+//    </ul>
+//</li>
+//</ul>
 
 function init(makePostRequestFunc) {
     makePOSTRequest = makePostRequestFunc;
@@ -322,12 +330,12 @@ var Actions = ( function() {
 
         // Save changes
         ActionSaveTask: function() {
-                            if ($('watch').taskListId == undefined) {
+                            if ($('a-move-to-list').taskListId == undefined ) {
                                 return;
                             }
 
                             var task = $('watch').task;
-                            var taskListId = $('watch').taskListId;
+                            var taskListId = $('a-move-to-list').taskListId;
 
                             var date = "";
                             if ($('checkbox-with-date').checked) {
@@ -343,13 +351,22 @@ var Actions = ( function() {
 
                             // редактируем или добавляем задачу только с непустым названием
                             if (title != '') {
-                                if ($('watch').task != undefined)
-                                {
-                                    // upadting task
-                                    requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, title, date, notes);
+                                if (taskListId == $('watch').taskListId) {
+                                    if ($('watch').task != undefined) {
+                                        // updating task
+                                        requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, title, date, notes);
+                                    }
+                                    else {
+                                        // adding task
+                                        requestController.insertTaskRequest(taskListId, $('checkbox-task-completed').checked, title, date, notes, true);
+                                    }
                                 }
                                 else {
-                                    // adding task
+                                    if ($('watch').task != undefined) {
+                                        // delete a task
+                                        requestController.deleteTaskRequest($('watch').taskListId, $('watch').task);
+                                    }
+
                                     requestController.insertTaskRequest(taskListId, $('checkbox-task-completed').checked, title, date, notes, true);
                                 }
                             }
@@ -747,6 +764,7 @@ function WatchSectionController() {
 
             if ($('watch').taskListId == taskList.id) {
                 $('a-move-to-list').innerText = taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
+                $('a-move-to-list').taskListId = taskList.id;
             }
 
             $('taskListsWatch').appendChild(li);
@@ -761,6 +779,7 @@ function WatchSectionController() {
 
         if (targ.taskList) {
             $('a-move-to-list').innerText = targ.taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
+            $('a-move-to-list').taskListId = taskList.id;
         }
     }
 
