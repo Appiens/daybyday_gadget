@@ -172,12 +172,12 @@
     }
 
     ul#navWrapper li {
-        border: 0 red dashed;
+        border: 1 red dashed;
         float: left;
         list-style: none;
         margin-right: 0.75em;
         background-color: #DDD;
-        padding: 0 0.25em;
+        padding-left: 0;
     }
 
     ul#navWrapper li li {
@@ -194,7 +194,7 @@
     ul#navWrapper ul {
         display: none;
         position: absolute;
-        background-color: #DDD;
+        background-color: #FFF;
     }
 
     ul#navWrapper li:hover ul {
@@ -226,7 +226,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 14:37');
+        console.log('starting gadget 14:50');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
