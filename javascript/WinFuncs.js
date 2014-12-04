@@ -88,7 +88,7 @@ function init(makePostRequestFunc) {
     $('button-to-subtasks').addEventListener('click', Actions.ActionToSubtasks);
     $('button-discard').addEventListener('click', Actions.ActionDiscard);
     $('button-insert-task').addEventListener('click', Actions.ActionInsertTask);
-//    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
+    $('button-delete-task').addEventListener('click', Actions.ActionDeleteTask);
 //    $('button-modify-task').addEventListener('click', Actions.ActionModifyTask);
 
     watchSectionController.createTaskStatusImagesWatch();
@@ -365,7 +365,7 @@ var Actions = ( function() {
                                 watchSectionController.OnSomeEditDone();
                             },
 
-        // Cancel changes = go back to server state
+        // Cancel changes
         ActionDiscard: function () {
 //                                if ($('watch').task != undefined && $('watch').taskListId != undefined)
 //                                {
@@ -385,35 +385,32 @@ var Actions = ( function() {
                         },
 
         ActionDeleteTask: function() {
-                                if (taskNodeController.selectedTaskDiv == null) {
+                                var task = $('watch').task;
+                                var taskListId = $('watch').taskListId;
+
+                                if (task == undefined) {
                                     return;
                                 }
-
-                                if (taskNodeController.selectedTaskDiv.task == null ||
-                                    taskNodeController.selectedTaskDiv.taskListId == null) {
-                                    return;
-                                }
-
-                                var task = taskNodeController.selectedTaskDiv.task;
-                                var taskListId = taskNodeController.selectedTaskDiv.taskListId;
 
                                 taskListNodeController.lastUpdatedTaskListId = taskListId;
                                 requestController.deleteTaskRequest(taskListId, task);
+
+                                Actions.ActionBackToList();
                         },
 
-        ActionModifyTask: function() {
-                                if (taskNodeController.selectedTaskDiv == null) {
-                                    return;
-                                }
-
-                                if (taskNodeController.selectedTaskDiv.task == null ||
-                                    taskNodeController.selectedTaskDiv.taskListId == null) {
-                                    return;
-                                }
-
-                                taskListNodeController.lastUpdatedTaskListId =  taskNodeController.selectedTaskDiv.taskListId ;
-                                taskNodeController.EditTask(taskNodeController.selectedTaskDiv);
-                        }
+//        ActionModifyTask: function() {
+//                                if (taskNodeController.selectedTaskDiv == null) {
+//                                    return;
+//                                }
+//
+//                                if (taskNodeController.selectedTaskDiv.task == null ||
+//                                    taskNodeController.selectedTaskDiv.taskListId == null) {
+//                                    return;
+//                                }
+//
+//                                taskListNodeController.lastUpdatedTaskListId =  taskNodeController.selectedTaskDiv.taskListId ;
+//                                taskNodeController.EditTask(taskNodeController.selectedTaskDiv);
+//                        }
     };})();
 
 var TaskUtils = (function() {
@@ -1212,6 +1209,7 @@ function TaskNodeController() {
             $('watch').additionalSection = TaskUtils.getAdditionalSection($('watch').task);
 
             watchSectionController.SetWatchFieldsFromTask($('watch').task);
+            enableButton($('button-delete-task'));
             // watchSectionController.SetDisableWatchButtons(true);
             showOneSection('watch');
         }
@@ -1224,6 +1222,8 @@ function TaskNodeController() {
 
         var emptyTask = {notes: '', title: '', due: null, status: TaskStatuses.NEEDS_ACTION};
         watchSectionController.SetWatchFieldsFromTask(emptyTask);
+        disableButton($('button-delete-task'));
+
         showOneSection('watch');
     }
 
