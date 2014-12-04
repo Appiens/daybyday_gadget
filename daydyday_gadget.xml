@@ -184,7 +184,7 @@
         border: 0 black dashed;
         float: none;
         margin-left: -5px;
-        margin-top: 3px;
+        margin-top: 8px;
     }
 
     ul#navWrapper li li:first-child {
@@ -227,7 +227,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 13:32');
+        console.log('starting gadget 14:17');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -563,23 +563,24 @@
                 </tr>
     </table>
     <input type="date" id="input-task-date" name="input-task-date" required>
+
+    <div id="div-notes" class="new-select-style-wpandyou">
+    <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
+    </div>
+     <table cellpadding=0 align="right">
+     <tr>
+       <td style="text-align:left; vertical-align:middle;">
+                        <input type="button" id="button-to-subtasks" name="button-to-subtasks" value="&#x2261" title="__MSG_action_to_subtasks__"/>
+       </td>
+     </tr>
+     </table><br>
      <ul id="navWrapper">
         <li>
             <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
             <ul id="taskListsWatch">
             </ul>
         </li>
-    </ul> <br>
-    <div id="div-notes" class="new-select-style-wpandyou">
-    <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
-    </div>
-     <table cellpadding=0 width=50% align="right">
-     <tr>
-       <td style="width: 25%; text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-to-subtasks" name="button-to-subtasks" value="&#x2261" title="__MSG_action_to_subtasks__"/>
-       </td>
-     </tr>
-     </table>
+    </ul>
   </div>
   ]]> 
   </Content>

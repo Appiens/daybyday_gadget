@@ -760,9 +760,7 @@ function WatchSectionController() {
         else if (e.srcElement) targ = e.srcElement;
 
         if (targ.taskList) {
-            if ($('watch').taskListId != targ.taskList.id) {
-                $('a-move-to-list').innerText = targ.taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
-            }
+            $('a-move-to-list').innerText = targ.taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
         }
     }
 
