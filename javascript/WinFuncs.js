@@ -337,19 +337,23 @@ var Actions = ( function() {
                                 date.setFromInputValue( $('input-task-date').value);
                             }
 
+                            var title = $('input-task-name').value.trim();
                             var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
                             notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
 
                             taskListNodeController.lastUpdatedTaskListId = taskListId;
 
-                            if ($('watch').task != undefined)
-                            {
-                                // upadting task
-                                requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes);
-                             }
-                             else {
-                                // adding task
-                                requestController.insertTaskRequest(taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes, true);
+                            // редактируем или добавляем задачу только с непустым названием
+                            if (title != '') {
+                                if ($('watch').task != undefined)
+                                {
+                                    // upadting task
+                                    requestController.changeTaskRequest(taskListId, task, $('checkbox-task-completed').checked, title, date, notes);
+                                }
+                                else {
+                                    // adding task
+                                    requestController.insertTaskRequest(taskListId, $('checkbox-task-completed').checked, title, date, notes, true);
+                                }
                             }
 
                             Actions.ActionBackToList();
@@ -1217,6 +1221,9 @@ function TaskNodeController() {
         $('watch').task = null;
         $('watch').taskListId = taskListId;
         $('watch').additionalSection = '';
+
+        var emptyTask = new {notes: '', title: '', due: null, status: TaskStatuses.NEEDS_ACTION};
+        watchSectionController.SetWatchFieldsFromTask(emptyTask);
         showOneSection('watch');
     }
 
