@@ -168,12 +168,12 @@
     ul#navWrapper {
         border: 0 black dashed;
         margin-left: 9px;
-        float: none;
+        <!--float: none;-->
     }
 
     ul#navWrapper li {
         border: 0 red dashed;
-        float: left;
+        <!--float: left;-->
         list-style: none;
         margin-right: 0.75em;
         background-color: #DDD;
@@ -226,7 +226,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:30');
+        console.log('starting gadget 19:22');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
