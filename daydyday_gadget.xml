@@ -34,6 +34,11 @@
       height: 35px
       }
 
+    #footerWatchDown {
+        display: block;
+        height: 35px
+    }
+
   	#main {
 	  margin: 0px;
 	  padding: 0px;
@@ -173,7 +178,7 @@
 
     ul#navWrapper li {
         border: 0 red dashed;
-        <!--float: left;-->
+        float: left;
         list-style: none;
         margin-right: 0.75em;
         background-color: #DDD;
@@ -226,7 +231,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 19:22');
+        console.log('starting gadget 19:32');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -566,6 +571,7 @@
     <div id="div-notes" class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
     </div>
+    <div id="footerWatchDown">
      <table cellpadding=0 align="right">
      <tr>
        <td style="text-align:left; vertical-align:middle;">
@@ -573,7 +579,7 @@
        </td>
      </tr>
      </table>
-     <div>
+     </div><br>
      <ul id="navWrapper">
         <li>
             <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
@@ -581,7 +587,6 @@
             </ul>
         </li>
     </ul>
-    </div>
   </div>
   ]]> 
   </Content>
