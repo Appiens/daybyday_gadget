@@ -181,10 +181,11 @@
     }
 
     ul#navWrapper li li {
-        border: 0 black dashed;
+        border: 1 black dashed;
         float: none;
         margin-left: -5px;
         margin-top: 3px;
+        background-color: #DDD;
     }
 
     ul#navWrapper li li:first-child {
@@ -226,7 +227,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 14:50');
+        console.log('starting gadget 14:58');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
