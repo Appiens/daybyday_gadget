@@ -172,7 +172,7 @@
     }
 
     ul#navWrapper li {
-        border: 1 red dashed;
+        border: 0 red dashed;
         float: left;
         list-style: none;
         margin-right: 0.75em;
@@ -181,14 +181,14 @@
     }
 
     ul#navWrapper li li {
-        border: 1 black dashed;
+        border: 0 black dashed;
         float: none;
         margin-left: -5px;
-        margin-top: -1px;
+        margin-top: 0px;
     }
 
     ul#navWrapper li li:first-child {
-        margin-top: 4px;
+        margin-top: 1px;
     }
 
     ul#navWrapper ul {
@@ -226,7 +226,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:05');
+        console.log('starting gadget 15:12');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -572,7 +572,8 @@
                         <input type="button" id="button-to-subtasks" name="button-to-subtasks" value="&#x2261" title="__MSG_action_to_subtasks__"/>
        </td>
      </tr>
-     </table><br>
+     </table>
+     <br>
      <ul id="navWrapper">
         <li>
             <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
