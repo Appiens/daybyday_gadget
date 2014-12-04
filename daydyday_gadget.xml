@@ -231,7 +231,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 19:53');
+        console.log('starting gadget 19:58');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -575,11 +575,11 @@
      <table cellpadding=0 align="right">
      <tr>
        <td style="text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-to-subtasks" name="button-to-subtasks" value="&#x2261" title="__MSG_action_to_subtasks__"/>
+           <input type="button" id="button-to-subtasks" name="button-to-subtasks" value="&#x2261" title="__MSG_action_to_subtasks__"/>
        </td>
      </tr>
      </table>
-     </div><br>
+     </div>
      <ul id="navWrapper">
         <li>
             <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
