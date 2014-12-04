@@ -99,8 +99,6 @@ function init(makePostRequestFunc) {
     $('input-task-date').addEventListener('change', watchSectionController.OnSomeEditDone);
     $('input-task-comment').addEventListener('keyup', watchSectionController.OnSomeEditDone);
     $('checkbox-with-date').addEventListener('change', watchSectionController.OnSomeEditDone);
-
-    $('a-move-to-list').innerText = getLangValue('action_move_to_list') + ' ' + UnicodeSymbols.ARROW_DOWN;
 }
 
 /*generates the tasks tree in a main section*/
@@ -740,15 +738,35 @@ function WatchSectionController() {
 
             var taskList = $('listId').children[i].taskList;
             var li = document.createElement('li');
+
+            //TODO при нажатии SaveTask сравниваем таск лист $('watch').taskListId и выбранный в комбо, если они НЕ совпадают, необходимо перенести таск в другой список
             li.addEventListener("click", OnMoveToListClick);
             var galka = $('watch').taskListId == taskList.id ? UnicodeSymbols.GALKA : '';
             li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
-            li.taskListId = taskList.id;
+            li.taskList = taskList;
+
+            if ($('watch').taskListId == taskList.id) {
+                $('a-move-to-list').innerText = taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
+            }
+
             $('taskListsWatch').appendChild(li);
         }
     }
 
     var OnMoveToListClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        if (targ.taskList) {
+            if ($('watch').taskListId != targ.taskList.id) {
+                $('a-move-to-list').innerText = targ.taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
+            }
+        }
+    }
+
+    var OnMoveToListClick_old = function(e) {
         var targ;
         if (!e) var e = window.event;
         if (e.target) targ = e.target;
