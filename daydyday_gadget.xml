@@ -226,7 +226,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:12');
+        console.log('starting gadget 15:23');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -573,7 +573,7 @@
        </td>
      </tr>
      </table>
-     <br>
+     <div>
      <ul id="navWrapper">
         <li>
             <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
@@ -581,6 +581,7 @@
             </ul>
         </li>
     </ul>
+    </div>
   </div>
   ]]> 
   </Content>
