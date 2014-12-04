@@ -1222,7 +1222,7 @@ function TaskNodeController() {
         $('watch').taskListId = taskListId;
         $('watch').additionalSection = '';
 
-        var emptyTask = new {notes: '', title: '', due: null, status: TaskStatuses.NEEDS_ACTION};
+        var emptyTask = {notes: '', title: '', due: null, status: TaskStatuses.NEEDS_ACTION};
         watchSectionController.SetWatchFieldsFromTask(emptyTask);
         showOneSection('watch');
     }
