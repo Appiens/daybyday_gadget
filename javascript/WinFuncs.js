@@ -762,8 +762,6 @@ function WatchSectionController() {
         if (targ.taskList) {
             $('a-move-to-list').innerText = targ.taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
         }
-
-        $('taskListsWatch').style.display = 'none';
     }
 
     var OnMoveToListClick_old = function(e) {
