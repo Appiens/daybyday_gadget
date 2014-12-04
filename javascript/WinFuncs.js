@@ -779,7 +779,7 @@ function WatchSectionController() {
 
         if (targ.taskList) {
             $('a-move-to-list').innerText = targ.taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
-            $('a-move-to-list').taskListId = taskList.id;
+            $('a-move-to-list').taskListId = targ.taskList.id;
         }
     }
 
