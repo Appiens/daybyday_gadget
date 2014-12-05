@@ -57,6 +57,10 @@
   	  padding: 0;
 	}
 
+	#div-notes {
+	  display: block;
+	}
+
 	.collapsibleList li{
     	  list-style-image:none; 
     	  list-style-type:none;
@@ -231,7 +235,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 10:33');
+        console.log('starting gadget 10:44');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
