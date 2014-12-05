@@ -673,8 +673,7 @@ function WatchSectionController() {
         checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display == '';
 
         if (checkBox.disabled) {
-            // TODO make lang value for this text
-            checkBox.title = 'If task is repeatable, we can`t change its status! Please use Day by Day for this purpose!';
+            checkBox.title = getLangValue("msg_wrn_repeatable_status");
         }
 
         // parent.SetDisableWatchButtons(false);
@@ -1208,7 +1207,7 @@ function TaskNodeController() {
         checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
 
         if (checkBox.disabled) {
-            checkBox.title = 'If task is repeatable, we can`t change its status! Please use Day by Day for this purpose!';
+            checkBox.title = getLangValue("msg_wrn_repeatable_status");
         }
     }
 

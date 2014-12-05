@@ -231,7 +231,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 21:35');
+        console.log('starting gadget 10:33');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -567,6 +567,13 @@
                 </tr>
     </table>
     <input type="date" id="input-task-date" name="input-task-date" required>
+    <ul id="navWrapper">
+        <li>
+            <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
+            <ul id="taskListsWatch">
+            </ul>
+        </li>
+    </ul>
 
     <div id="div-notes" class="new-select-style-wpandyou">
     <textarea name="input-task-comment" id="input-task-comment" rows="5" placeholder="__MSG_notes_default__"></textarea>
@@ -580,13 +587,6 @@
      </tr>
      </table>
      </div>
-     <ul id="navWrapper">
-        <li>
-            <a id="a-move-to-list" href="#" aria-haspopup="true"></a>
-            <ul id="taskListsWatch">
-            </ul>
-        </li>
-    </ul>
   </div>
   ]]> 
   </Content>
