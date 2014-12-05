@@ -119,6 +119,12 @@ function generateList(taskLists) {
     // fill the list
     for (i = 0; i < taskLists.length; ++i) {
         taskListNodeController.InsertTaskListNode(taskLists[i], ulMain);
+
+        // sorting tasks in task list
+        if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
+            taskLists.tasks.sort(TaskUtils.cmpTasks);
+        }
+
         taskListNodeController.InsertTasksNodesForTaskList(taskLists[i], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
     } // for i
 
@@ -529,8 +535,124 @@ var TaskUtils = (function() {
                                         var text = task.notes;
                                         var index = text.indexOf('\n<!=\n');
                                         return text.substring(0, index);
-                                }
-    };})();
+                                },
+        cmpTasks: function(taskA, taskB) {
+                                        var res =  TaskUtils.cmpByStatus(taskA, taskB);
+
+                                        if (res != 0) {
+                                            return res;
+                                        }
+
+                                        res = TaskUtils.cmpByPriority(taskA, taskB);
+
+                                        if (res != 0) {
+                                            return res;
+                                        }
+
+                                        res = TaskUtils.cmpByDate(taskA, taskB);
+
+                                        if (res != 0) {
+                                            return res;
+                                        }
+
+                                        res = TaskUtils.cmpByTitle(taskA, taskB);
+                                        return res;
+                                },
+        cmpByPriority: function(taskA, taskB) {
+                                        var additionalA = TaskUtils.getAdditionalSection(taskA);
+                                        var additionalB = TaskUtils.getAdditionalSection(taskB);
+
+                                        var hasHiA = TaskUtils.isHighPriorityTask(additionalA);
+                                        var hasHiB = TaskUtils.isHighPriorityTask(additionalB);
+
+                                        if (hasHiA && hasHiB) {
+                                            return 0;
+                                        }
+
+                                        if (hasHiA && !hasHiB) {
+                                            return -1;
+                                        }
+
+                                        if (!hasHiA && hasHiB) {
+                                            return 1;
+                                        }
+
+                                        var hasLoA = TaskUtils.getAdditionalSection(taskA);
+                                        var hasLoB = TaskUtils.getAdditionalSection(taskB);
+
+                                        if (hasLoA && hasLoB) {
+                                            return 0;
+                                        }
+
+                                        if (hasLoA && !hasLoB) {
+                                            return 1;
+                                        }
+
+                                        if (!hasLoA && hasLoB) {
+                                            return -1;
+                                        }
+
+                                        // у обеих задач нормальные приоритеты
+                                        return 0;
+                                },
+        cmpByDate: function(taskA, taskB) {
+                                        if (taskA.due == undefined) {
+                                            if (taskB.due == undefined) {
+                                                return 0;
+                                            }
+                                            else {
+                                                return 1;
+                                            }
+                                        }
+
+                                        if (taskB.due == undefined) {
+                                            return -1;
+                                        }
+
+                                        var da = new Date(taskA.due);
+                                        var db = new Date(taskB.due);
+
+                                        if (da == db) {
+                                            return 0;
+                                        }
+
+                                        if (da > db) {
+                                            return 1;
+                                        }
+                                        else {
+                                            return -1;
+                                        }
+                                },
+
+        cmpByStatus:  function (taskA, taskB) {
+                                        if (taskA.status == taskB.status) {
+                                            return 0;
+                                        }
+
+                                        if (taskA.status == TaskStatuses.NEEDS_ACTION) {
+                                            return -1;
+                                        }
+
+                                        return 1;
+                                },
+
+        cmpByTitle: function (taskA, taskB) {
+                                        var aa = taskA.title.toLowerCase();
+                                        var bb = taskB.title.toLowerCase();
+
+                                        if (aa == bb) {
+                                            return 0;
+                                        }
+
+                                        if (aa > bb) {
+                                            return 1;
+                                        }
+                                        else {
+                                            return -1;
+                                        }
+    }
+
+};})();
 
 function WatchSectionController() {
     var parent = this;
