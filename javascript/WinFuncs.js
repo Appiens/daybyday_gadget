@@ -577,8 +577,8 @@ var TaskUtils = (function() {
                                             return 1;
                                         }
 
-                                        var hasLoA = TaskUtils.getAdditionalSection(taskA);
-                                        var hasLoB = TaskUtils.getAdditionalSection(taskB);
+                                        var hasLoA = TaskUtils.isLowPriorityTask(additionalA);
+                                        var hasLoB = TaskUtils.isLowPriorityTask(additionalB);
 
                                         if (hasLoA && hasLoB) {
                                             return 0;
@@ -601,12 +601,12 @@ var TaskUtils = (function() {
                                                 return 0;
                                             }
                                             else {
-                                                return 1;
+                                                return 1; // b a
                                             }
                                         }
 
                                         if (taskB.due == undefined) {
-                                            return -1;
+                                            return -1; // a b
                                         }
 
                                         var da = new Date(taskA.due);
@@ -617,10 +617,10 @@ var TaskUtils = (function() {
                                         }
 
                                         if (da > db) {
-                                            return 1;
+                                            return 1; // b a
                                         }
                                         else {
-                                            return -1;
+                                            return -1; // a b
                                         }
                                 },
 
