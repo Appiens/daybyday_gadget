@@ -122,7 +122,7 @@ function generateList(taskLists) {
 
         // sorting tasks in task list
         if (taskLists[i].tasks && taskLists[i].tasks.length > 0) {
-            taskLists.tasks.sort(TaskUtils.cmpTasks);
+            taskLists[i].tasks.sort(TaskUtils.cmpTasks);
         }
 
         taskListNodeController.InsertTasksNodesForTaskList(taskLists[i], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id));
@@ -879,7 +879,7 @@ function WatchSectionController() {
 
             //TODO при нажатии SaveTask сравниваем таск лист $('watch').taskListId и выбранный в комбо, если они НЕ совпадают, необходимо перенести таск в другой список
             li.addEventListener("click", OnMoveToListClick);
-            var galka = $('watch').taskListId == taskList.id ? UnicodeSymbols.GALKA : '';
+            var galka = $('watch').taskListId == taskList.id && $('watch').task ? UnicodeSymbols.GALKA : '';
             li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
             li.taskList = taskList;
 
