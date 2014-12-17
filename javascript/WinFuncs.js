@@ -323,6 +323,13 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
+function showMiniMessage(msg) {
+    var msg = new gadgets.MiniMessage(__MODULE_ID__);
+    var errMsg = msg.createTimerMessage(msg, 7);
+    errMsg.style.backgroundColor = "red";
+    errMsg.style.color = "white";
+}
+
 // </editor-fold>
 
 var Actions = ( function() {
@@ -1072,7 +1079,8 @@ function RequestController() {
     // calback function for a change task request
     var OnChangeTaskStatus = function(obj) {
         if (obj.errors.length > 0) {
-            alert(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
+            // alert(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
+            showMiniMessage(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
             return;
         }
 
@@ -1099,7 +1107,8 @@ function RequestController() {
         return {
             OnTaskDeleted: function(obj) {
                 if (obj.errors.length > 0) {
-                    alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+                    // alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+                    showMiniMessage(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
                     return;
                 }
 
@@ -1114,7 +1123,8 @@ function RequestController() {
         return {
             OnTaskInserted : function(obj) {
                 if (obj.errors.length > 0) {
-                    alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+                    //alert(getLangValue("msg_error_occured") + '\n' + JSON.stringify(obj.errors[0]));
+                    showMiniMessage(getLangValue("msg_error_occured")+ '\n' + JSON.stringify(obj.errors[0]));
                     return;
                 }
 
