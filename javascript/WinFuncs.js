@@ -324,7 +324,7 @@ function createSimpleTextNode(text, id) {
 }
 
 function showMiniMessage(msg) {
-    var msg = new gadgets.MiniMessage(__MODULE_ID__);
+    var msg = new gadgets.MiniMessage(0);
     var errMsg = msg.createTimerMessage(msg, 7);
     errMsg.style.backgroundColor = "red";
     errMsg.style.color = "white";
