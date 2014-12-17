@@ -235,12 +235,13 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 16:52');
+        console.log('starting gadget 17:33');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
         $("button-expand").addEventListener('click', showHideDetails);
         $("button-collapse").addEventListener('click', showHideDetails);
+        $("button-copytoclipboard").addEventListener('click', testMiniMessage);
         fetchDataAll();
     }
 
@@ -292,6 +293,13 @@
             $("button-collapse").style.display = 'none';
             $("div-details").style.display = 'none';
         }
+    }
+
+    function testMiniMessage() {
+         var msg = new gadgets.MiniMessage(__MODULE_ID__);
+         var errMsg = msg.createTimerMessage("I'm going to disappear in 5 seconds.", 5);
+         errMsg.style.backgroundColor = "red";
+         errMsg.style.color = "white";
     }
 
     function OnFetchDataDoneAll(response) {

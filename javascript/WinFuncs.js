@@ -904,34 +904,34 @@ function WatchSectionController() {
         }
     }
 
-    var OnMoveToListClick_old = function(e) {
-        var targ;
-        if (!e) var e = window.event;
-        if (e.target) targ = e.target;
-        else if (e.srcElement) targ = e.srcElement;
-
-        if (!IsButtonDisabled($('button-save_task'))) {
-            alert(getLangValue("msg_move_forbidden"));
-            return;
-        }
-
-        if (targ.taskListId) {
-            if ($('watch').taskListId != targ.taskListId) {
-                // try to move task to another task list
-                requestController.deleteTaskRequest($('watch').taskListId, $('watch').task);
-                var date = "";
-                if ($('checkbox-with-date').checked) {
-                    date = new MyDate();
-                    date.setFromInputValue( $('input-task-date').value);
-                }
-
-                var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
-                notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
-                requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes, true, true);
-                Actions.ActionBackToList();
-            }
-        }
-    }
+//    var OnMoveToListClick_old = function(e) {
+//        var targ;
+//        if (!e) var e = window.event;
+//        if (e.target) targ = e.target;
+//        else if (e.srcElement) targ = e.srcElement;
+//
+//        if (!IsButtonDisabled($('button-save_task'))) {
+//            alert(getLangValue("msg_move_forbidden"));
+//            return;
+//        }
+//
+//        if (targ.taskListId) {
+//            if ($('watch').taskListId != targ.taskListId) {
+//                // try to move task to another task list
+//                requestController.deleteTaskRequest($('watch').taskListId, $('watch').task);
+//                var date = "";
+//                if ($('checkbox-with-date').checked) {
+//                    date = new MyDate();
+//                    date.setFromInputValue( $('input-task-date').value);
+//                }
+//
+//                var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
+//                notes += $('watch').additionalSection; //TaskUtils.getAdditionalSection($('watch').task);
+//                requestController.insertTaskRequest(targ.taskListId, $('checkbox-task-completed').checked, $('input-task-name').value, date, notes, true, true);
+//                Actions.ActionBackToList();
+//            }
+//        }
+//    }
 
     // Creates a status img
     // string url - the Image url
