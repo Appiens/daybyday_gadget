@@ -1009,7 +1009,7 @@ function RequestController() {
     }
 
     this.changeTaskRequest = function(taskListId, task, isCompleted, title, dueDate, notes) {
-        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasksT/' + task.id + '?key=' + API_KEY;
         var data = '{"id": "'+ task.id + '"';
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         var hasChanges = false;
@@ -1050,7 +1050,7 @@ function RequestController() {
 
     this.insertTaskRequest = function(taskListId, isCompleted, title, dueDate, notes, gotoTask) {
         // https://www.googleapis.com/tasks/v1/lists/' + listId + '/tasks
-        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks?key=' + API_KEY;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasksT?key=' + API_KEY;
         var data = '{';
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         data += isCompleted? '"status":"' + status + '"' : '"status":"' + status + '", "completed": null';
@@ -1071,7 +1071,7 @@ function RequestController() {
     }
 
     this.deleteTaskRequest = function(taskListId, task) {
-        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasksT/' + task.id + '?key=' + API_KEY;
         var shell = TaskDeletedShell(task, taskListId);
         makePOSTRequest(url, '', shell.OnTaskDeleted, "DELETE");
     }
