@@ -235,7 +235,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 16:22');
+        console.log('starting gadget 16:37');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -528,7 +528,7 @@
 	<ul id="listId" class="collapsibleList"></ul>
   </div>
 
-  <div id="error" style="display: none; height: 80%; overflow-y: scroll;">
+  <div id="error" style="display: none;">
     <!--<label id="label-oauth-error" style="display:none;"></label>-->
     __MSG_msg_error_occured__
     <table cellpadding=0>
@@ -549,7 +549,7 @@
             </td>
         </tr>
     </table>
-    <div id='div-details' style="display:none">
+    <div id='div-details' style="display:none; height: 80%; overflow-y: scroll;">
     </div>
   </div>
 
