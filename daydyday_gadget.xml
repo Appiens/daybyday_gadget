@@ -235,10 +235,12 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:46');
+        console.log('starting gadget 15:28');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
+        $("button-expand").addEventListener('click', showHideDetails);
+        $("button-collapse").addEventListener('click', showHideDetails);
         fetchDataAll();
     }
 
@@ -259,7 +261,7 @@
         }
 
         // Hide err section
-         $('label-oauth-error').style.display = 'none';
+         showOneSection('main');
 
         fetchData(OnFetchDataDoneAll);
     }
@@ -273,6 +275,23 @@
 
     function openDayByDayPage() {
         window.open("https://play.google.com/store/apps/details?id=ru.infteh.organizer.trial", "_blank", null);
+    }
+
+    function showHideDetails() {
+        var isHidden = document.getElementById("div-details").style.display == 'none';
+
+        if (isHidden) {
+            $("span-showhide").innerHTML = "Hide details";
+            $("button-expand").style.display = 'none';
+            $("button-collapse").style.display = '';
+            $("div-details").style.display = '';
+        }
+        else {
+            $("span-showhide").innerHTML = "Show details";
+            $("button-expand").style.display = '';
+            $("button-collapse").style.display = 'none';
+            $("div-details").style.display = 'none';
+        }
     }
 
     function OnFetchDataDoneAll(response) {
@@ -305,8 +324,8 @@
                  }
             }
          else {
-                $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-                $('label-oauth-error').style.display = '';
+                $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                $('div-details').style.display = '';
                 showOneSection('error');
                 errorOccured = true;
         }
@@ -326,8 +345,8 @@
             }
         else {
                taskListsTmp = null;
-                $('label-oauth-error').innerText = getLangValue('msg_error_hour');
-                $('label-oauth-error').style.display = '';
+                $('div-details').innerText = getLangValue('msg_error_hour');
+                $('div-details').style.display = '';
                 showOneSection('error');
 
                console.log('Error loading task lists');
@@ -380,8 +399,8 @@
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
         } else {
-            $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-            $('label-oauth-error').style.display = '';
+            $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+            $('div-details').style.display = '';
             showOneSection('error');
             errorOccured = true;
         }
@@ -413,8 +432,8 @@
             }
             else {
                     taskListsTmp = null;
-                    $('label-oauth-error').innerText = getLangValue('msg_error_hour');
-                    $('label-oauth-error').style.display = '';
+                    $('div-details').innerText = getLangValue('msg_error_hour');
+                    $('div-details').style.display = '';
                     showOneSection('error');
                     console.log("Error for " + taskList.title);
                     errorOccuredTmp = true;
@@ -514,7 +533,29 @@
   </div>
 
   <div id="error" style="display: none">
-    <label id="label-oauth-error" style="display:none;"></label>
+    <!--<label id="label-oauth-error" style="display:none;"></label>-->
+    __MSG_msg_error_occured__
+    <table cellpadding=0>
+        <tr>
+            <td style="text-align:left; vertical-align:middle;">
+                <input type="button" id="button-expand" name="button-expand" value="&#x002B"/>
+            </td>
+            <td style="text-align:left; vertical-align:middle;">
+                <input type="button" id="button-collapse" name="button-collapse" value="&#x002D" style="display:none"/>
+            </td>
+            <td style="text-align:left; vertical-align:middle;">
+                 <span id="span-showhide" name="span-showhide">
+                    __MSG_msg_show_details__
+                </span>
+            </td>
+            <td style="text-align:left; vertical-align:middle;">
+                <input type="button" id="button-copytoclipboard" name="button-copytoclipboard" value=" &#x2398" title="Copy to clipboard"/>
+            </td>
+        </tr>
+    </table>
+    <div id='div-details' style="display:none">
+
+    </div>
   </div>
 
   <div id="approval" style="display: none">
