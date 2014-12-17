@@ -236,7 +236,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 17:55');
+        console.log('starting gadget 18:00');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -367,7 +367,7 @@
     function fetchData(onDone) {
 
         var params = {};
-        url = "https://www.googleapis.com/tasks/v1/users/@me/listsS?key=" + API_KEY + "&fields=items(id%2Ctitle%2Cupdated)";
+        url = "https://www.googleapis.com/tasks/v1/users/@me/lists?key=" + API_KEY + "&fields=items(id%2Ctitle%2Cupdated)";
         params[gadgets.io.RequestParameters.CONTENT_TYPE] = gadgets.io.ContentType.JSON;
         params[gadgets.io.RequestParameters.AUTHORIZATION] = gadgets.io.AuthorizationType.OAUTH;
         params[gadgets.io.RequestParameters.OAUTH_SERVICE_NAME] = "google";
