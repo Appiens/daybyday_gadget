@@ -235,7 +235,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 16:37');
+        console.log('starting gadget 16:52');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -325,6 +325,7 @@
             }
          else {
                 $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                $('div-error-msg').innerText = getLangValue('msg_error_occured');
                 showOneSection('error');
                 errorOccured = true;
         }
@@ -344,7 +345,8 @@
             }
         else {
                taskListsTmp = null;
-                $('div-details').innerText = getLangValue('msg_error_hour');
+               $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+               $('div-error-msg').innerText = getLangValue('msg_error_hour');
                 showOneSection('error');
 
                console.log('Error loading task lists');
@@ -398,6 +400,7 @@
            }
         } else {
             $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+            $('div-error-msg').innerText = getLangValue('msg_error_occured');
             showOneSection('error');
             errorOccured = true;
         }
@@ -429,7 +432,8 @@
             }
             else {
                     taskListsTmp = null;
-                    $('div-details').innerText = getLangValue('msg_error_hour');
+                    $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                    $('div-error-msg').innerText = getLangValue('msg_error_hour');
                     showOneSection('error');
                     console.log("Error for " + taskList.title);
                     errorOccuredTmp = true;
@@ -530,7 +534,7 @@
 
   <div id="error" style="display: none;">
     <!--<label id="label-oauth-error" style="display:none;"></label>-->
-    __MSG_msg_error_occured__
+    <div id='div-error-msg'>__MSG_msg_error_occured__</div>
     <table cellpadding=0>
         <tr>
             <td style="text-align:left; vertical-align:middle;">
