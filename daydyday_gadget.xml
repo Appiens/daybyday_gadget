@@ -235,7 +235,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:41');
+        console.log('starting gadget 15:58');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -325,7 +325,6 @@
             }
          else {
                 $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-                $('div-details').style.display = '';
                 showOneSection('error');
                 errorOccured = true;
         }
@@ -346,7 +345,6 @@
         else {
                taskListsTmp = null;
                 $('div-details').innerText = getLangValue('msg_error_hour');
-                $('div-details').style.display = '';
                 showOneSection('error');
 
                console.log('Error loading task lists');
@@ -400,7 +398,6 @@
            }
         } else {
             $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-            $('div-details').style.display = '';
             showOneSection('error');
             errorOccured = true;
         }
@@ -433,7 +430,6 @@
             else {
                     taskListsTmp = null;
                     $('div-details').innerText = getLangValue('msg_error_hour');
-                    $('div-details').style.display = '';
                     showOneSection('error');
                     console.log("Error for " + taskList.title);
                     errorOccuredTmp = true;
@@ -532,7 +528,7 @@
 	<ul id="listId" class="collapsibleList"></ul>
   </div>
 
-  <div id="error" style="display: none">
+  <div id="error" style="display: none; overflow-y: scroll;">
     <!--<label id="label-oauth-error" style="display:none;"></label>-->
     __MSG_msg_error_occured__
     <table cellpadding=0>
@@ -554,7 +550,6 @@
         </tr>
     </table>
     <div id='div-details' style="display:none">
-
     </div>
   </div>
 
