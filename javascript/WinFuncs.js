@@ -323,9 +323,9 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
-function showMiniMessage(msg) {
+function showMiniMessage(msg_) {
     var msg = new gadgets.MiniMessage(0, $("messageBox"));
-    var errMsg = msg.createTimerMessage(msg, 7);
+    var errMsg = msg.createTimerMessage(msg_, 7);
     errMsg.style.backgroundColor = "red";
     errMsg.style.color = "white";
 }
