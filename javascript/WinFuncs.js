@@ -953,7 +953,7 @@ function RequestController() {
     }
 
     this.changeTaskRequest = function(taskListId, task, isCompleted, title, dueDate, notes) {
-        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasksT/' + task.id + '?key=' + API_KEY;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
         var data = '{"id": "'+ task.id + '"';
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         var hasChanges = false;
@@ -994,7 +994,7 @@ function RequestController() {
 
     this.insertTaskRequest = function(taskListId, isCompleted, title, dueDate, notes, gotoTask) {
         // https://www.googleapis.com/tasks/v1/lists/' + listId + '/tasks
-        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasksT?key=' + API_KEY;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks?key=' + API_KEY;
         var data = '{';
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         data += isCompleted? '"status":"' + status + '"' : '"status":"' + status + '", "completed": null';
@@ -1015,7 +1015,7 @@ function RequestController() {
     }
 
     this.deleteTaskRequest = function(taskListId, task) {
-        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasksT/' + task.id + '?key=' + API_KEY;
+        var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
         var shell = TaskDeletedShell(task, taskListId);
         makePOSTRequest(url, '', shell.OnTaskDeleted, "DELETE");
     }
@@ -1029,8 +1029,7 @@ function RequestController() {
 
 
         if (obj.text) {
-            // TODO delete this string when done
-            console.log(obj.text);
+            //console.log(obj.text);
             var taskFromServer = JSON.parse(obj.text);
 
             // обновляем секцию Main
@@ -1081,9 +1080,9 @@ function RequestController() {
                         $('main').scrollTop = getOffset(taskDiv);
                     }
 
-                    if (selectTask) {
-                        taskNodeController.selectTaskDiv($(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id));
-                    }
+//                    if (selectTask) {
+//                        taskNodeController.selectTaskDiv($(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id));
+//                    }
                 }
             }
 
@@ -1213,7 +1212,7 @@ function TaskListNodeController() {
 function TaskNodeController() {
 
     var parent = this;
-    this.selectedTaskDiv = null; // выбранный таск
+    // this.selectedTaskDiv = null; // выбранный таск
     this.lastUpdatedTaskListId = null; // последний редактируемый таск лист
 
     // редактирует нод соотетствующий таску в секции Main
@@ -1291,10 +1290,6 @@ function TaskNodeController() {
     this.DeleteTaskNode = function(taskFromServer, taskListId) {
         var taskLi = $(MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
         if (taskLi) {
-            if (parent.selectedTaskDiv == $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id)) {
-                parent.deselectTaskDiv();
-            }
-
             taskLi.parentNode.removeChild(taskLi);
         }
 

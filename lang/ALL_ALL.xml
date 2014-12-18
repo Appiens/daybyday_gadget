@@ -23,6 +23,7 @@
     <msg name="msg_hide_details">Hide details</msg>
     <msg name="msg_item_deleted">Item deleted</msg>
     <msg name="msg_item_inserted">Item inserted</msg>
+    <msg name="msg_help_us">Click to help</msg>
     <msg name="personalize">Click me to authorize</msg>
     <msg name="approval_part_1">Please click</msg>
     <msg name="approval_part_2">I've approved access</msg>

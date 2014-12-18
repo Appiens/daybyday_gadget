@@ -236,7 +236,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 10:45');
+        console.log('starting gadget 11:18');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -295,6 +295,17 @@
         }
     }
 
+    function showError(shortText, descrText, link, linkText) {
+         link = link || '#';
+         linkText = linkText || '';
+
+         $('div-details').innerText = descrText;
+         $('div-error-msg').innerText = shortText;
+         $('a-err-link').href =  link;
+         $('a-err-link').innerText = linkText;
+         showOneSection('error');
+    }
+
     function OnFetchDataDoneAll(response) {
         if (response.oauthApprovalUrl) {
           // Create the popup handler. The onOpen function is called when the user
@@ -325,9 +336,10 @@
                  }
             }
          else {
-                $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-                $('div-error-msg').innerText = getLangValue('msg_error_occured');
-                showOneSection('error');
+                // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                // $('div-error-msg').innerText = getLangValue('msg_error_occured');
+                // showOneSection('error');
+                showError(getLangValue('msg_error_occured'), 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
                 errorOccured = true;
         }
     }
@@ -346,9 +358,13 @@
             }
         else {
                taskListsTmp = null;
-               $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-               $('div-error-msg').innerText = getLangValue('msg_error_hour');
-                showOneSection('error');
+              // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+              // $('div-error-msg').innerText = getLangValue('msg_error_hour');
+              //  showOneSection('error');
+               showError(getLangValue('msg_error_hour'),
+                         'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText,
+                         'https://github.com/Appiens/daybyday_gadget/issues/1',
+                         getLangValue('msg_help_us'));
 
                console.log('Error loading task lists');
         }
@@ -400,9 +416,10 @@
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
         } else {
-            $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-            $('div-error-msg').innerText = getLangValue('msg_error_occured');
-            showOneSection('error');
+            // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+            // $('div-error-msg').innerText = getLangValue('msg_error_occured');
+            // showOneSection('error');
+             showError(getLangValue('msg_error_occured'), 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
             errorOccured = true;
         }
       }, "&showCompleted=true");
@@ -433,9 +450,14 @@
             }
             else {
                     taskListsTmp = null;
-                    $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-                    $('div-error-msg').innerText = getLangValue('msg_error_hour');
-                    showOneSection('error');
+                    // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                    // $('div-error-msg').innerText = getLangValue('msg_error_hour');
+                    // showOneSection('error');
+                    showError(getLangValue('msg_error_hour'),
+                         'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText,
+                         'https://github.com/Appiens/daybyday_gadget/issues/1',
+                         getLangValue('msg_help_us'));
+
                     console.log("Error for " + taskList.title);
                     errorOccuredTmp = true;
             }
@@ -556,6 +578,7 @@
             </td>
         </tr>
     </table>
+    <a href="#" id="a-err-link"></a>
     <div id='div-details' style="display:none; height: 80%; overflow-y: scroll;">
     </div>
   </div>
