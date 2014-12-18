@@ -1219,9 +1219,6 @@ function TaskNodeController() {
      this.UpdateTaskNode = function(taskFromServer) {
         if (taskFromServer) {
 
-            SetTaskStatusCheckbox(taskFromServer);
-            SetTaskTitle(taskFromServer);
-
             var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
 
             SetDisplayStatusOverdue(taskFromServer);
@@ -1231,6 +1228,9 @@ function TaskNodeController() {
                 SetDisplayTaskStatusAddImages(taskFromServer);
                 subTaskDivMainController.RecreateSubTaskDiv(taskDiv, taskFromServer);
             }
+
+            SetTaskStatusCheckbox(taskFromServer);
+            SetTaskTitle(taskFromServer);
 
             taskDiv.task = taskFromServer;
         }
@@ -1444,6 +1444,11 @@ function TaskNodeController() {
 // task - a task which is connected to a task div, to which checkbox belongs
     var SetTaskStatusCheckbox = function(task) {
         var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
+        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
+
+        if (checkBox.disabled) {
+            checkBox.title = getLangValue("msg_wrn_repeatable_status");
+        }
 
         if (checkBox.checked != (task.status == TaskStatuses.COMPLETED)) {
             checkBox.checked = (task.status == TaskStatuses.COMPLETED);
