@@ -19,6 +19,11 @@
     <msg name="msg_move_forbidden">Please, save or discard this task before moving it!</msg>
     <msg name="msg_error_hour">Oops! We don`t know how to solve this... Press F5</msg>
     <msq name="msg_wrn_repeatable_status">You can`t change status of repeatable task! Please use Day by Day!</msq>
+    <msg name="msg_show_details">Show details</msg>
+    <msg name="msg_hide_details">Hide details</msg>
+    <msg name="msg_item_deleted">Item deleted</msg>
+    <msg name="msg_item_inserted">Item inserted</msg>
+    <msg name="msg_help_us">Click to help</msg>
     <msg name="personalize">Click me to authorize</msg>
     <msg name="approval_part_1">Please click</msg>
     <msg name="approval_part_2">I've approved access</msg>

@@ -5,6 +5,7 @@
     <Require feature="locked-domain"/>
     <Require feature='auth-refresh'/>
     <Require feature="dynamic-height"/>
+    <Require feature="minimessage"/>
       <OAuth>
       <Service name="google">
         <Access url="https://www.google.com/accounts/OAuthGetAccessToken" method="GET" /> 
@@ -235,10 +236,13 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:46');
+        console.log('starting gadget 12:46');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
+        $('a-err-link').addEventListener('click', openQuestionPage);
+        $("button-expand").addEventListener('click', showHideDetails);
+        $("button-collapse").addEventListener('click', showHideDetails);
         fetchDataAll();
     }
 
@@ -259,7 +263,7 @@
         }
 
         // Hide err section
-         $('label-oauth-error').style.display = 'none';
+         showOneSection('main');
 
         fetchData(OnFetchDataDoneAll);
     }
@@ -273,6 +277,38 @@
 
     function openDayByDayPage() {
         window.open("https://play.google.com/store/apps/details?id=ru.infteh.organizer.trial", "_blank", null);
+    }
+
+    function openQuestionPage() {
+         window.open($('a-err-link').href, "_blank", null);
+    }
+
+    function showHideDetails() {
+        var isHidden = document.getElementById("div-details").style.display == 'none';
+
+        if (isHidden) {
+            $("span-showhide").innerHTML = "Hide details";
+            $("button-expand").style.display = 'none';
+            $("button-collapse").style.display = '';
+            $("div-details").style.display = '';
+        }
+        else {
+            $("span-showhide").innerHTML = "Show details";
+            $("button-expand").style.display = '';
+            $("button-collapse").style.display = 'none';
+            $("div-details").style.display = 'none';
+        }
+    }
+
+    function showError(shortText, descrText, link, linkText) {
+         link = link || '#';
+         linkText = linkText || '';
+
+         $('div-details').innerText = descrText;
+         $('div-error-msg').innerText = shortText;
+         $('a-err-link').href =  link;
+         $('a-err-link').innerText = linkText;
+         showOneSection('error');
     }
 
     function OnFetchDataDoneAll(response) {
@@ -305,9 +341,10 @@
                  }
             }
          else {
-                $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-                $('label-oauth-error').style.display = '';
-                showOneSection('error');
+                // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                // $('div-error-msg').innerText = getLangValue('msg_error_occured');
+                // showOneSection('error');
+                showError(getLangValue('msg_error_occured'), 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
                 errorOccured = true;
         }
     }
@@ -326,9 +363,13 @@
             }
         else {
                taskListsTmp = null;
-                $('label-oauth-error').innerText = getLangValue('msg_error_hour');
-                $('label-oauth-error').style.display = '';
-                showOneSection('error');
+              // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+              // $('div-error-msg').innerText = getLangValue('msg_error_hour');
+              //  showOneSection('error');
+               showError(getLangValue('msg_error_hour'),
+                         'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText,
+                         'https://github.com/Appiens/daybyday_gadget/issues/1',
+                         getLangValue('msg_help_us'));
 
                console.log('Error loading task lists');
         }
@@ -380,9 +421,10 @@
               timerFetchNewData = setTimeout(fetchOnlyNewData , requestInterval);
            }
         } else {
-            $('label-oauth-error').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
-            $('label-oauth-error').style.display = '';
-            showOneSection('error');
+            // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+            // $('div-error-msg').innerText = getLangValue('msg_error_occured');
+            // showOneSection('error');
+             showError(getLangValue('msg_error_occured'), 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText);
             errorOccured = true;
         }
       }, "&showCompleted=true");
@@ -413,9 +455,14 @@
             }
             else {
                     taskListsTmp = null;
-                    $('label-oauth-error').innerText = getLangValue('msg_error_hour');
-                    $('label-oauth-error').style.display = '';
-                    showOneSection('error');
+                    // $('div-details').innerText = 'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText;
+                    // $('div-error-msg').innerText = getLangValue('msg_error_hour');
+                    // showOneSection('error');
+                    showError(getLangValue('msg_error_hour'),
+                         'OAuth error: ' + response.oauthError + ': ' + response.oauthErrorText,
+                         'https://github.com/Appiens/daybyday_gadget/issues/1',
+                         getLangValue('msg_help_us'));
+
                     console.log("Error for " + taskList.title);
                     errorOccuredTmp = true;
             }
@@ -491,6 +538,7 @@
     gadgets.util.registerOnLoadHandler(startGadget);
   </script>
 
+  <div id="messageBox"></div>
   <div id="footer">
     <table cellpadding=0 width=100%>
        <tr>
@@ -513,8 +561,31 @@
 	<ul id="listId" class="collapsibleList"></ul>
   </div>
 
-  <div id="error" style="display: none">
-    <label id="label-oauth-error" style="display:none;"></label>
+  <div id="error" style="display: none;">
+    <!--<label id="label-oauth-error" style="display:none;"></label>-->
+    <div id='div-error-msg'>__MSG_msg_error_occured__</div>
+    <a href="#" id="a-err-link"></a>
+    <table cellpadding=0>
+        <tr>
+            <td style="text-align:left; vertical-align:middle;">
+                <input type="button" id="button-expand" name="button-expand" value="&#x002B"/>
+
+            </td>
+            <td style="text-align:left; vertical-align:middle;">
+                <input type="button" id="button-collapse" name="button-collapse" value="&#x002D" style="display:none"/>
+            </td>
+            <td style="text-align:left; vertical-align:middle;">
+                 <span id="span-showhide" name="span-showhide">
+                    __MSG_msg_show_details__
+                </span>
+            </td>
+            <td style="text-align:left; vertical-align:middle;">
+                <input type="button" id="button-copytoclipboard" name="button-copytoclipboard" value=" &#x2398" title="Copy to clipboard"/>
+            </td>
+        </tr>
+    </table>
+    <div id='div-details' style="display:none; height: 80%; overflow-y: scroll;">
+    </div>
   </div>
 
   <div id="approval" style="display: none">
@@ -531,18 +602,15 @@
 
   <div id="watch" style="display: none">
    <div id="footerWatch">
-        <table cellpadding=0 width=50%>
+        <table cellpadding=0 width=100%>
                 <tr>
-                    <!--<td style="width: 25%; text-align:left; vertical-align:middle;">-->
-                        <!--<input type="button" id="button-back-to-list" name="button-back-to-list" value="&#x25C1" title="__MSG_action_back_to_list__"/>-->
-                    <!--</td>-->
-                    <td style="width: 25%; text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-save_task" name="button-save-task" value="&#x2713" title="__MSG_action_save_task__"/>
-                    </td>
-                     <td style="width: 25%; text-align:left; vertical-align:middle;">
+                    <td style="width: 70%; text-align:left; vertical-align:middle;">
                         <input type="button" id="button-delete-task" name="button-delete-task" value="&#xF1F8" title="__MSG_action_delete_task__"/>
                     </td>
-                    <td style="width: 25%; text-align:left; vertical-align:middle;">
+                    <td style="width: 15%; text-align:right; vertical-align:middle;">
+                        <input type="button" id="button-save_task" name="button-save-task" value="&#x2713" title="__MSG_action_save_task__"/>
+                    </td>
+                    <td style="width: 15%; text-align:right; vertical-align:middle;">
                         <input type="button" id="button-discard" name="button-discard" value="&#x2715" title="__MSG_action_discard__"/>
                     </td>
                 </tr>
