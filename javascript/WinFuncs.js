@@ -321,6 +321,8 @@ function showMiniMessage(msg_, messageType) {
     if (messageType == MessageTypes.INFO) {
         errMsg.style.backgroundColor = Colors.LIGHT_YELLOW;
     }
+
+    alert(msg_);
 }
 
 // </editor-fold>
