@@ -236,10 +236,11 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 11:18');
+        console.log('starting gadget 12:46');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
+        $('a-err-link').addEventListener('click', openQuestionPage);
         $("button-expand").addEventListener('click', showHideDetails);
         $("button-collapse").addEventListener('click', showHideDetails);
         fetchDataAll();
@@ -276,6 +277,10 @@
 
     function openDayByDayPage() {
         window.open("https://play.google.com/store/apps/details?id=ru.infteh.organizer.trial", "_blank", null);
+    }
+
+    function openQuestionPage() {
+         window.open($('a-err-link').href, "_blank", null);
     }
 
     function showHideDetails() {
@@ -559,6 +564,7 @@
   <div id="error" style="display: none;">
     <!--<label id="label-oauth-error" style="display:none;"></label>-->
     <div id='div-error-msg'>__MSG_msg_error_occured__</div>
+    <a href="#" id="a-err-link"></a>
     <table cellpadding=0>
         <tr>
             <td style="text-align:left; vertical-align:middle;">
@@ -578,7 +584,6 @@
             </td>
         </tr>
     </table>
-    <a href="#" id="a-err-link"></a>
     <div id='div-details' style="display:none; height: 80%; overflow-y: scroll;">
     </div>
   </div>

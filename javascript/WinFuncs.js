@@ -311,8 +311,9 @@ function createSimpleTextNode(text, id) {
 }
 
 function showMiniMessage(msg_, messageType) {
+    var TIME_TO_HOLD_SEC = 5;
     var msg = new gadgets.MiniMessage(0, $("messageBox"));
-    var errMsg = msg.createTimerMessage(msg_, 7);
+    var errMsg = msg.createTimerMessage(msg_, TIME_TO_HOLD_SEC);
 
     if (messageType == MessageTypes.ERROR) {
         errMsg.style.backgroundColor = Colors.LIGHT_RED;
@@ -321,8 +322,6 @@ function showMiniMessage(msg_, messageType) {
     if (messageType == MessageTypes.INFO) {
         errMsg.style.backgroundColor = Colors.LIGHT_YELLOW;
     }
-
-    alert(msg_);
 }
 
 // </editor-fold>
