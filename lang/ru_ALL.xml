@@ -21,6 +21,8 @@
     <msq name="msg_wrn_repeatable_status">Нельзя изменить статус повторяющейся задачи. Используйте приложение День за Днём!</msq>
     <msg name="msg_show_details">Показать детали</msg>
     <msg name="msg_hide_details">Скрыть детали</msg>
+    <msg name="msg_item_deleted">Удаление выполнено</msg>
+    <msg name="msg_item_inserted">Вставка выполнена</msg>
     <msg name="personalize">Нажмите сюда для авторизации</msg>
     <msg name="approval_part_1">Пожалуйста, нажмите</msg>
     <msg name="approval_part_2">Я одобрил доступ</msg>

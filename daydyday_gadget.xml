@@ -236,7 +236,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 18:42');
+        console.log('starting gadget 10:32');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -541,6 +541,7 @@
         <tr>
             <td style="text-align:left; vertical-align:middle;">
                 <input type="button" id="button-expand" name="button-expand" value="&#x002B"/>
+
             </td>
             <td style="text-align:left; vertical-align:middle;">
                 <input type="button" id="button-collapse" name="button-collapse" value="&#x002D" style="display:none"/>
@@ -575,16 +576,13 @@
    <div id="footerWatch">
         <table cellpadding=0 width=50%>
                 <tr>
-                    <!--<td style="width: 25%; text-align:left; vertical-align:middle;">-->
-                        <!--<input type="button" id="button-back-to-list" name="button-back-to-list" value="&#x25C1" title="__MSG_action_back_to_list__"/>-->
-                    <!--</td>-->
-                    <td style="width: 25%; text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-save_task" name="button-save-task" value="&#x2713" title="__MSG_action_save_task__"/>
-                    </td>
-                     <td style="width: 25%; text-align:left; vertical-align:middle;">
+                    <td style="width: 60%; text-align:left; vertical-align:middle;">
                         <input type="button" id="button-delete-task" name="button-delete-task" value="&#xF1F8" title="__MSG_action_delete_task__"/>
                     </td>
-                    <td style="width: 25%; text-align:left; vertical-align:middle;">
+                    <td style="width: 20%; text-align:right; vertical-align:middle;">
+                        <input type="button" id="button-save_task" name="button-save-task" value="&#x2713" title="__MSG_action_save_task__"/>
+                    </td>
+                    <td style="width: 20%; text-align:right; vertical-align:middle;">
                         <input type="button" id="button-discard" name="button-discard" value="&#x2715" title="__MSG_action_discard__"/>
                     </td>
                 </tr>
