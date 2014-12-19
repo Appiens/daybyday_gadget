@@ -50,7 +50,7 @@ var watchSectionController = new WatchSectionController();
 // структура секции Watch
 //
 // $('watch').task  содержат задачу
-// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр.
+// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр. (любые изменения с приоритетом, повторяемостью попадают сюда)
 // $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
 // у гугла происходит выброс в секцию списка
 // <div id='div-status-images'> дочерние img создаются динамически
@@ -418,19 +418,19 @@ var Actions = ( function() {
 var TaskUtils = (function() {
     return {
         isLowPriorityTask: function(additionalSection) {
-                                return additionalSection.indexOf('PRIORITY:-1') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.PRIORITY + ':-1') > 0;
                             },
 
         isHighPriorityTask: function(additionalSection) {
-                                return additionalSection.indexOf('PRIORITY:1') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.PRIORITY + ':1') > 0;
                             },
 
         isRepeatableTask: function(additionalSection) {
-                                return additionalSection.indexOf('DTSTART:') > 0 && additionalSection.indexOf('RRULE:') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.REPEATABLE_DTSTART + ':') > 0 && additionalSection.indexOf(AdditionalKeywords.REPEATABLE_RRULE + ':') > 0;
                             },
 
         isAlarmedTask: function(additionalSection) {
-                                return additionalSection.indexOf('REMINDER:') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.REMINDER + ':') > 0;
                             },
 
         isOverdueTask: function(task) {
@@ -448,13 +448,7 @@ var TaskUtils = (function() {
 
                                 return false;
                             },
-        // возвращает количество аттрибутов в добавочной секции
-        getNumberAttribs: function(additionalSection) {
-                                var n = additionalSection.split('\n').length;
-                                var empty = '\n<!=\n=!>'.split('\n').length;
-                                return n - empty;
-        },
-
+        // returns new additional section
         removeRepeatable: function(additionalSection) {
                                 if (additionalSection == '') {
                                     return '';
@@ -464,11 +458,43 @@ var TaskUtils = (function() {
                                     return additionalSection;
                                 }
 
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'DTSTART:');
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'RRULE:');
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':');
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':');
 
                                 return additionalSection;
                             },
+        removePriority: function(additionalSection) {
+                                if (additionalSection == '') {
+                                    return '';
+                                }
+
+                                if (!TaskUtils.isHighPriorityTask(additionalSection) && !TaskUtils.isLowPriorityTask(additionalSection)) {
+                                    return additionalSection;
+                                }
+
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.PRIORITY + ':');
+
+                                return additionalSection;
+                            },
+        removeAlarmed: function(additionalSection) {
+                                if (additionalSection == '') {
+                                    return '';
+                                }
+
+                                if (!TaskUtils.isAlarmedTask(additionalSection)) {
+                                    return additionalSection;
+                                }
+
+                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.REMINDER + ':');
+
+                                return additionalSection;
+                            },
+        // возвращает количество аттрибутов в добавочной секции
+        getNumberAttribs: function(additionalSection) {
+                                var n = additionalSection.split('\n').length;
+                                var empty = '\n<!=\n=!>'.split('\n').length;
+                                return n - empty;
+        },
 
         removeSectionByWord: function(additionalSection, keyWord) {
                                 var indStart = additionalSection.indexOf(keyWord);
@@ -773,7 +799,7 @@ function WatchSectionController() {
         SetDisplayTaskStatusAddImagesWatch();
 
         var checkBox = $('checkbox-task-completed');
-        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display == '';
+        checkBox.disabled = TaskUtils.isRepeatableTask($('watch').additionalSection);
 
         if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
@@ -1028,7 +1054,7 @@ function RequestController() {
 
 
         if (obj.text) {
-            //console.log(obj.text);
+            console.log(obj.text);
             var taskFromServer = JSON.parse(obj.text);
 
             // обновляем секцию Main
@@ -1444,7 +1470,7 @@ function TaskNodeController() {
 // task - a task which is connected to a task div, to which checkbox belongs
     var SetTaskStatusCheckbox = function(task) {
         var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
-        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
+        checkBox.disabled = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
 
         if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
@@ -1963,6 +1989,15 @@ var MessageTypes = (function() {
         ERROR: 1,
         INFO: 0,
         WARN: 2
+    };
+})();
+
+var AdditionalKeywords = (function() {
+    return {
+        PRIORITY: 'PRIORITY',
+        REPEATABLE_DTSTART: 'DTSTART',
+        REPEATABLE_RRULE: 'RRULE',
+        REMINDER: 'REMINDER'
     };
 })();
 
