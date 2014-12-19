@@ -463,6 +463,12 @@ var TaskUtils = (function() {
 
                                 return additionalSection;
                             },
+        addRepeatable: function(additionalSection, valueDTSTART, valueRRULE) {
+                                additionalSection = TaskUtils.removeRepeatable(additionalSection);
+                                additionalSection = TaskUtils.addSection(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':' + valueDTSTART);
+                                additionalSection = TaskUtils.addSection(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':' + valueRRULE);
+                                return additionalSection;
+                            },
         removePriority: function(additionalSection) {
                                 if (additionalSection == '') {
                                     return '';
@@ -475,6 +481,10 @@ var TaskUtils = (function() {
                                 additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.PRIORITY + ':');
 
                                 return additionalSection;
+                            },
+        addPriority: function(additionalSection, value) {
+                                additionalSection = TaskUtils.removePriority(additionalSection);
+                                return TaskUtils.addSection(additionalSection, AdditionalKeywords.PRIORITY + ':' + value);
                             },
         removeAlarmed: function(additionalSection) {
                                 if (additionalSection == '') {
@@ -489,10 +499,15 @@ var TaskUtils = (function() {
 
                                 return additionalSection;
                             },
+        addAlarmed: function(additionalSection, value) {
+                                additionalSection = TaskUtils.removeAlarmed(additionalSection);
+                                return TaskUtils.addSection(additionalSection, AdditionalKeywords.REMINDER + ':' + value);
+                            },
+
         // возвращает количество аттрибутов в добавочной секции
         getNumberAttribs: function(additionalSection) {
                                 var n = additionalSection.split('\n').length;
-                                var empty = '\n<!=\n=!>'.split('\n').length;
+                                var empty = /*'\n<!=\n=!>'*/ (AdditionalKeywords.SECTION_START + AdditionalKeywords.SECTION_END).split('\n').length;
                                 return n - empty;
         },
 
@@ -510,14 +525,25 @@ var TaskUtils = (function() {
                                 return result;
 
                             },
+        // sectionToAdd без \n в начале
+        addSection: function(additionalSection, sectionToAdd) {
+                                if (additionalSection == '') {
+                                    additionalSection = /*'\n<!=\n=!>'*/ AdditionalKeywords.SECTION_START + AdditionalKeywords.SECTION_END;
+                                }
 
+                                var indexEnd = additionalSection.indexOf(/*'\n=!>'*/ AdditionalKeywords.SECTION_END);
+                                var firstPart = additionalSection.substring(0, indexEnd);
+                                var lastPart = additionalSection.substring(indexEnd);
+                                additionalSection = firstPart + '\n' + sectionToAdd  + lastPart;
+                                return additionalSection;
+                            },
         additionalSectionExist: function (task) {
                                            var text = task.notes;
                                            if (text == undefined) {
                                                 return false;
                                             }
 
-                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('=!>') > text.indexOf('\n<!=\n'));
+                                           return (text.indexOf(/*'\n<!='*/ AdditionalKeywords.SECTION_START) >= 0 && text.indexOf(/*'\n=!>'*/ AdditionalKeywords.SECTION_END) > text.indexOf(/*'\n<!='*/ AdditionalKeywords.SECTION_START));
                                 },
 
         getAdditionalSection: function (task) {
@@ -526,7 +552,7 @@ var TaskUtils = (function() {
                                         }
 
                                         var text = task.notes;
-                                        var index = text.indexOf('\n<!=\n');
+                                        var index = text.indexOf(/*'\n<!=\n'*/ AdditionalKeywords.SECTION_START);
                                         return text.substring(index);
                                 },
 
@@ -540,7 +566,7 @@ var TaskUtils = (function() {
                                         }
 
                                         var text = task.notes;
-                                        var index = text.indexOf('\n<!=\n');
+                                        var index = text.indexOf(/*'\n<!=\n'*/ AdditionalKeywords.SECTION_START);
                                         return text.substring(0, index);
                                 },
         cmpTasks: function(taskA, taskB) {
@@ -1992,12 +2018,16 @@ var MessageTypes = (function() {
     };
 })();
 
+// формат добавочной секции
+// SECTION_START \nАТРИБУТ_1:ЗНАЧЕНИЕ_1\nАТРИБУТ_2:ЗНАЧЕНИЕ_2\n...АТРИБУТ_N=ЗНАЧЕНИЕ_N SECTION_END
 var AdditionalKeywords = (function() {
     return {
         PRIORITY: 'PRIORITY',
         REPEATABLE_DTSTART: 'DTSTART',
         REPEATABLE_RRULE: 'RRULE',
-        REMINDER: 'REMINDER'
+        REMINDER: 'REMINDER',
+        SECTION_START: '\n<!=', // признак начала добавочной секции
+        SECTION_END: '\n=!>' // признак окончания добавочной секции
     };
 })();
 
