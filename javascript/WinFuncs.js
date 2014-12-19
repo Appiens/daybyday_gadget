@@ -49,8 +49,8 @@ var watchSectionController = new WatchSectionController();
 
 // структура секции Watch
 //
-// $('watch').task  содержат задачу
-// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр. (любые изменения с приоритетом, повторяемостью попадают сюда)
+// $('watch').task  задача, отображаемая в данный момент; null - если режим вставки (ничего не редактируем); изменения текстовых полей сюда не попадают, здесь хранится задача с сервера
+// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр. (любые изменения с приоритетом, повторяемостью попадают сюда) и только при нажатии на V отправляются на сервер
 // $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
 // у гугла происходит выброс в секцию списка
 // <div id='div-status-images'> дочерние img создаются динамически
@@ -134,7 +134,7 @@ function generateList(taskLists) {
 
 /* Updates a task list from taskListsTmp asked from server, in this list we get tasks which were created/updated/deleted during last 5 mins*/
 /* Применение изменений, полученных с сервера, к отображаемому списку ul*/
-/*array[] taskLists - список списков задач, полученный с сервера*/
+/* array[] taskLists - список списков задач, полученный с сервера*/
 function processTmpList(taskLists) {
     var i;
     var isNewTaskList; // признак нового таск листа
@@ -147,9 +147,10 @@ function processTmpList(taskLists) {
 
         isNewTaskList = false;
 
+        // пытаемся найти список с таким идентификатом таск листа
         var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
         if (taskListUl) {
-            // таск лист был переименован (возможно)
+            // таск лист существует и был переименован (возможно)
             taskListNodeController.SetTaskListTitle(taskLists[i]);
         }
         else {
@@ -171,6 +172,7 @@ function processTmpList(taskLists) {
                     Actions.ActionBackToList();
                 }
 
+                // если таск был удалён, удаляем его визуальное воплощение
                 if (taskLists[i].tasks[j].deleted) {
                     try {
                         taskNodeController.DeleteTaskNode(taskLists[i].tasks[j], taskLists[i].id);
@@ -184,9 +186,11 @@ function processTmpList(taskLists) {
 
                 try {
                    if ($(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id)) {
+                       // если таск существует редактируем его визуальное воплощение
                        taskNodeController.UpdateTaskNode(taskLists[i].tasks[j]);
                    }
                    else {
+                       // а если не существует - вставляем его
                        taskNodeController.InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id), true);
                    }
 
@@ -203,10 +207,15 @@ function processTmpList(taskLists) {
         }
     } // for i
 
+    // удаляем визуальное воплощение таск листов, которые были удалены
     taskListNodeController.DeleteTaskListNodesNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
 }
 
+/* устанавливает последний отредактированный таск лист (именно в него будут вставляться таски)*/
+/* по принципу - из полного списка таск листов выбираем тот, у которого были последние изменения */
+/* если это неизвестно - берем первый список задач*/
+/* array[] taskLists - полный список таск листов (после полной перезагрузки*/
 function setLastUpdatedTaskList(taskLists) {
     taskListNodeController.lastUpdatedTaskListId = null;
 
@@ -256,6 +265,7 @@ function showOneSection(toshow) {
         }
     }
 
+    // секцию footer показываем вместе с секцией main
     $('footer').style.display = toshow == 'main'? "": "none";
 }
 
@@ -289,10 +299,13 @@ function enableButton(button) {
     button.removeAttribute('disabled');
 }
 
+// неактивна ли кнопка
+// вернуть ИСТИНУ, если кнопка неактивна
 function IsButtonDisabled(button) {
     return button.hasAttribute('disabled');
 }
 
+// получить сообщение на текущем языке (все файлы с языками в папке lang)
 function getLangValue(message) {
     var prefs = new gadgets.Prefs();
     return prefs.getMsg(message);
@@ -310,6 +323,10 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
+// Показать маленькое сообщение в секции messageBox
+// отображать сообщение в течение TIME_TO_HOLD_SEC сек
+// string msg_ - собственно сообщение
+// MessageTypes messageType - тип сообщения
 function showMiniMessage(msg_, messageType) {
     var TIME_TO_HOLD_SEC = 5;
     var msg = new gadgets.MiniMessage(0, $("messageBox"));
@@ -369,6 +386,7 @@ var Actions = ( function() {
                                     }
                                 }
                                 else {
+                                    // переносим таск в другой список, то есть удаляем из текущего и вставляем в новый
                                     if ($('watch').task != undefined) {
                                         // delete a task
                                         requestController.deleteTaskRequest($('watch').taskListId, $('watch').task);
@@ -381,7 +399,7 @@ var Actions = ( function() {
                             Actions.ActionBackToList();
                           },
 
-        // Convert notes to subTasks
+        // Convert notes to subTasks and back
         ActionToSubtasks:  function () {
                                 watchSectionController.changeNotesState($('input-task-comment').style.display == '');
                                 watchSectionController.OnSomeEditDone();
@@ -391,7 +409,7 @@ var Actions = ( function() {
         ActionDiscard: function () {
                               Actions.ActionBackToList();
                         },
-
+        // Insert a task
         ActionInsertTask: function() {
                                 if (taskListNodeController.lastUpdatedTaskListId == null) {
                                     return;
@@ -399,7 +417,7 @@ var Actions = ( function() {
 
                                 taskNodeController.AddTask(taskListNodeController.lastUpdatedTaskListId);
                         },
-
+        // Delete a task
         ActionDeleteTask: function() {
                                 var task = $('watch').task;
                                 var taskListId = $('watch').taskListId;
@@ -417,22 +435,33 @@ var Actions = ( function() {
 
 var TaskUtils = (function() {
     return {
+        // является ли задача низкоприоритетной
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача низкоприоритетная
         isLowPriorityTask: function(additionalSection) {
                                 return additionalSection.indexOf(AdditionalKeywords.PRIORITY + ':-1') > 0;
                             },
-
+        // является ли задача высокоприоритетной
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача высокоприоритетная
         isHighPriorityTask: function(additionalSection) {
                                 return additionalSection.indexOf(AdditionalKeywords.PRIORITY + ':1') > 0;
                             },
-
+        // является ли задача повторяющейся
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача повторяющаяся
         isRepeatableTask: function(additionalSection) {
                                 return additionalSection.indexOf(AdditionalKeywords.REPEATABLE_DTSTART + ':') > 0 && additionalSection.indexOf(AdditionalKeywords.REPEATABLE_RRULE + ':') > 0;
                             },
-
+        // является ли задача задачей с напоминанием
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача задачей с напоминанием
         isAlarmedTask: function(additionalSection) {
                                 return additionalSection.indexOf(AdditionalKeywords.REMINDER + ':') > 0;
                             },
-
+        // является ли задача просроченной
+        // object task  - задача
+        // возвращает ИСТИНУ, если задача просроченная
         isOverdueTask: function(task) {
                                 if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
                                     var today = new Date();
@@ -448,7 +477,9 @@ var TaskUtils = (function() {
 
                                 return false;
                             },
-        // returns new additional section
+        // удаляет из добавочной секции признаки повторяющейся задачи
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
         removeRepeatable: function(additionalSection) {
                                 if (additionalSection == '') {
                                     return '';
@@ -458,17 +489,25 @@ var TaskUtils = (function() {
                                     return additionalSection;
                                 }
 
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':');
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':');
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':');
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':');
 
                                 return additionalSection;
                             },
+        // добавляет к добавочной секции признаки повторяющейся задачи
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string valueDTSTART - дата с которой начинаются повторения YYYYMMDD
+        // string valueRRULE - правило, по которому нужно повторять типа FREQ=YEARLY;UNTIL=YYYYMMDD
+        // возвращает новую добавочную секцию additionalSection
         addRepeatable: function(additionalSection, valueDTSTART, valueRRULE) {
                                 additionalSection = TaskUtils.removeRepeatable(additionalSection);
-                                additionalSection = TaskUtils.addSection(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':' + valueDTSTART);
-                                additionalSection = TaskUtils.addSection(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':' + valueRRULE);
+                                additionalSection = TaskUtils.addAttrib(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':' + valueDTSTART);
+                                additionalSection = TaskUtils.addAttrib(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':' + valueRRULE);
                                 return additionalSection;
                             },
+        // удаляет из добавочной секции признаки приоритета
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
         removePriority: function(additionalSection) {
                                 if (additionalSection == '') {
                                     return '';
@@ -478,14 +517,21 @@ var TaskUtils = (function() {
                                     return additionalSection;
                                 }
 
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.PRIORITY + ':');
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.PRIORITY + ':');
 
                                 return additionalSection;
                             },
+        // добавляет к добавочной секции признак приоритета
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string value - значение приоритета 1 - высокий, -1 - низкий
+        // возвращает новую добавочную секцию additionalSection
         addPriority: function(additionalSection, value) {
                                 additionalSection = TaskUtils.removePriority(additionalSection);
-                                return TaskUtils.addSection(additionalSection, AdditionalKeywords.PRIORITY + ':' + value);
+                                return TaskUtils.addAttrib(additionalSection, AdditionalKeywords.PRIORITY + ':' + value);
                             },
+        // удаляет из добавочной секции признаки напоминания
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
         removeAlarmed: function(additionalSection) {
                                 if (additionalSection == '') {
                                     return '';
@@ -495,23 +541,32 @@ var TaskUtils = (function() {
                                     return additionalSection;
                                 }
 
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, AdditionalKeywords.REMINDER + ':');
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.REMINDER + ':');
 
                                 return additionalSection;
                             },
+        // добавляет к добавочной секции признаки напоминания
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
         addAlarmed: function(additionalSection, value) {
                                 additionalSection = TaskUtils.removeAlarmed(additionalSection);
-                                return TaskUtils.addSection(additionalSection, AdditionalKeywords.REMINDER + ':' + value);
+                                return TaskUtils.addAttrib(additionalSection, AdditionalKeywords.REMINDER + ':' + value);
                             },
 
         // возвращает количество аттрибутов в добавочной секции
+        // string additionalSection - добавочная секция комментария notes задачи
+        // формат добавочной секции
+        // SECTION_START \nАТРИБУТ_1:ЗНАЧЕНИЕ_1\nАТРИБУТ_2:ЗНАЧЕНИЕ_2\n...АТРИБУТ_N=ЗНАЧЕНИЕ_N SECTION_END
         getNumberAttribs: function(additionalSection) {
                                 var n = additionalSection.split('\n').length;
                                 var empty = /*'\n<!=\n=!>'*/ (AdditionalKeywords.SECTION_START + AdditionalKeywords.SECTION_END).split('\n').length;
                                 return n - empty;
-        },
-
-        removeSectionByWord: function(additionalSection, keyWord) {
+                            },
+        // удаляет атрибут из добавочной секции
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string keyWord - ключевое слово по которому нужно удалить атрибут
+        // возвращает добавочную секцию
+        removeAttribByWord: function(additionalSection, keyWord) {
                                 var indStart = additionalSection.indexOf(keyWord);
                                 var indEnd =  additionalSection.indexOf('\n', indStart);
                                 var strToReplace = additionalSection.substring(indStart, indEnd + 1);
@@ -525,8 +580,11 @@ var TaskUtils = (function() {
                                 return result;
 
                             },
-        // sectionToAdd без \n в начале
-        addSection: function(additionalSection, sectionToAdd) {
+        // добавляет атрибут в добавочную секцию
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string attrToAdd - добавляемый атрибут с со значением
+        // возвращает новую добавочную секцию
+        addAttrib: function(additionalSection, attrToAdd) {
                                 if (additionalSection == '') {
                                     additionalSection = /*'\n<!=\n=!>'*/ AdditionalKeywords.SECTION_START + AdditionalKeywords.SECTION_END;
                                 }
@@ -534,9 +592,11 @@ var TaskUtils = (function() {
                                 var indexEnd = additionalSection.indexOf(/*'\n=!>'*/ AdditionalKeywords.SECTION_END);
                                 var firstPart = additionalSection.substring(0, indexEnd);
                                 var lastPart = additionalSection.substring(indexEnd);
-                                additionalSection = firstPart + '\n' + sectionToAdd  + lastPart;
+                                additionalSection = firstPart + '\n' + attrToAdd  + lastPart;
                                 return additionalSection;
                             },
+        // возвращает ИСТИНУ, если добавочная секция существует
+        // object task - задача
         additionalSectionExist: function (task) {
                                            var text = task.notes;
                                            if (text == undefined) {
@@ -545,7 +605,8 @@ var TaskUtils = (function() {
 
                                            return (text.indexOf(/*'\n<!='*/ AdditionalKeywords.SECTION_START) >= 0 && text.indexOf(/*'\n=!>'*/ AdditionalKeywords.SECTION_END) > text.indexOf(/*'\n<!='*/ AdditionalKeywords.SECTION_START));
                                 },
-
+        // возвращает добавочную секцию, если она есть и '', если нет
+        // object task - задача
         getAdditionalSection: function (task) {
                                         if (!TaskUtils.additionalSectionExist(task)) {
                                             return '';
@@ -555,7 +616,8 @@ var TaskUtils = (function() {
                                         var index = text.indexOf(/*'\n<!=\n'*/ AdditionalKeywords.SECTION_START);
                                         return text.substring(index);
                                 },
-
+        // возвращает секцию комментария, не содержащую добавочную секцию
+        // object task - задача
         getNotesSection: function(task) {
                                         if (task.notes == undefined) {
                                             return '';
