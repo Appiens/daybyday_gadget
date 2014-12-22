@@ -1363,7 +1363,7 @@ function TaskNodeController() {
         var taskDiv = createTaskDiv(taskFromServer, taskListId);
 
         var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
-        span.addEventListener("click", OnTaskDivClick, false);
+        span.addEventListener("click", OnTaskSpanClick, false);
 
         var checkBox = createCheckBoxForTask(taskFromServer);
         taskDiv.appendChild(checkBox);
@@ -1482,14 +1482,6 @@ function TaskNodeController() {
         checkBox.type = 'checkbox';
         checkBox.setAttribute("id", MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
-        checkBox.addEventListener('mouseenter', function(e) {
-            console.log('mouse enter');
-        });
-
-        checkBox.addEventListener('mouseleave', function(e) {
-            console.log('mouse leave');
-        });
-
         checkBox.addEventListener('change', function(e) {
             var targ;
 
@@ -1526,6 +1518,7 @@ function TaskNodeController() {
         taskDiv.taskListId = taskListId;
         taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
         taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
+        taskDiv.addEventListener("click", OnTaskDivClick, false);
         return taskDiv;
     }
 
@@ -1622,6 +1615,19 @@ function TaskNodeController() {
     }
 
     var OnTaskDivClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        if (targ.id.substring(0, MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
+            return;
+        }
+
+        parent.EditTask(targ);
+    }
+
+    var OnTaskSpanClick = function(e) {
         var targ;
         if (!e) var e = window.event;
         if (e.target) targ = e.target;
