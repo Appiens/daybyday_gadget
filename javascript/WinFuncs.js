@@ -887,10 +887,13 @@ function WatchSectionController() {
         SetDisplayTaskStatusAddImagesWatch();
 
         var checkBox = $('checkbox-task-completed');
-        checkBox.disabled = TaskUtils.isRepeatableTask($('watch').additionalSection);
+        checkBox.readOnly = TaskUtils.isRepeatableTask($('watch').additionalSection);
 
-        if (checkBox.disabled) {
+        if (checkBox.readOnly) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
+        }
+        else {
+            checkBox.title = '';
         }
 
         // parent.SetDisableWatchButtons(false);
@@ -1390,10 +1393,13 @@ function TaskNodeController() {
         SetTaskTitle(taskFromServer);
 
         // disabling checkBox for repeatable task
-        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
+        checkBox.readOnly = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
 
-        if (checkBox.disabled) {
+        if (checkBox.readOnly) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
+        }
+        else {
+            checkBox.title = '';
         }
     }
 
@@ -1567,10 +1573,13 @@ function TaskNodeController() {
 // task - a task which is connected to a task div, to which checkbox belongs
     var SetTaskStatusCheckbox = function(task) {
         var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
-        checkBox.disabled = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
+        checkBox.readOnly = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
 
-        if (checkBox.disabled) {
+        if (checkBox.readOnly) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
+        }
+        else {
+            checkBox.title = '';
         }
 
         if (checkBox.checked != (task.status == TaskStatuses.COMPLETED)) {
