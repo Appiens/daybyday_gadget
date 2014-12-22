@@ -1476,6 +1476,10 @@ function TaskNodeController() {
         checkBox.type = 'checkbox';
         checkBox.setAttribute("id", MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
+        checkBox.addEventListener('click', function(e) {
+            console.log('test');
+        });
+
         checkBox.addEventListener('change', function(e) {
             var targ;
 
@@ -1485,6 +1489,7 @@ function TaskNodeController() {
             var li = targ;
             while (li != null && li.task == undefined) li = li.parentNode;
             var task = li.task;
+
             OnChangeTaskStatusCB(targ);
 
             while (li != null && li.taskListId == undefined) li = li.parentNode;
