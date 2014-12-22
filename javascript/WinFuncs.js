@@ -1476,8 +1476,12 @@ function TaskNodeController() {
         checkBox.type = 'checkbox';
         checkBox.setAttribute("id", MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
 
-        checkBox.addEventListener('click', function(e) {
-            console.log('test');
+        checkBox.addEventListener('mouseenter', function(e) {
+            console.log('mouse enter');
+        });
+
+        checkBox.addEventListener('mouseleave', function(e) {
+            console.log('mouse leave');
         });
 
         checkBox.addEventListener('change', function(e) {
