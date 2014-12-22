@@ -972,7 +972,7 @@ function WatchSectionController() {
 
             //TODO при нажатии SaveTask сравниваем таск лист $('watch').taskListId и выбранный в комбо, если они НЕ совпадают, необходимо перенести таск в другой список
             li.addEventListener("click", OnMoveToListClick);
-            var galka = $('watch').taskListId == taskList.id && $('watch').task ? UnicodeSymbols.GALKA : '';
+            var galka = /*$('watch').taskListId == taskList.id && $('watch').task ? UnicodeSymbols.GALKA :*/ '';
             li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
             li.taskList = taskList;
 
@@ -1166,7 +1166,7 @@ function RequestController() {
                 }
 
                 if (obj.text == '' && obj.rc == 204) {
-                    showMiniMessage(getLangValue("msg_item_deleted"), MessageTypes.INFO);
+                    // showMiniMessage(getLangValue("msg_item_deleted"), MessageTypes.INFO);
                     taskNodeController.DeleteTaskNode(task, taskListId);
                 }
             }
@@ -1182,7 +1182,7 @@ function RequestController() {
                 }
 
                 if (obj.text) {
-                    showMiniMessage(getLangValue("msg_item_inserted"), MessageTypes.INFO);
+                   // showMiniMessage(getLangValue("msg_item_inserted"), MessageTypes.INFO);
                     var taskFromServer = JSON.parse(obj.text);
                     var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
                     taskListId = taskListId.substring(0, taskListId.indexOf('/'));
