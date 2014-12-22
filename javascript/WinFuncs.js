@@ -1778,6 +1778,7 @@ function SubTaskDivMainController() {
         span.addEventListener("click", OnSubTaskSpanClick, false);
 
         div.appendChild(span);
+        div.addEventListener("click", OnSubTaskSpanClick, false);
         li.appendChild(div);
 
         if (isDone) {
