@@ -1433,7 +1433,7 @@ function TaskNodeController() {
         $('watch').taskListId = taskListId;
         $('watch').additionalSection = '';
 
-        var emptyTask = {notes: '', title: '', due: null, status: TaskStatuses.NEEDS_ACTION};
+        var emptyTask = {notes: '', title: '', due: new Date(), status: TaskStatuses.NEEDS_ACTION};
         watchSectionController.SetWatchFieldsFromTask(emptyTask);
         disableButton($('button-delete-task'));
 
