@@ -911,9 +911,9 @@ function WatchSectionController() {
 
     // Creates status images and adds them to a div-status-images div, we should show/hide them when task status changes
     this.createTaskStatusImagesWatch = function() {
-        var imgOverdue = createTaskStatusImgWatch(StatusImagesNames.URL_OVERDUE, StatusImagesNames.PREFIX_OVERDUE);
+        var imgOverdue = createTaskStatusImgWatch(StatusImagesNames.URL_OVERDUE_WATCH, StatusImagesNames.PREFIX_OVERDUE);
         $('div-status-images').appendChild(imgOverdue);
-        var imgAlarm = createTaskStatusImgWatch(StatusImagesNames.URL_ALARM, StatusImagesNames.PREFIX_ALARM);
+        var imgAlarm = createTaskStatusImgWatch(StatusImagesNames.URL_ALARM_WATCH, StatusImagesNames.PREFIX_ALARM);
         $('div-status-images').appendChild(imgAlarm);
         var imgRepeat = createTaskStatusImgWatch(StatusImagesNames.URL_REPEAT, StatusImagesNames.PREFIX_REPEAT);
         $('div-status-images').appendChild(imgRepeat);
@@ -1993,8 +1993,10 @@ function SubTaskDivWatchController() {
 
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = baseUrlImg;
-    var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
-    var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
+    var urlAlarm = URL_IMAGES_FOLDER + "alarm_tiny.png";
+    var urlOverdue = URL_IMAGES_FOLDER + "overdue_tiny.png";
+    var urlAlarmWatch = URL_IMAGES_FOLDER + "alarm_small.png";
+    var urlOverdueWatch = URL_IMAGES_FOLDER + "overdue_small.png";
     var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
     var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
     var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
@@ -2007,6 +2009,8 @@ var StatusImagesNames = (function() {
         PREFIX_PRIORITY_LOW: "img_plo",
         URL_ALARM: urlAlarm,
         URL_OVERDUE: urlOverdue,
+        URL_ALARM_WATCH: urlAlarmWatch,
+        URL_OVERDUE_WATCH: urlOverdueWatch,
         URL_REPEAT: urlRepeat,
         URL_PRIORITY_HIGH: urlPriorityHigh,
         URL_PRIORITY_LOW: urlPriorityLow
