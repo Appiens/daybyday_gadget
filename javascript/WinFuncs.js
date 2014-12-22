@@ -887,9 +887,9 @@ function WatchSectionController() {
         SetDisplayTaskStatusAddImagesWatch();
 
         var checkBox = $('checkbox-task-completed');
-        checkBox.readOnly = TaskUtils.isRepeatableTask($('watch').additionalSection);
+        checkBox.disabled = TaskUtils.isRepeatableTask($('watch').additionalSection);
 
-        if (checkBox.readOnly) {
+        if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
         }
         else {
@@ -918,11 +918,11 @@ function WatchSectionController() {
         $('div-status-images').appendChild(imgOverdue);
         var imgAlarm = createTaskStatusImgWatch(StatusImagesNames.URL_ALARM_WATCH, StatusImagesNames.PREFIX_ALARM);
         $('div-status-images').appendChild(imgAlarm);
-        var imgRepeat = createTaskStatusImgWatch(StatusImagesNames.URL_REPEAT, StatusImagesNames.PREFIX_REPEAT);
+        var imgRepeat = createTaskStatusImgWatch(StatusImagesNames.URL_REPEAT_WATCH, StatusImagesNames.PREFIX_REPEAT);
         $('div-status-images').appendChild(imgRepeat);
-        var imgPriorityHigh = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_HIGH, StatusImagesNames.PREFIX_PRIORITY_HIGH);
+        var imgPriorityHigh = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_HIGH_WATCH, StatusImagesNames.PREFIX_PRIORITY_HIGH);
         $('div-status-images').appendChild(imgPriorityHigh);
-        var imgPriorityLow = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_LOW, StatusImagesNames.PREFIX_PRIORITY_LOW);
+        var imgPriorityLow = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_LOW_WATCH, StatusImagesNames.PREFIX_PRIORITY_LOW);
         $('div-status-images').appendChild(imgPriorityLow);
     }
 
@@ -1393,9 +1393,9 @@ function TaskNodeController() {
         SetTaskTitle(taskFromServer);
 
         // disabling checkBox for repeatable task
-        checkBox.readOnly = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
+        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + taskFromServer.id).style.display == '';
 
-        if (checkBox.readOnly) {
+        if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
         }
         else {
@@ -1573,9 +1573,9 @@ function TaskNodeController() {
 // task - a task which is connected to a task div, to which checkbox belongs
     var SetTaskStatusCheckbox = function(task) {
         var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
-        checkBox.readOnly = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
+        checkBox.disabled = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
 
-        if (checkBox.readOnly) {
+        if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
         }
         else {
@@ -2015,9 +2015,12 @@ var StatusImagesNames = (function() {
     var urlOverdue = URL_IMAGES_FOLDER + "overdue_tiny.png";
     var urlAlarmWatch = URL_IMAGES_FOLDER + "alarm_small.png";
     var urlOverdueWatch = URL_IMAGES_FOLDER + "overdue_small.png";
-    var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
-    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
-    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
+    var urlRepeat = URL_IMAGES_FOLDER + "repeat_tiny.png";
+    var urlPriorityHigh = URL_IMAGES_FOLDER + "priority_high_tiny.png";
+    var urlPriorityLow = URL_IMAGES_FOLDER + "priority_low_tiny.png";
+    var urlRepeatWatch = URL_IMAGES_FOLDER + "repeat_small.png";
+    var urlPriorityHighWatch = URL_IMAGES_FOLDER + "priority_high_small.png";
+    var urlPriorityLowWatch = URL_IMAGES_FOLDER + "priority_low_small.png";
 
     return {
         PREFIX_ALARM : "img_alm_",
@@ -2031,7 +2034,10 @@ var StatusImagesNames = (function() {
         URL_OVERDUE_WATCH: urlOverdueWatch,
         URL_REPEAT: urlRepeat,
         URL_PRIORITY_HIGH: urlPriorityHigh,
-        URL_PRIORITY_LOW: urlPriorityLow
+        URL_PRIORITY_LOW: urlPriorityLow,
+        URL_REPEAT_WATCH: urlRepeatWatch,
+        URL_PRIORITY_HIGH_WATCH: urlPriorityHighWatch,
+        URL_PRIORITY_LOW_WATCH: urlPriorityLowWatch
     };})();
 
 var MainSectionPrefixes = (function() {
