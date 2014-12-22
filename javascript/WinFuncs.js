@@ -1734,8 +1734,8 @@ function SubTaskDivMainController() {
     // string taskId  - parent task`s id
     // int subTaskNum - subtask`s number
     var InsertSubTaskNode = function(li, subTask, taskId, subTaskNum) {
-        var span = document.createElement('div');
-        span.style.paddingLeft = '25px';
+        var div = document.createElement('div');
+        div.style.paddingLeft = '25px';
 
         var isDone = subTask.substring(0,1) == 'T';
         var text = subTask.substring(1);
@@ -1773,9 +1773,12 @@ function SubTaskDivMainController() {
             requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes + additionalSection, task.due);
         });
 
-        span.appendChild(checkBox);
-        span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
-        li.appendChild(span);
+        div.appendChild(checkBox);
+        var span = createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
+        span.addEventListener("click", OnSubTaskSpanClick, false);
+
+        div.appendChild(span);
+        li.appendChild(div);
 
         if (isDone) {
             checkBox.checked = true;
@@ -1789,6 +1792,21 @@ function SubTaskDivMainController() {
         var li = targ;
         while (li != null && li.taskListId == undefined) li = li.parentNode;
         $(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
+    }
+
+    var OnSubTaskSpanClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        // получить div
+
+
+        while (targ != null && targ.id.substring(0, MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
+            targ = targ.parentNode;
+        }
+
+        taskNodeController.EditTask(targ);
     }
 }
 
