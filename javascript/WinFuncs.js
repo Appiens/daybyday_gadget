@@ -1438,7 +1438,8 @@ function TaskNodeController() {
             $('watch').additionalSection = TaskUtils.getAdditionalSection($('watch').task);
 
             watchSectionController.SetWatchFieldsFromTask($('watch').task);
-            enableButton($('button-delete-task'));
+            //enableButton($('button-delete-task'));
+            $('button-delete-task').style.display = '';
             showOneSection('watch');
         }
     }
@@ -1450,7 +1451,8 @@ function TaskNodeController() {
 
         var emptyTask = {notes: '', title: '', due: new Date(), status: TaskStatuses.NEEDS_ACTION};
         watchSectionController.SetWatchFieldsFromTask(emptyTask);
-        disableButton($('button-delete-task'));
+        //disableButton($('button-delete-task'));
+        $('button-delete-task').style.display = 'none';
 
         showOneSection('watch');
     }
@@ -2060,9 +2062,9 @@ function MyMessageBox() {
      var show = function(question, nameYes, nameOk, nameNo, showYes, showOk, showNo, funYes, funOk, funNo) {
         $('div-msg-question').innerText = question;
 
-        $('button-answer-1').title = nameYes;
-        $('button-answer-2').title = nameOk;
-        $('button-answer-3').title = nameNo;
+        $('button-answer-1').value = nameYes;
+        $('button-answer-2').value = nameOk;
+        $('button-answer-3').value = nameNo;
 
         $('button-answer-1').style.display = showYes? '': 'none';
         $('button-answer-2').style.display = showOk? '': 'none';

@@ -163,6 +163,22 @@
         color:#777777;
     }
 
+    input.button-answer {
+        text-indent:0px;
+        display:inline-block;
+        color:#14396a;
+        font-weight:normal;
+        font-style:normal;
+        font-size: medium;
+        height:25px;
+        text-decoration:none;
+        text-align:center;
+        vertical-align:center;
+        margin-bottom:0px;
+        margin-top:0px;
+        border-radius: 5px; /* Скругление */
+    }
+
     input.button-refresh {
         background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/refresh_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
@@ -279,7 +295,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 10:19');
+        console.log('starting gadget 10:40');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -622,9 +638,6 @@
                     __MSG_msg_show_details__
                 </span>
             </td>
-            <td style="text-align:left; vertical-align:middle;">
-                <input type="button" id="button-copytoclipboard" name="button-copytoclipboard" value=" &#x2398" title="Copy to clipboard"/>
-            </td>
         </tr>
     </table>
     <div id='div-details' style="display:none; height: 80%; overflow-y: scroll;">
@@ -651,13 +664,13 @@
     <table cellpadding=0 width=100%>
                 <tr>
                     <td style="width: 33%; text-align:middle; vertical-align:middle;">
-                        <input type="button" id="button-answer-1" name="button-answer-1"/>
+                        <input type="button" id="button-answer-1" name="button-answer-1" class="button-answer"/>
                     </td>
                     <td style="width: 33%; text-align:middle; vertical-align:middle;">
-                        <input type="button" id="button-answer-2" name="button-answer-2"/>
+                        <input type="button" id="button-answer-2" name="button-answer-2" class="button-answer"/>
                     </td>
                     <td style="width: 33%; text-align:middle; vertical-align:middle;">
-                        <input type="button" id="button-answer-3" name="button-answer-3"/>
+                        <input type="button" id="button-answer-3" name="button-answer-3" class="button-answer"/>
                     </td>
                 </tr>
     </table>
