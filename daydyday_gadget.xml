@@ -163,12 +163,73 @@
         color:#777777;
     }
 
+    input.button-answer {
+        text-indent:0px;
+        display:inline-block;
+        color:#14396a;
+        font-weight:normal;
+        font-style:normal;
+        font-size: medium;
+        width: 50px;
+        height:25px;
+        text-decoration:none;
+        text-align:center;
+        vertical-align:center;
+        margin-bottom:0px;
+        margin-top:0px;
+        border-radius: 5px; /* Скругление */
+        background-color: #DFEEFF;
+    }
+
+    input.button-refresh {
+        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/refresh_small.png'); /* 16px x 16px */
+        background-color: transparent; /* make the button transparent */
+        background-repeat: no-repeat;  /* make the background image appear only once */
+        background-position: 4px 4px;  /* equivalent to 'top left' */
+    }
+
+    input.button-add-task {
+        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/add_task_small.png'); /* 16px x 16px */
+        background-color: transparent; /* make the button transparent */
+        background-repeat: no-repeat;  /* make the background image appear only once */
+        background-position: 3px 5px;  /* equivalent to 'top left' */
+    }
+
+    input.button-delete-task {
+        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/delete_small.png'); /* 16px x 16px */
+        background-color: transparent; /* make the button transparent */
+        background-repeat: no-repeat;  /* make the background image appear only once */
+        background-position: center;  /* equivalent to 'top left' */
+    }
+
+    input.button-save-task {
+        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ok_small.png'); /* 16px x 16px */
+        background-color: transparent; /* make the button transparent */
+        background-repeat: no-repeat;  /* make the background image appear only once */
+        background-position: center;  /* equivalent to 'top left' */
+    }
+
+    input.button-cancel-task {
+        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/cancel_small.png'); /* 16px x 16px */
+        background-color: transparent; /* make the button transparent */
+        background-repeat: no-repeat;  /* make the background image appear only once */
+        background-position: center;  /* equivalent to 'top left' */
+    }
+
+    input.button-to-subtasks {
+        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/subtasks_small.png'); /* 16px x 16px */
+        background-color: transparent; /* make the button transparent */
+        background-repeat: no-repeat;  /* make the background image appear only once */
+        background-position: center;  /* equivalent to 'top left' */
+    }
+
     textarea {
         resize: vertical;
     }
 
     a, a:hover {
         text-decoration: none;
+        color: #666666;
     }
 
     td {
@@ -236,7 +297,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 15:13');
+        console.log('starting gadget 11:30');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -543,14 +604,13 @@
     <table cellpadding=0 width=100%>
        <tr>
         <td style="width: 15%; text-align:left; vertical-align:middle;">
-            <input type="button" id="button-refresh" name="button-refresh" value="↺" title="__MSG_action_refresh__"/>
+            <input type="button" id="button-refresh" name="button-refresh"  title="__MSG_action_refresh__" class="button-refresh"/>
         </td>
         <td style="width: 15%; text-align:left; vertical-align:middle;">
-            <input type="button" id="button-insert-task" name="button-insert-task" value="&#x2295" title="__MSG_action_insert_task__"/>
+            <input type="button" id="button-insert-task" name="button-insert-task" title="__MSG_action_insert_task__" class="button-add-task"/>
         </td>
         <td style="width: 70%; text-align: right; vertical-align:middle;">
-          <!--<a href="#" id="a-daybyday-add" style="font-size: 9px; text-decoration: none">__MSG_day_by_day__</a>-->
-          <img id="img-daybyday-add" src="https://liubovast.github.io/images/daybyday16.png" width="16" height="16">
+          <img id="img-daybyday-add" src="https://liubovast.github.io/images/daybyday16.png" width="16" height="16" title="V1.0">
         </td>
        </tr>
     </table>
@@ -579,9 +639,6 @@
                     __MSG_msg_show_details__
                 </span>
             </td>
-            <td style="text-align:left; vertical-align:middle;">
-                <input type="button" id="button-copytoclipboard" name="button-copytoclipboard" value=" &#x2398" title="Copy to clipboard"/>
-            </td>
         </tr>
     </table>
     <div id='div-details' style="display:none; height: 80%; overflow-y: scroll;">
@@ -600,18 +657,39 @@
     __MSG_approval_part_3__
   </div>
 
+  <div id="message" style="display: none">
+    <br>
+    <br>
+    <div id="div-msg-question"></div>
+    <br>
+    <table cellpadding=0 width=100%>
+                <tr>
+                    <td style="width: 33%; text-align:middle; vertical-align:middle;">
+                        <input type="button" id="button-answer-1" name="button-answer-1" class="button-answer"/>
+                    </td>
+                    <td style="width: 33%; text-align:middle; vertical-align:middle;">
+                        <input type="button" id="button-answer-2" name="button-answer-2" class="button-answer"/>
+                    </td>
+                    <td style="width: 33%; text-align:middle; vertical-align:middle;">
+                        <input type="button" id="button-answer-3" name="button-answer-3" class="button-answer"/>
+                    </td>
+                </tr>
+    </table>
+
+  </div>
+
   <div id="watch" style="display: none">
    <div id="footerWatch">
         <table cellpadding=0 width=100%>
                 <tr>
                     <td style="width: 70%; text-align:left; vertical-align:middle;">
-                        <input type="button" id="button-delete-task" name="button-delete-task" value="&#xF1F8" title="__MSG_action_delete_task__"/>
+                        <input type="button" id="button-delete-task" name="button-delete-task" title="__MSG_action_delete_task__" class="button-delete-task"/>
                     </td>
                     <td style="width: 15%; text-align:right; vertical-align:middle;">
-                        <input type="button" id="button-save_task" name="button-save-task" value="&#x2713" title="__MSG_action_save_task__"/>
+                        <input type="button" id="button-save_task" name="button-save-task" title="__MSG_action_save_task__" class="button-save-task"/>
                     </td>
                     <td style="width: 15%; text-align:right; vertical-align:middle;">
-                        <input type="button" id="button-discard" name="button-discard" value="&#x2715" title="__MSG_action_discard__"/>
+                        <input type="button" id="button-discard" name="button-discard" title="__MSG_action_discard__" class="button-cancel-task"/>
                     </td>
                 </tr>
     </table>
@@ -654,7 +732,7 @@
      <table cellpadding=0 align="right">
      <tr>
        <td style="text-align:left; vertical-align:middle;">
-           <input type="button" id="button-to-subtasks" name="button-to-subtasks" value="&#x2261" title="__MSG_action_to_subtasks__"/>
+           <input type="button" id="button-to-subtasks" name="button-to-subtasks"  title="__MSG_action_to_subtasks__" class="button-to-subtasks"/>
        </td>
      </tr>
      </table>

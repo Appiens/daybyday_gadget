@@ -11,6 +11,7 @@ var subTaskDivMainController = new SubTaskDivMainController();
 var subTaskDivWatchController = new  SubTaskDivWatchController();
 var requestController = new RequestController();
 var watchSectionController = new WatchSectionController();
+var myMessageBox = new MyMessageBox();
 
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
 //   <ul id="listId">
@@ -51,8 +52,8 @@ var watchSectionController = new WatchSectionController();
 
 // структура секции Watch
 //
-// $('watch').task  содержат задачу
-// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр.
+// $('watch').task  задача, отображаемая в данный момент; null - если режим вставки (ничего не редактируем); изменения текстовых полей сюда не попадают, здесь хранится задача с сервера
+// $('watch').additionalSection содержит дополнительную информацию о задаче - приоритет, повторяемость и пр. (любые изменения с приоритетом, повторяемостью попадают сюда) и только при нажатии на V отправляются на сервер
 // $('watch').taskListId содержит id списка задач - оба эти значения должны соответствовать серверу (если пришёл апдейт редактируемой задачи, нужно выбросить пользователя из редактирования в основной список)
 // у гугла происходит выброс в секцию списка
 // <div id='div-status-images'> дочерние img создаются динамически
@@ -136,7 +137,7 @@ function generateList(taskLists) {
 
 /* Updates a task list from taskListsTmp asked from server, in this list we get tasks which were created/updated/deleted during last 5 mins*/
 /* Применение изменений, полученных с сервера, к отображаемому списку ul*/
-/*array[] taskLists - список списков задач, полученный с сервера*/
+/* array[] taskLists - список списков задач, полученный с сервера*/
 function processTmpList(taskLists) {
     var i;
     var isNewTaskList; // признак нового таск листа
@@ -149,9 +150,10 @@ function processTmpList(taskLists) {
 
         isNewTaskList = false;
 
+        // пытаемся найти список с таким идентификатом таск листа
         var taskListUl = $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id);
         if (taskListUl) {
-            // таск лист был переименован (возможно)
+            // таск лист существует и был переименован (возможно)
             taskListNodeController.SetTaskListTitle(taskLists[i]);
         }
         else {
@@ -173,6 +175,7 @@ function processTmpList(taskLists) {
                     Actions.ActionBackToList();
                 }
 
+                // если таск был удалён, удаляем его визуальное воплощение
                 if (taskLists[i].tasks[j].deleted) {
                     try {
                         taskNodeController.DeleteTaskNode(taskLists[i].tasks[j], taskLists[i].id);
@@ -186,9 +189,11 @@ function processTmpList(taskLists) {
 
                 try {
                    if ($(MainSectionPrefixes.PREFIX_DIV_TASK + taskLists[i].tasks[j].id)) {
+                       // если таск существует редактируем его визуальное воплощение
                        taskNodeController.UpdateTaskNode(taskLists[i].tasks[j]);
                    }
                    else {
+                       // а если не существует - вставляем его
                        taskNodeController.InsertTaskNode(taskLists[i].id, taskLists[i].tasks[j], $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskLists[i].id), true);
                    }
 
@@ -205,10 +210,15 @@ function processTmpList(taskLists) {
         }
     } // for i
 
+    // удаляем визуальное воплощение таск листов, которые были удалены
     taskListNodeController.DeleteTaskListNodesNotExist(taskLists, taskListsLast);
     taskListsLast = taskLists;
 }
 
+/* устанавливает последний отредактированный таск лист (именно в него будут вставляться таски)*/
+/* по принципу - из полного списка таск листов выбираем тот, у которого были последние изменения */
+/* если это неизвестно - берем первый список задач*/
+/* array[] taskLists - полный список таск листов (после полной перезагрузки*/
 function setLastUpdatedTaskList(taskLists) {
     taskListNodeController.lastUpdatedTaskListId = null;
 
@@ -246,7 +256,7 @@ function setLastUpdatedTaskList(taskLists) {
 // When the user confirms access, the fetchData() function is invoked again to
 // obtain and display the user's data.
 function showOneSection(toshow) {
-    var sections = [ 'main', 'approval', 'waiting', 'watch', 'error' ];
+    var sections = [ 'main', 'approval', 'waiting', 'watch', 'error', 'message' ];
 
     for (var i=0; i < sections.length; ++i) {
         var s = sections[i];
@@ -258,6 +268,7 @@ function showOneSection(toshow) {
         }
     }
 
+    // секцию footer показываем вместе с секцией main
     $('footer').style.display = toshow == 'main'? "": "none";
 }
 
@@ -291,10 +302,13 @@ function enableButton(button) {
     button.removeAttribute('disabled');
 }
 
+// неактивна ли кнопка
+// вернуть ИСТИНУ, если кнопка неактивна
 function IsButtonDisabled(button) {
     return button.hasAttribute('disabled');
 }
 
+// получить сообщение на текущем языке (все файлы с языками в папке lang)
 function getLangValue(message) {
     var prefs = new gadgets.Prefs();
     return prefs.getMsg(message);
@@ -312,6 +326,10 @@ function createSimpleTextNode(text, id) {
     return span;
 }
 
+// Показать маленькое сообщение в секции messageBox
+// отображать сообщение в течение TIME_TO_HOLD_SEC сек
+// string msg_ - собственно сообщение
+// MessageTypes messageType - тип сообщения
 function showMiniMessage(msg_, messageType) {
     var TIME_TO_HOLD_SEC = 5;
     var msg = new gadgets.MiniMessage(0, $("messageBox"));
@@ -371,6 +389,7 @@ var Actions = ( function() {
                                     }
                                 }
                                 else {
+                                    // переносим таск в другой список, то есть удаляем из текущего и вставляем в новый
                                     if ($('watch').task != undefined) {
                                         // delete a task
                                         requestController.deleteTaskRequest($('watch').taskListId, $('watch').task);
@@ -383,7 +402,7 @@ var Actions = ( function() {
                             Actions.ActionBackToList();
                           },
 
-        // Convert notes to subTasks
+        // Convert notes to subTasks and back
         ActionToSubtasks:  function () {
                                 watchSectionController.changeNotesState($('input-task-comment').style.display == '');
                                 watchSectionController.OnSomeEditDone();
@@ -393,7 +412,7 @@ var Actions = ( function() {
         ActionDiscard: function () {
                               Actions.ActionBackToList();
                         },
-
+        // Insert a task
         ActionInsertTask: function() {
                                 if (taskListNodeController.lastUpdatedTaskListId == null) {
                                     return;
@@ -401,7 +420,7 @@ var Actions = ( function() {
 
                                 taskNodeController.AddTask(taskListNodeController.lastUpdatedTaskListId);
                         },
-
+        // Delete a task
         ActionDeleteTask: function() {
                                 var task = $('watch').task;
                                 var taskListId = $('watch').taskListId;
@@ -410,31 +429,50 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                taskListNodeController.lastUpdatedTaskListId = taskListId;
-                                requestController.deleteTaskRequest(taskListId, task);
+                                myMessageBox.showYesNo(getLangValue("msg_accept_delete"),
+                                    function() {
+                                        taskListNodeController.lastUpdatedTaskListId = taskListId;
+                                        requestController.deleteTaskRequest(taskListId, task);
 
-                                Actions.ActionBackToList();
+                                        Actions.ActionBackToList();
+                                    },
+                                    function() {
+                                        showOneSection('watch');
+                                    });
+
+
                         }
     };})();
 
 var TaskUtils = (function() {
     return {
+        // является ли задача низкоприоритетной
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача низкоприоритетная
         isLowPriorityTask: function(additionalSection) {
-                                return additionalSection.indexOf('PRIORITY:-1') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.PRIORITY + ':-1') > 0;
                             },
-
+        // является ли задача высокоприоритетной
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача высокоприоритетная
         isHighPriorityTask: function(additionalSection) {
-                                return additionalSection.indexOf('PRIORITY:1') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.PRIORITY + ':1') > 0;
                             },
-
+        // является ли задача повторяющейся
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача повторяющаяся
         isRepeatableTask: function(additionalSection) {
-                                return additionalSection.indexOf('DTSTART:') > 0 && additionalSection.indexOf('RRULE:') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.REPEATABLE_DTSTART + ':') > 0 && additionalSection.indexOf(AdditionalKeywords.REPEATABLE_RRULE + ':') > 0;
                             },
-
+        // является ли задача задачей с напоминанием
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает ИСТИНУ, если задача задачей с напоминанием
         isAlarmedTask: function(additionalSection) {
-                                return additionalSection.indexOf('REMINDER:') > 0;
+                                return additionalSection.indexOf(AdditionalKeywords.REMINDER + ':') > 0;
                             },
-
+        // является ли задача просроченной
+        // object task  - задача
+        // возвращает ИСТИНУ, если задача просроченная
         isOverdueTask: function(task) {
                                 if (task.due && task.status == TaskStatuses.NEEDS_ACTION) {
                                     var today = new Date();
@@ -450,13 +488,9 @@ var TaskUtils = (function() {
 
                                 return false;
                             },
-        // возвращает количество аттрибутов в добавочной секции
-        getNumberAttribs: function(additionalSection) {
-                                var n = additionalSection.split('\n').length;
-                                var empty = '\n<!=\n=!>'.split('\n').length;
-                                return n - empty;
-        },
-
+        // удаляет из добавочной секции признаки повторяющейся задачи
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
         removeRepeatable: function(additionalSection) {
                                 if (additionalSection == '') {
                                     return '';
@@ -466,13 +500,84 @@ var TaskUtils = (function() {
                                     return additionalSection;
                                 }
 
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'DTSTART:');
-                                additionalSection = TaskUtils.removeSectionByWord(additionalSection, 'RRULE:');
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':');
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':');
 
                                 return additionalSection;
                             },
+        // добавляет к добавочной секции признаки повторяющейся задачи
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string valueDTSTART - дата с которой начинаются повторения YYYYMMDD
+        // string valueRRULE - правило, по которому нужно повторять типа FREQ=YEARLY;UNTIL=YYYYMMDD
+        // возвращает новую добавочную секцию additionalSection
+        addRepeatable: function(additionalSection, valueDTSTART, valueRRULE) {
+                                additionalSection = TaskUtils.removeRepeatable(additionalSection);
+                                additionalSection = TaskUtils.addAttrib(additionalSection, AdditionalKeywords.REPEATABLE_DTSTART + ':' + valueDTSTART);
+                                additionalSection = TaskUtils.addAttrib(additionalSection, AdditionalKeywords.REPEATABLE_RRULE + ':' + valueRRULE);
+                                return additionalSection;
+                            },
+        // удаляет из добавочной секции признаки приоритета
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
+        removePriority: function(additionalSection) {
+                                if (additionalSection == '') {
+                                    return '';
+                                }
 
-        removeSectionByWord: function(additionalSection, keyWord) {
+                                if (!TaskUtils.isHighPriorityTask(additionalSection) && !TaskUtils.isLowPriorityTask(additionalSection)) {
+                                    return additionalSection;
+                                }
+
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.PRIORITY + ':');
+
+                                return additionalSection;
+                            },
+        // добавляет к добавочной секции признак приоритета
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string value - значение приоритета 1 - высокий, -1 - низкий
+        // возвращает новую добавочную секцию additionalSection
+        addPriority: function(additionalSection, value) {
+                                additionalSection = TaskUtils.removePriority(additionalSection);
+                                return TaskUtils.addAttrib(additionalSection, AdditionalKeywords.PRIORITY + ':' + value);
+                            },
+        // удаляет из добавочной секции признаки напоминания
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
+        removeAlarmed: function(additionalSection) {
+                                if (additionalSection == '') {
+                                    return '';
+                                }
+
+                                if (!TaskUtils.isAlarmedTask(additionalSection)) {
+                                    return additionalSection;
+                                }
+
+                                additionalSection = TaskUtils.removeAttribByWord(additionalSection, AdditionalKeywords.REMINDER + ':');
+
+                                return additionalSection;
+                            },
+        // добавляет к добавочной секции признаки напоминания
+        // string additionalSection - добавочная секция комментария notes задачи
+        // возвращает новую добавочную секцию additionalSection
+        addAlarmed: function(additionalSection, value) {
+                                additionalSection = TaskUtils.removeAlarmed(additionalSection);
+                                return TaskUtils.addAttrib(additionalSection, AdditionalKeywords.REMINDER + ':' + value);
+                            },
+
+        // возвращает количество аттрибутов в добавочной секции
+        // string additionalSection - добавочная секция комментария notes задачи
+        // формат добавочной секции
+        // SECTION_START \nАТРИБУТ_1:ЗНАЧЕНИЕ_1\nАТРИБУТ_2:ЗНАЧЕНИЕ_2\n...АТРИБУТ_N=ЗНАЧЕНИЕ_N SECTION_END
+        getNumberAttribs: function(additionalSection) {
+                                var n = additionalSection.split('\n').length;
+                                var empty = /*'\n<!=\n=!>'*/ (AdditionalKeywords.SECTION_START + AdditionalKeywords.SECTION_END).split('\n').length;
+                                return n - empty;
+                            },
+        // удаляет атрибут из добавочной секции
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string keyWord - ключевое слово по которому нужно удалить атрибут
+        // возвращает добавочную секцию
+        removeAttribByWord: function(additionalSection, keyWord) {
                                 var indStart = additionalSection.indexOf(keyWord);
                                 var indEnd =  additionalSection.indexOf('\n', indStart);
                                 var strToReplace = additionalSection.substring(indStart, indEnd + 1);
@@ -486,26 +591,44 @@ var TaskUtils = (function() {
                                 return result;
 
                             },
+        // добавляет атрибут в добавочную секцию
+        // string additionalSection - добавочная секция комментария notes задачи
+        // string attrToAdd - добавляемый атрибут с со значением
+        // возвращает новую добавочную секцию
+        addAttrib: function(additionalSection, attrToAdd) {
+                                if (additionalSection == '') {
+                                    additionalSection = /*'\n<!=\n=!>'*/ AdditionalKeywords.SECTION_START + AdditionalKeywords.SECTION_END;
+                                }
 
+                                var indexEnd = additionalSection.indexOf(/*'\n=!>'*/ AdditionalKeywords.SECTION_END);
+                                var firstPart = additionalSection.substring(0, indexEnd);
+                                var lastPart = additionalSection.substring(indexEnd);
+                                additionalSection = firstPart + '\n' + attrToAdd  + lastPart;
+                                return additionalSection;
+                            },
+        // возвращает ИСТИНУ, если добавочная секция существует
+        // object task - задача
         additionalSectionExist: function (task) {
                                            var text = task.notes;
                                            if (text == undefined) {
                                                 return false;
                                             }
 
-                                           return (text.indexOf('\n<!=\n') >= 0 && text.indexOf('=!>') > text.indexOf('\n<!=\n'));
+                                           return (text.indexOf(/*'\n<!='*/ AdditionalKeywords.SECTION_START) >= 0 && text.indexOf(/*'\n=!>'*/ AdditionalKeywords.SECTION_END) > text.indexOf(/*'\n<!='*/ AdditionalKeywords.SECTION_START));
                                 },
-
+        // возвращает добавочную секцию, если она есть и '', если нет
+        // object task - задача
         getAdditionalSection: function (task) {
                                         if (!TaskUtils.additionalSectionExist(task)) {
                                             return '';
                                         }
 
                                         var text = task.notes;
-                                        var index = text.indexOf('\n<!=\n');
+                                        var index = text.indexOf(/*'\n<!=\n'*/ AdditionalKeywords.SECTION_START);
                                         return text.substring(index);
                                 },
-
+        // возвращает секцию комментария, не содержащую добавочную секцию
+        // object task - задача
         getNotesSection: function(task) {
                                         if (task.notes == undefined) {
                                             return '';
@@ -516,7 +639,7 @@ var TaskUtils = (function() {
                                         }
 
                                         var text = task.notes;
-                                        var index = text.indexOf('\n<!=\n');
+                                        var index = text.indexOf(/*'\n<!=\n'*/ AdditionalKeywords.SECTION_START);
                                         return text.substring(0, index);
                                 },
         cmpTasks: function(taskA, taskB) {
@@ -775,10 +898,13 @@ function WatchSectionController() {
         SetDisplayTaskStatusAddImagesWatch();
 
         var checkBox = $('checkbox-task-completed');
-        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + 'watch').style.display == '';
+        checkBox.disabled = TaskUtils.isRepeatableTask($('watch').additionalSection);
 
         if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
+        }
+        else {
+            checkBox.title = '';
         }
 
         // parent.SetDisableWatchButtons(false);
@@ -799,15 +925,15 @@ function WatchSectionController() {
 
     // Creates status images and adds them to a div-status-images div, we should show/hide them when task status changes
     this.createTaskStatusImagesWatch = function() {
-        var imgOverdue = createTaskStatusImgWatch(StatusImagesNames.URL_OVERDUE, StatusImagesNames.PREFIX_OVERDUE);
+        var imgOverdue = createTaskStatusImgWatch(StatusImagesNames.URL_OVERDUE_WATCH, StatusImagesNames.PREFIX_OVERDUE);
         $('div-status-images').appendChild(imgOverdue);
-        var imgAlarm = createTaskStatusImgWatch(StatusImagesNames.URL_ALARM, StatusImagesNames.PREFIX_ALARM);
+        var imgAlarm = createTaskStatusImgWatch(StatusImagesNames.URL_ALARM_WATCH, StatusImagesNames.PREFIX_ALARM);
         $('div-status-images').appendChild(imgAlarm);
-        var imgRepeat = createTaskStatusImgWatch(StatusImagesNames.URL_REPEAT, StatusImagesNames.PREFIX_REPEAT);
+        var imgRepeat = createTaskStatusImgWatch(StatusImagesNames.URL_REPEAT_WATCH, StatusImagesNames.PREFIX_REPEAT);
         $('div-status-images').appendChild(imgRepeat);
-        var imgPriorityHigh = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_HIGH, StatusImagesNames.PREFIX_PRIORITY_HIGH);
+        var imgPriorityHigh = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_HIGH_WATCH, StatusImagesNames.PREFIX_PRIORITY_HIGH);
         $('div-status-images').appendChild(imgPriorityHigh);
-        var imgPriorityLow = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_LOW, StatusImagesNames.PREFIX_PRIORITY_LOW);
+        var imgPriorityLow = createTaskStatusImgWatch(StatusImagesNames.URL_PRIORITY_LOW_WATCH, StatusImagesNames.PREFIX_PRIORITY_LOW);
         $('div-status-images').appendChild(imgPriorityLow);
     }
 
@@ -860,7 +986,7 @@ function WatchSectionController() {
 
             //TODO при нажатии SaveTask сравниваем таск лист $('watch').taskListId и выбранный в комбо, если они НЕ совпадают, необходимо перенести таск в другой список
             li.addEventListener("click", OnMoveToListClick);
-            var galka = $('watch').taskListId == taskList.id && $('watch').task ? UnicodeSymbols.GALKA : '';
+            var galka = /*$('watch').taskListId == taskList.id && $('watch').task ? UnicodeSymbols.GALKA :*/ '';
             li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
             li.taskList = taskList;
 
@@ -1030,7 +1156,7 @@ function RequestController() {
 
 
         if (obj.text) {
-            //console.log(obj.text);
+            console.log(obj.text);
             var taskFromServer = JSON.parse(obj.text);
 
             // обновляем секцию Main
@@ -1054,7 +1180,7 @@ function RequestController() {
                 }
 
                 if (obj.text == '' && obj.rc == 204) {
-                    showMiniMessage(getLangValue("msg_item_deleted"), MessageTypes.INFO);
+                    // showMiniMessage(getLangValue("msg_item_deleted"), MessageTypes.INFO);
                     taskNodeController.DeleteTaskNode(task, taskListId);
                 }
             }
@@ -1070,7 +1196,7 @@ function RequestController() {
                 }
 
                 if (obj.text) {
-                    showMiniMessage(getLangValue("msg_item_inserted"), MessageTypes.INFO);
+                   // showMiniMessage(getLangValue("msg_item_inserted"), MessageTypes.INFO);
                     var taskFromServer = JSON.parse(obj.text);
                     var taskListId = taskFromServer.selfLink.substring('https://www.googleapis.com/tasks/v1/lists/'.length);
                     taskListId = taskListId.substring(0, taskListId.indexOf('/'));
@@ -1248,7 +1374,7 @@ function TaskNodeController() {
         var taskDiv = createTaskDiv(taskFromServer, taskListId);
 
         var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
-        span.addEventListener("click", OnTaskDivClick, false);
+        span.addEventListener("click", OnTaskSpanClick, false);
 
         var checkBox = createCheckBoxForTask(taskFromServer);
         taskDiv.appendChild(checkBox);
@@ -1283,6 +1409,9 @@ function TaskNodeController() {
         if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
         }
+        else {
+            checkBox.title = '';
+        }
     }
 
     // удаляет нод соотетствующий таску в секции Main
@@ -1311,7 +1440,8 @@ function TaskNodeController() {
             $('watch').additionalSection = TaskUtils.getAdditionalSection($('watch').task);
 
             watchSectionController.SetWatchFieldsFromTask($('watch').task);
-            enableButton($('button-delete-task'));
+            //enableButton($('button-delete-task'));
+            $('button-delete-task').style.display = '';
             showOneSection('watch');
         }
     }
@@ -1321,9 +1451,10 @@ function TaskNodeController() {
         $('watch').taskListId = taskListId;
         $('watch').additionalSection = '';
 
-        var emptyTask = {notes: '', title: '', due: null, status: TaskStatuses.NEEDS_ACTION};
+        var emptyTask = {notes: '', title: '', due: new Date(), status: TaskStatuses.NEEDS_ACTION};
         watchSectionController.SetWatchFieldsFromTask(emptyTask);
-        disableButton($('button-delete-task'));
+        //disableButton($('button-delete-task'));
+        $('button-delete-task').style.display = 'none';
 
         showOneSection('watch');
     }
@@ -1373,6 +1504,7 @@ function TaskNodeController() {
             var li = targ;
             while (li != null && li.task == undefined) li = li.parentNode;
             var task = li.task;
+
             OnChangeTaskStatusCB(targ);
 
             while (li != null && li.taskListId == undefined) li = li.parentNode;
@@ -1399,6 +1531,7 @@ function TaskNodeController() {
         taskDiv.taskListId = taskListId;
         taskDiv.addEventListener("mouseenter", OnTaskDivMouseOver, false);
         taskDiv.addEventListener("mouseleave", OnTaskDivMouseOut, false);
+        taskDiv.addEventListener("click", OnTaskDivClick, false);
         return taskDiv;
     }
 
@@ -1446,10 +1579,13 @@ function TaskNodeController() {
 // task - a task which is connected to a task div, to which checkbox belongs
     var SetTaskStatusCheckbox = function(task) {
         var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
-        checkBox.disabled = $(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
+        checkBox.disabled = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
 
         if (checkBox.disabled) {
             checkBox.title = getLangValue("msg_wrn_repeatable_status");
+        }
+        else {
+            checkBox.title = '';
         }
 
         if (checkBox.checked != (task.status == TaskStatuses.COMPLETED)) {
@@ -1492,6 +1628,19 @@ function TaskNodeController() {
     }
 
     var OnTaskDivClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+
+        if (targ.id.substring(0, MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
+            return;
+        }
+
+        parent.EditTask(targ);
+    }
+
+    var OnTaskSpanClick = function(e) {
         var targ;
         if (!e) var e = window.event;
         if (e.target) targ = e.target;
@@ -1598,8 +1747,8 @@ function SubTaskDivMainController() {
     // string taskId  - parent task`s id
     // int subTaskNum - subtask`s number
     var InsertSubTaskNode = function(li, subTask, taskId, subTaskNum) {
-        var span = document.createElement('div');
-        span.style.paddingLeft = '25px';
+        var div = document.createElement('div');
+        div.style.paddingLeft = '25px';
 
         var isDone = subTask.substring(0,1) == 'T';
         var text = subTask.substring(1);
@@ -1637,9 +1786,13 @@ function SubTaskDivMainController() {
             requestController.changeSubTaskStatusRequest(taskListId, m_taskId, newNotes + additionalSection, task.due);
         });
 
-        span.appendChild(checkBox);
-        span.appendChild(createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum));
-        li.appendChild(span);
+        div.appendChild(checkBox);
+        var span = createSimpleTextNode(text, MainSectionPrefixes.PREFIX_SPAN_SUBTASK_TITLE + taskId + "_" + subTaskNum);
+        span.addEventListener("click", OnSubTaskSpanClick, false);
+
+        div.appendChild(span);
+        div.addEventListener("click", OnSubTaskSpanClick, false);
+        li.appendChild(div);
 
         if (isDone) {
             checkBox.checked = true;
@@ -1653,6 +1806,21 @@ function SubTaskDivMainController() {
         var li = targ;
         while (li != null && li.taskListId == undefined) li = li.parentNode;
         $(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
+    }
+
+    var OnSubTaskSpanClick = function(e) {
+        var targ;
+        if (!e) var e = window.event;
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        // получить div
+
+
+        while (targ != null && targ.id.substring(0, MainSectionPrefixes.PREFIX_DIV_TASK.length) != MainSectionPrefixes.PREFIX_DIV_TASK) {
+            targ = targ.parentNode;
+        }
+
+        taskNodeController.EditTask(targ);
     }
 }
 
@@ -1879,13 +2047,79 @@ function SubTaskDivWatchController() {
     }
 }
 
+function MyMessageBox() {
+    var parent = this;
+    var onYes = null;
+    var onOk = null;
+    var onNo = null;
+
+    this.showYesNo = function(question, funYes, funNo) {
+        show(question, getLangValue("msg_yes"), '', getLangValue("msg_no"), true, false, true, funYes, null, funNo);
+    }
+
+    this.showOk = function(question, funOk) {
+        show(question, '', getLangValue("msg_ok"), '', false, true, false, null, funOk, null);
+    }
+
+     var show = function(question, nameYes, nameOk, nameNo, showYes, showOk, showNo, funYes, funOk, funNo) {
+        $('div-msg-question').innerText = question;
+
+        $('button-answer-1').value = nameYes;
+        $('button-answer-2').value = nameOk;
+        $('button-answer-3').value = nameNo;
+
+        $('button-answer-1').style.display = showYes? '': 'none';
+        $('button-answer-2').style.display = showOk? '': 'none';
+        $('button-answer-3').style.display = showNo? '': 'none';
+
+        addEventListeners(funYes, funOk, funNo);
+
+        showOneSection("message");
+    }
+
+    var addEventListeners = function(funYes, funOk, funNo) {
+        if (onYes) {
+            $('button-answer-1').removeEventListener('click', onYes);
+        }
+
+        if (onOk) {
+            $('button-answer-2').removeEventListener('click', onOk);
+        }
+
+        if (onNo) {
+            $('button-answer-3').removeEventListener('click', onNo);
+        }
+
+        onYes = funYes;
+        onOk = funOk;
+        onNo = funNo;
+
+        if (onYes) {
+            $('button-answer-1').addEventListener('click', onYes);
+        }
+
+        if (onOk) {
+            $('button-answer-2').addEventListener('click', onOk);
+        }
+
+        if (onNo) {
+            $('button-answer-3').addEventListener('click', onNo);
+        }
+    }
+}
+
 var StatusImagesNames = (function() {
     var URL_IMAGES_FOLDER = baseUrlImg;
-    var urlAlarm = URL_IMAGES_FOLDER + "ic_tiny_alarm_light.png";
-    var urlOverdue = URL_IMAGES_FOLDER + "ic_tiny_overdue_light.png";
-    var urlRepeat = URL_IMAGES_FOLDER + "ic_tiny_repeat_light.png";
-    var urlPriorityHigh = URL_IMAGES_FOLDER + "ic_tiny_priority_high_light.png";
-    var urlPriorityLow = URL_IMAGES_FOLDER + "ic_tiny_priority_low_light.png";
+    var urlAlarm = URL_IMAGES_FOLDER + "alarm_tiny.png";
+    var urlOverdue = URL_IMAGES_FOLDER + "overdue_tiny.png";
+    var urlAlarmWatch = URL_IMAGES_FOLDER + "alarm_small.png";
+    var urlOverdueWatch = URL_IMAGES_FOLDER + "overdue_small.png";
+    var urlRepeat = URL_IMAGES_FOLDER + "repeat_tiny.png";
+    var urlPriorityHigh = URL_IMAGES_FOLDER + "priority_high_tiny.png";
+    var urlPriorityLow = URL_IMAGES_FOLDER + "priority_low_tiny.png";
+    var urlRepeatWatch = URL_IMAGES_FOLDER + "repeat_small.png";
+    var urlPriorityHighWatch = URL_IMAGES_FOLDER + "priority_high_small.png";
+    var urlPriorityLowWatch = URL_IMAGES_FOLDER + "priority_low_small.png";
 
     return {
         PREFIX_ALARM : "img_alm_",
@@ -1895,9 +2129,14 @@ var StatusImagesNames = (function() {
         PREFIX_PRIORITY_LOW: "img_plo",
         URL_ALARM: urlAlarm,
         URL_OVERDUE: urlOverdue,
+        URL_ALARM_WATCH: urlAlarmWatch,
+        URL_OVERDUE_WATCH: urlOverdueWatch,
         URL_REPEAT: urlRepeat,
         URL_PRIORITY_HIGH: urlPriorityHigh,
-        URL_PRIORITY_LOW: urlPriorityLow
+        URL_PRIORITY_LOW: urlPriorityLow,
+        URL_REPEAT_WATCH: urlRepeatWatch,
+        URL_PRIORITY_HIGH_WATCH: urlPriorityHighWatch,
+        URL_PRIORITY_LOW_WATCH: urlPriorityLowWatch
     };})();
 
 var MainSectionPrefixes = (function() {
@@ -1965,6 +2204,19 @@ var MessageTypes = (function() {
         ERROR: 1,
         INFO: 0,
         WARN: 2
+    };
+})();
+
+// формат добавочной секции
+// SECTION_START \nАТРИБУТ_1:ЗНАЧЕНИЕ_1\nАТРИБУТ_2:ЗНАЧЕНИЕ_2\n...АТРИБУТ_N=ЗНАЧЕНИЕ_N SECTION_END
+var AdditionalKeywords = (function() {
+    return {
+        PRIORITY: 'PRIORITY',
+        REPEATABLE_DTSTART: 'DTSTART',
+        REPEATABLE_RRULE: 'RRULE',
+        REMINDER: 'REMINDER',
+        SECTION_START: '\n<!=', // признак начала добавочной секции
+        SECTION_END: '\n=!>' // признак окончания добавочной секции
     };
 })();
 
