@@ -297,7 +297,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 10:56');
+        console.log('starting gadget 11:15');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -610,8 +610,7 @@
             <input type="button" id="button-insert-task" name="button-insert-task" title="__MSG_action_insert_task__" class="button-add-task"/>
         </td>
         <td style="width: 70%; text-align: right; vertical-align:middle;">
-          <!--<a href="#" id="a-daybyday-add" style="font-size: 9px; text-decoration: none">__MSG_day_by_day__</a>-->
-          <img id="img-daybyday-add" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/daybyday16.png" width="16" height="16">
+          <img id="img-daybyday-add" src="https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/daybyday16.png" width="16" height="16" title="V1.0.0.0">
         </td>
        </tr>
     </table>

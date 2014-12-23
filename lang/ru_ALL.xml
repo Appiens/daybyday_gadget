@@ -27,6 +27,7 @@
     <msg name="msg_yes">Да</msg>
     <msg name="msg_ok">OK</msg>
     <msg name="msg_no">Нет</msg>
+    <msg name="msg_accept_delete">Вы действительно хотите удалить задачу?</msg>
     <msg name="personalize">Нажмите сюда для авторизации</msg>
     <msg name="approval_part_1">Пожалуйста, нажмите</msg>
     <msg name="approval_part_2">Я одобрил доступ</msg>

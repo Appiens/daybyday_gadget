@@ -427,7 +427,7 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                myMessageBox.showYesNo('Do you really want to delete this task?',
+                                myMessageBox.showYesNo(getLangValue("msg_accept_delete"),
                                     function() {
                                         taskListNodeController.lastUpdatedTaskListId = taskListId;
                                         requestController.deleteTaskRequest(taskListId, task);
