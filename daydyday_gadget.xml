@@ -182,42 +182,42 @@
     }
 
     input.button-refresh {
-        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/refresh_small.png'); /* 16px x 16px */
+        background-image: url('https://liubovast.github.io/images/refresh_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: 4px 4px;  /* equivalent to 'top left' */
     }
 
     input.button-add-task {
-        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/add_task_small.png'); /* 16px x 16px */
+        background-image: url('https://liubovast.github.io/images/add_task_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: 3px 5px;  /* equivalent to 'top left' */
     }
 
     input.button-delete-task {
-        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/delete_small.png'); /* 16px x 16px */
+        background-image: url('https://liubovast.github.io/images/delete_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
     }
 
     input.button-save-task {
-        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/ok_small.png'); /* 16px x 16px */
+        background-image: url('https://liubovast.github.io/images/ok_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
     }
 
     input.button-cancel-task {
-        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/cancel_small.png'); /* 16px x 16px */
+        background-image: url('https://liubovast.github.io/images/cancel_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
     }
 
     input.button-to-subtasks {
-        background-image: url('https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/subtasks_small.png'); /* 16px x 16px */
+        background-image: url('https://liubovast.github.io/images/subtasks_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
