@@ -24,6 +24,9 @@
     <msg name="msg_item_deleted">Удаление выполнено</msg>
     <msg name="msg_item_inserted">Вставка выполнена</msg>
     <msg name="msg_help_us">Нажмите, чтобы помочь</msg>
+    <msg name="msg_yes">Да</msg>
+    <msg name="msg_ok">OK</msg>
+    <msg name="msg_no">Нет</msg>
     <msg name="personalize">Нажмите сюда для авторизации</msg>
     <msg name="approval_part_1">Пожалуйста, нажмите</msg>
     <msg name="approval_part_2">Я одобрил доступ</msg>

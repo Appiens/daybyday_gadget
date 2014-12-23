@@ -9,6 +9,7 @@ var subTaskDivMainController = new SubTaskDivMainController();
 var subTaskDivWatchController = new  SubTaskDivWatchController();
 var requestController = new RequestController();
 var watchSectionController = new WatchSectionController();
+var myMessageBox = new MyMessageBox();
 
 // структура дерева (находящиеся на одном отступе элементы являются сиблингами, с бОльшим отступом - чайлдами)
 //   <ul id="listId">
@@ -253,7 +254,7 @@ function setLastUpdatedTaskList(taskLists) {
 // When the user confirms access, the fetchData() function is invoked again to
 // obtain and display the user's data.
 function showOneSection(toshow) {
-    var sections = [ 'main', 'approval', 'waiting', 'watch', 'error' ];
+    var sections = [ 'main', 'approval', 'waiting', 'watch', 'error', 'message' ];
 
     for (var i=0; i < sections.length; ++i) {
         var s = sections[i];
@@ -426,10 +427,18 @@ var Actions = ( function() {
                                     return;
                                 }
 
-                                taskListNodeController.lastUpdatedTaskListId = taskListId;
-                                requestController.deleteTaskRequest(taskListId, task);
+                                myMessageBox.showYesNo('Do you really want to delete this task?',
+                                    function() {
+                                        taskListNodeController.lastUpdatedTaskListId = taskListId;
+                                        requestController.deleteTaskRequest(taskListId, task);
 
-                                Actions.ActionBackToList();
+                                        Actions.ActionBackToList();
+                                    },
+                                    function() {
+                                        showOneSection('watch');
+                                    });
+
+
                         }
     };})();
 
@@ -2031,6 +2040,67 @@ function SubTaskDivWatchController() {
         }
 
         return "unknown";
+    }
+}
+
+function MyMessageBox() {
+    var parent = this;
+    var onYes = null;
+    var onOk = null;
+    var onNo = null;
+
+    this.showYesNo = function(question, funYes, funNo) {
+        show(question, getLangValue("msg_yes"), '', getLangValue("msg_no"), true, false, true, funYes, null, funNo);
+    }
+
+    this.showOk = function(question, funOk) {
+        show(question, '', getLangValue("msg_ok"), '', false, true, false, null, funOk, null);
+    }
+
+     var show = function(question, nameYes, nameOk, nameNo, showYes, showOk, showNo, funYes, funOk, funNo) {
+        $('div-msg-question').innerText = question;
+
+        $('button-answer-1').innerText = nameYes;
+        $('button-answer-2').innerText = nameOk;
+        $('button-answer-3').innerText = nameNo;
+
+        $('button-answer-1').style.display = showYes? '': 'none';
+        $('button-answer-2').style.display = showOk? '': 'none';
+        $('button-answer-3').style.display = showNo? '': 'none';
+
+        addEventListeners(funYes, funOk, funNo);
+
+        showOneSection("message");
+    }
+
+    var addEventListeners = function(funYes, funOk, funNo) {
+        if (onYes) {
+            $('button-answer-1').removeEventListener('click', onYes);
+        }
+
+        if (onOk) {
+            $('button-answer-2').removeEventListener('click', onOk);
+        }
+
+        if (onNo) {
+            $('button-answer-3').removeEventListener('click', onNo);
+        }
+
+        onYes = funYes;
+        onOk = funOk;
+        onNo = funNo;
+
+        if (onYes) {
+            $('button-answer-1').addEventListener('click', onYes);
+        }
+
+        if (onOk) {
+            $('button-answer-2').addEventListener('click', onOk);
+        }
+
+        if (onNo) {
+            $('button-answer-3').addEventListener('click', onNo);
+        }
     }
 }
 

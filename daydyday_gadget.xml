@@ -279,7 +279,7 @@
     var timerFetchNewData = -1; // таймер для загрузки обновлений с сервера
 
     function startGadget() {
-        console.log('starting gadget 18:34');
+        console.log('starting gadget 10:13');
         init(makePOSTRequest);
         $('button-refresh').addEventListener('click', fetchDataAll);
         $('img-daybyday-add').addEventListener('click', openDayByDayPage);
@@ -641,6 +641,27 @@
     __MSG_approval_part_1__
     <a href="#" id="approvaldone">__MSG_approval_part_2__</a>
     __MSG_approval_part_3__
+  </div>
+
+  <div id="message" style="display: none">
+    <br>
+    <br>
+    <div id="div-msg-question"></div>
+    <br>
+    <table cellpadding=0 width=100%>
+                <tr>
+                    <td style="width: 33%; text-align:middle; vertical-align:middle;">
+                        <input type="button" id="button-answer-1" name="button-answer-1"/>
+                    </td>
+                    <td style="width: 33%; text-align:middle; vertical-align:middle;">
+                        <input type="button" id="button-answer-2" name="button-answer-2"/>
+                    </td>
+                    <td style="width: 33%; text-align:middle; vertical-align:middle;">
+                        <input type="button" id="button-answer-3" name="button-answer-3"/>
+                    </td>
+                </tr>
+    </table>
+
   </div>
 
   <div id="watch" style="display: none">
