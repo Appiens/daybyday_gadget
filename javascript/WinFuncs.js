@@ -2060,9 +2060,9 @@ function MyMessageBox() {
      var show = function(question, nameYes, nameOk, nameNo, showYes, showOk, showNo, funYes, funOk, funNo) {
         $('div-msg-question').innerText = question;
 
-        $('button-answer-1').innerText = nameYes;
-        $('button-answer-2').innerText = nameOk;
-        $('button-answer-3').innerText = nameNo;
+        $('button-answer-1').title = nameYes;
+        $('button-answer-2').title = nameOk;
+        $('button-answer-3').title = nameNo;
 
         $('button-answer-1').style.display = showYes? '': 'none';
         $('button-answer-2').style.display = showOk? '': 'none';
