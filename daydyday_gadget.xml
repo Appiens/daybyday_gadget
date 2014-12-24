@@ -13,8 +13,8 @@
         <Authorization url="https://www.google.com/accounts/OAuthAuthorizeToken?oauth_callback=http://oauth.gmodules.com/gadgets/oauthcallback" /> 
       </Service>
     </OAuth>
-    <Locale messages="https://liubovast.github.io/lang/ALL_ALL.xml"/>
-    <Locale lang="ru" messages="https://liubovast.github.io/lang/ru_ALL.xml"/>
+    <Locale messages="https://appiens.github.io/lang/ALL_ALL.xml"/>
+    <Locale lang="ru" messages="https://appiens.github.io/lang/ru_ALL.xml"/>
   </ModulePrefs>
   <Content type="html">
   <![CDATA[
@@ -73,7 +73,7 @@
 
     li.collapsibleListOpen{
          cursor:pointer;
-         background: url('https://liubovast.github.io/images/button-minus.png'); <!--no-repeat top left;-->
+         background: url('https://appiens.github.io/images/button-minus.png'); <!--no-repeat top left;-->
          background-position: 0 5px;
          background-size: 12px 12px;
          background-repeat: no-repeat;
@@ -84,7 +84,7 @@
 
     li.collapsibleListClosed{
          cursor:pointer;
-         background: url('https://liubovast.github.io/images/button-plus.png'); <!--no-repeat top left;-->
+         background: url('https://appiens.github.io/images/button-plus.png'); <!--no-repeat top left;-->
          background-position: 0 5px;
          background-size: 12px 12px;
          background-repeat: no-repeat;
@@ -182,42 +182,42 @@
     }
 
     input.button-refresh {
-        background-image: url('https://liubovast.github.io/images/refresh_small.png'); /* 16px x 16px */
+        background-image: url('https://appiens.github.io/images/refresh_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: 4px 4px;  /* equivalent to 'top left' */
     }
 
     input.button-add-task {
-        background-image: url('https://liubovast.github.io/images/add_task_small.png'); /* 16px x 16px */
+        background-image: url('https://appiens.github.io/images/add_task_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: 3px 5px;  /* equivalent to 'top left' */
     }
 
     input.button-delete-task {
-        background-image: url('https://liubovast.github.io/images/delete_small.png'); /* 16px x 16px */
+        background-image: url('https://appiens.github.io/images/delete_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
     }
 
     input.button-save-task {
-        background-image: url('https://liubovast.github.io/images/ok_small.png'); /* 16px x 16px */
+        background-image: url('https://appiens.github.io/images/ok_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
     }
 
     input.button-cancel-task {
-        background-image: url('https://liubovast.github.io/images/cancel_small.png'); /* 16px x 16px */
+        background-image: url('https://appiens.github.io/images/cancel_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
     }
 
     input.button-to-subtasks {
-        background-image: url('https://liubovast.github.io/images/subtasks_small.png'); /* 16px x 16px */
+        background-image: url('https://appiens.github.io/images/subtasks_small.png'); /* 16px x 16px */
         background-color: transparent; /* make the button transparent */
         background-repeat: no-repeat;  /* make the background image appear only once */
         background-position: center;  /* equivalent to 'top left' */
@@ -282,10 +282,10 @@
         background-color: #33B5E5;
     }
   </style>
-  <script type="text/javascript" src="https://liubovast.github.io/javascript/CollapsibleLists.js"></script>
-  <script type="text/javascript" src="https://liubovast.github.io/javascript/shindig.js"></script>
-  <script type="text/javascript" src="https://liubovast.github.io/javascript/WinFuncs.js"></script>
-  <script type="text/javascript" src="https://liubovast.github.io/javascript/DateTimeClass.js"></script>
+  <script type="text/javascript" src="https://appiens.github.io/javascript/CollapsibleLists.js"></script>
+  <script type="text/javascript" src="https://appiens.github.io/javascript/shindig.js"></script>
+  <script type="text/javascript" src="https://appiens.github.io/javascript/WinFuncs.js"></script>
+  <script type="text/javascript" src="https://appiens.github.io/javascript/DateTimeClass.js"></script>
   <script type="text/javascript">
   
     var taskLists = []; // полный список задач
@@ -610,7 +610,7 @@
             <input type="button" id="button-insert-task" name="button-insert-task" title="__MSG_action_insert_task__" class="button-add-task"/>
         </td>
         <td style="width: 70%; text-align: right; vertical-align:middle;">
-          <img id="img-daybyday-add" src="https://liubovast.github.io/images/daybyday16.png" width="16" height="16" title="V1.0">
+          <img id="img-daybyday-add" src="https://appiens.github.io/images/daybyday16.png" width="16" height="16" title="V1.0">
         </td>
        </tr>
     </table>
