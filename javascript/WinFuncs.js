@@ -640,6 +640,10 @@ var TaskUtils = (function() {
                                         var index = text.indexOf(/*'\n<!=\n'*/ AdditionalKeywords.SECTION_START);
                                         return text.substring(0, index);
                                 },
+        // Функция сравнения задач
+        // object taskA - первая задача для сравнения
+        // object taskB - вторая задача для сравнения
+        // возвращает 1 B<A, -1 A<B 0 A=B
         cmpTasks: function(taskA, taskB) {
                                         var res =  TaskUtils.cmpByStatus(taskA, taskB);
 
@@ -662,6 +666,10 @@ var TaskUtils = (function() {
                                         res = TaskUtils.cmpByTitle(taskA, taskB);
                                         return res;
                                 },
+        // Функция сравнения задач по приоритету
+        // object taskA - первая задача для сравнения
+        // object taskB - вторая задача для сравнения
+        // возвращает 1 B<A, -1 A<B 0 A=B
         cmpByPriority: function(taskA, taskB) {
                                         var additionalA = TaskUtils.getAdditionalSection(taskA);
                                         var additionalB = TaskUtils.getAdditionalSection(taskB);
@@ -699,6 +707,10 @@ var TaskUtils = (function() {
                                         // у обеих задач нормальные приоритеты
                                         return 0;
                                 },
+        // Функция сравнения задач по дате
+        // object taskA - первая задача для сравнения
+        // object taskB - вторая задача для сравнения
+        // возвращает 1 B<A, -1 A<B 0 A=B
         cmpByDate: function(taskA, taskB) {
                                         if (taskA.due == undefined) {
                                             if (taskB.due == undefined) {
@@ -727,7 +739,10 @@ var TaskUtils = (function() {
                                             return -1; // a b
                                         }
                                 },
-
+        // Функция сравнения задач по статусу
+        // object taskA - первая задача для сравнения
+        // object taskB - вторая задача для сравнения
+        // возвращает 1 B<A, -1 A<B 0 A=B
         cmpByStatus:  function (taskA, taskB) {
                                         if (taskA.status == taskB.status) {
                                             return 0;
@@ -739,7 +754,10 @@ var TaskUtils = (function() {
 
                                         return 1;
                                 },
-
+        // Функция сравнения задач по заголовку
+        // object taskA - первая задача для сравнения
+        // object taskB - вторая задача для сравнения
+        // возвращает 1 B<A, -1 A<B 0 A=B
         cmpByTitle: function (taskA, taskB) {
                                         var aa = taskA.title.toLowerCase();
                                         var bb = taskB.title.toLowerCase();
@@ -809,7 +827,7 @@ function WatchSectionController() {
         $('checkbox-with-date').checked = task.due != null;
         $('input-task-date').style.display = task.due != null ? '': 'none';
 
-        // show subtasks and hide notes
+        // show subtasks and hide notes if it can be done
         if (parent.canBeConvertedToSubtasks(notesOrig)) {
             var subTasks = parent.convertToSubTasks(notesOrig);
             subTaskDivWatchController.InsertSubTaskDiv($("div-notes"), $('watch').task , subTasks);
@@ -820,7 +838,6 @@ function WatchSectionController() {
         watchSectionController.OnSomeEditDone();
     }
 
-    // <editor-fold desc="Convert text to subTasks and SubTasks To Text">
     // Checks if the comment text can be converted to subTasks array
     // string text - a text to check
     // returns true if the conversion can be done
@@ -890,7 +907,7 @@ function WatchSectionController() {
         }
     }
 
-    // Update status images when some editing was done
+    // Изменения с полями ввода, происходящие при редактировании
     this.OnSomeEditDone = function() {
         SetDisplayStatusOverdueWatch();
         SetDisplayTaskStatusAddImagesWatch();
@@ -904,8 +921,6 @@ function WatchSectionController() {
         else {
             checkBox.title = '';
         }
-
-        // parent.SetDisableWatchButtons(false);
     }
 
     // заблокировать / разблокировать кнопки сохранения таска и отмены изменений
@@ -970,10 +985,13 @@ function WatchSectionController() {
 
     // creates a menu with task lists
     var createMoveToListMenu = function() {
+
+        // очистить нод
         while( $('taskListsWatch').children.length > 0){
             $('taskListsWatch').removeChild( $('taskListsWatch').children[0]);
         }
 
+        // и заполнить его новыми чайлднодами
         for (var i = 0 ; i < $('listId').children.length; i++) {
             if ($('listId').children[i].taskList == undefined) {
                 continue;
@@ -982,12 +1000,12 @@ function WatchSectionController() {
             var taskList = $('listId').children[i].taskList;
             var li = document.createElement('li');
 
-            //TODO при нажатии SaveTask сравниваем таск лист $('watch').taskListId и выбранный в комбо, если они НЕ совпадают, необходимо перенести таск в другой список
             li.addEventListener("click", OnMoveToListClick);
             var galka = /*$('watch').taskListId == taskList.id && $('watch').task ? UnicodeSymbols.GALKA :*/ '';
             li.appendChild(document.createTextNode(galka + ' ' + taskList.title));
             li.taskList = taskList;
 
+            // тот таск лист, из которого эта задача, публикуем в заголовок списка (a-move-to-list)
             if ($('watch').taskListId == taskList.id) {
                 $('a-move-to-list').innerText = taskList.title + ' ' + UnicodeSymbols.ARROW_DOWN;
                 $('a-move-to-list').taskListId = taskList.id;
@@ -997,6 +1015,8 @@ function WatchSectionController() {
         }
     }
 
+    // обработчик клика по списку (при перемещении в другой список)
+    // меняем заголовок списка и привязку $('a-move-to-list').taskListId
     var OnMoveToListClick = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1009,10 +1029,9 @@ function WatchSectionController() {
         }
     }
 
-    // Creates a status img
+    // Creates a status img for a Watch section
     // string url - the Image url
-    // task - the task which is connected to a task Div (to form the unique id)
-    // prefix - the prefix to an image id
+    // prefix - the prefix to define an image id
     // returns [object img] which should be added to some parent element
     var createTaskStatusImgWatch = function(url, prefix) {
         var img = document.createElement('img');
@@ -1024,7 +1043,7 @@ function WatchSectionController() {
         return img;
     }
 
-    // shows or hides alarm, repeat, priority_high, priority_low images in Watch section
+    // shows or hides alarm, repeat, priority_high, priority_low images in Watch section according to $('watch').additionalSection
     var SetDisplayTaskStatusAddImagesWatch = function() {
         var notes =  $('input-task-comment').style.display == '' ? $('input-task-comment').value : subTaskDivWatchController.getSubTasksArrFromWatchDiv().join('\n');
         notes += $('watch').additionalSection;
@@ -1046,6 +1065,7 @@ function WatchSectionController() {
         }
     }
 
+    // shows or hides overdue image in Watch section according to selected date (checkbox-with-date)
     var SetDisplayStatusOverdueWatch = function() {
         var status = $('checkbox-task-completed').checked ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         var date = null;
@@ -1062,6 +1082,11 @@ function WatchSectionController() {
 }
 
 function RequestController() {
+    // Изменить статус задачи
+    // string taskListId - идентификатор списка задач
+    // string taskId - идентификатор задачи
+    // bool isCompleted - выполнена ли задача
+    // string dueDate - дата выполнения YYYY-MM-DD (нужна обязательно, иначе исчезает в отредактированном таске)
     this.changeTaskStatusRequest = function(taskListId, taskId, isCompleted, dueDate) {
         var status = isCompleted ? TaskStatuses.COMPLETED: TaskStatuses.NEEDS_ACTION;
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
@@ -1070,6 +1095,11 @@ function RequestController() {
         makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
     }
 
+    // Изменить статус подзадачи (то есть комментарий)
+    // string taskListId - идентификатор списка задач
+    // string taskId - идентификатор задачи
+    // string notes - новый комментарий к задаче
+    // string dueDate - дата выполнения YYYY-MM-DD (нужна обязательно, иначе исчезает)
     this.changeSubTaskStatusRequest = function(taskListId, taskId, notes, dueDate) {
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + taskId + '?key=' + API_KEY;
         var duePart = dueDate != undefined ? ',"due":"' + dueDate + '"' : ',"due": null';
@@ -1077,6 +1107,13 @@ function RequestController() {
         makePOSTRequest(url, data, OnChangeTaskStatus, "PUT");
     }
 
+    // Изменить задачу
+    // string taskListId - идентификатор списка задач
+    // string taskId - идентификатор задачи
+    // bool isCompleted - выполнена ли задача
+    // string title - заголовок задачи
+    // string dueDate - дата выполнения YYYY-MM-DD (нужна обязательно, иначе исчезает)
+    // string notes - комментарий к задаче
     this.changeTaskRequest = function(taskListId, task, isCompleted, title, dueDate, notes) {
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
         var data = '{"id": "'+ task.id + '"';
@@ -1117,6 +1154,13 @@ function RequestController() {
         }
     }
 
+    // Вставить задачу
+    // string taskListId - идентификатор списка задач
+    // bool isCompleted - выполнена ли задача
+    // string title - заголовок задачи
+    // string dueDate - дата выполнения YYYY-MM-DD (нужна обязательно, иначе исчезает)
+    // string notes - комментарий к задаче
+    // bool gotoTask - перейти к задаче после вставки (то есть отскроллить секцию main, DEPRECATED)
     this.insertTaskRequest = function(taskListId, isCompleted, title, dueDate, notes, gotoTask) {
         // https://www.googleapis.com/tasks/v1/lists/' + listId + '/tasks
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks?key=' + API_KEY;
@@ -1139,6 +1183,9 @@ function RequestController() {
         makePOSTRequest(url, data, shell.OnTaskInserted, "POST");
     }
 
+    // Удалить задачу
+    // string taskListId - идентификатор списка задач
+    // string taskId - идентификатор задачи
     this.deleteTaskRequest = function(taskListId, task) {
         var url =  'https://www.googleapis.com/tasks/v1/lists/' + taskListId + '/tasks/' + task.id + '?key=' + API_KEY;
         var shell = TaskDeletedShell(task, taskListId);
@@ -1167,7 +1214,7 @@ function RequestController() {
         }
     }
 
-// обертка для обработчика события удаления таска
+    // обертка для обработчика события удаления таска
     var TaskDeletedShell = function(taskToDelete, taskListId) {
         var task = taskToDelete;
         return {
@@ -1185,6 +1232,7 @@ function RequestController() {
         };
     }
 
+    // обертка для обработчика события вставки таска
     var TaskInsertedShell = function(gotoTask, selectTask) {
         return {
             OnTaskInserted : function(obj) {
@@ -1200,10 +1248,10 @@ function RequestController() {
                     taskListId = taskListId.substring(0, taskListId.indexOf('/'));
                     taskNodeController.InsertTaskNode(taskListId, taskFromServer, $(MainSectionPrefixes.PREFIX_UL_TASKLIST + taskListId), true);
 
-                    if (gotoTask) {
-                        var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
-                        $('main').scrollTop = getOffset(taskDiv);
-                    }
+ //                   if (gotoTask) {
+ //                       var taskDiv = $(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id);
+ //                       $('main').scrollTop = getOffset(taskDiv);
+ //                   }
 
 //                    if (selectTask) {
 //                        taskNodeController.selectTaskDiv($(MainSectionPrefixes.PREFIX_DIV_TASK + taskFromServer.id));
@@ -1214,17 +1262,17 @@ function RequestController() {
         };
     }
 
-    var getOffset = function(taskDiv) {
-        var parent = taskDiv;
-        var result = 0;
-
-            while (parent != $('main')) {
-                result += parent.offsetTop;
-                parent = parent.parentNode;
-            }
-
-        return result;
-    }
+//    var getOffset = function(taskDiv) {
+//        var parent = taskDiv;
+//        var result = 0;
+//
+//            while (parent != $('main')) {
+//                result += parent.offsetTop;
+//                parent = parent.parentNode;
+//            }
+//
+//        return result;
+//    }
 }
 
 function TaskListNodeController() {
@@ -1293,13 +1341,15 @@ function TaskListNodeController() {
     }
 
     // sets a task list Title for a task List span
-    // taskList - a taskList which is connected to a taskList span
+    // object taskList - a taskList which is connected to a taskList span
     this.SetTaskListTitle = function(taskList) {
         var taskListSpan = $(MainSectionPrefixes.PREFIX_SPAN_TASKLIST + taskList.id);
         taskListSpan.innerText = taskList.title;
     }
 
     /*Adds <no task> element to each task List ul section*/
+    // object taskList - task list to add an empty task section
+    // ul - parent node for <no tasks> element
     var InsertNoTasksNode = function(taskList, ul) {
         var liChild = document.createElement('li');
         liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_NO_TASKS + taskList.id);
@@ -1337,7 +1387,6 @@ function TaskListNodeController() {
 function TaskNodeController() {
 
     var parent = this;
-    // this.selectedTaskDiv = null; // выбранный таск
     this.lastUpdatedTaskListId = null; // последний редактируемый таск лист
 
     // редактирует нод соотетствующий таску в секции Main
@@ -1366,6 +1415,7 @@ function TaskNodeController() {
     // string taskListId - идентификатор таск листа, которому принадлежит таск
     // object taskFromServer - новая задача (с сервера)
     // object ul - родительский элемент (ul таск листа)
+    // bool insertBefore - при значении ИСТИНА нод вставляется первым, ЛОЖЬ - последним
     this.InsertTaskNode = function(taskListId, taskFromServer, ul, insertBefore) {
         var liChild = document.createElement('li');
         liChild.setAttribute("id", MainSectionPrefixes.PREFIX_LI_TASK + taskFromServer.id);
@@ -1374,6 +1424,7 @@ function TaskNodeController() {
         var span = createSimpleTextNode(taskFromServer.title, MainSectionPrefixes.PREFIX_SPAN_TITLE + taskFromServer.id);
         span.addEventListener("click", OnTaskSpanClick, false);
 
+        // статус таска
         var checkBox = createCheckBoxForTask(taskFromServer);
         taskDiv.appendChild(checkBox);
         createTaskStatusImages(taskDiv, taskFromServer);
@@ -1429,6 +1480,8 @@ function TaskNodeController() {
         }
     }
 
+    // вход в редактирование таска (секция Watch)
+    // object taskDiv - секция с taskDiv
     this.EditTask = function(taskDiv) {
         if (taskDiv.task && taskDiv.taskListId) {
             // removing previous divSubWatch
@@ -1444,6 +1497,8 @@ function TaskNodeController() {
         }
     }
 
+    // вход в добавление таска (секция Watch)
+    // string taskListId - идентификатор списка задач, куда собираемся вставлять задачу
     this.AddTask = function(taskListId) {
         $('watch').task = null;
         $('watch').taskListId = taskListId;
@@ -1550,7 +1605,7 @@ function TaskNodeController() {
     }
 
     // shows / hides images priority, repeat, alarm in MAIN section
-    // task - a task which is connected to a task div, to which images belong
+    // object task - a task which is connected to a task div, to which images belong
     var SetDisplayTaskStatusAddImages = function(task) {
         if (TaskUtils.additionalSectionExist(task)) {
             var additionalSection = TaskUtils.getAdditionalSection(task);
@@ -1568,13 +1623,13 @@ function TaskNodeController() {
     }
 
     // shows / hides overdue image in MAIN section
-    // task - a task which is connected to a task div, to which images belong
+    // object task - a task which is connected to a task div, to which images belong
     var SetDisplayStatusOverdue = function(task) {
         $(StatusImagesNames.PREFIX_OVERDUE + task.id).style.display = TaskUtils.isOverdueTask(task) ? '': 'none';
     }
 
     // checks / unchecks task checkbox to show task.status
-// task - a task which is connected to a task div, to which checkbox belongs
+    // object task - a task which is connected to a task div, to which checkbox belongs
     var SetTaskStatusCheckbox = function(task) {
         var checkBox = $(MainSectionPrefixes.PREFIX_CB_COMPLETED + task.id);
         checkBox.disabled = TaskUtils.isRepeatableTask(TaskUtils.getAdditionalSection(task)); //$(StatusImagesNames.PREFIX_REPEAT + task.id).style.display == '';
@@ -1592,6 +1647,8 @@ function TaskNodeController() {
         }
     }
 
+    // Обработчик события изменение статуса чекбокса "Задача выполнена"
+    // object targ - sender
     var OnChangeTaskStatusCB = function(targ) {
         var taskId = targ.id.substring(MainSectionPrefixes.PREFIX_CB_COMPLETED.length);
         var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
@@ -1599,6 +1656,8 @@ function TaskNodeController() {
         document.getElementById(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
     }
 
+    // Обработчик события "Мышь над секцией таска"
+    // object e - sender
     var OnTaskDivMouseOver = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1612,6 +1671,8 @@ function TaskNodeController() {
         }
     }
 
+    // Обработчик события "Мышь вне секции таска"
+    // object e - sender
     var OnTaskDivMouseOut = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1625,6 +1686,8 @@ function TaskNodeController() {
         }
     }
 
+    // обработчик события "Клик по секции таска"
+    // object e - sender
     var OnTaskDivClick = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1638,6 +1701,8 @@ function TaskNodeController() {
         parent.EditTask(targ);
     }
 
+    // обработчик события "Клик по заголовку таска"
+    // object targ - sender
     var OnTaskSpanClick = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1653,6 +1718,8 @@ function TaskNodeController() {
         parent.EditTask(targ);
     }
 
+    // обработчик события "Клик по стрелочке"
+    // object targ - sender
     var OnArrowClick = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1679,6 +1746,8 @@ function TaskNodeController() {
         return img;
     }
 
+    // Creates an arrow
+    // object task - the task which is connected to a task Div (to form the unique id)
     var createArrow = function(task) {
         var arrow = createSimpleTextNode( UnicodeSymbols.ARROW_RIGHT, MainSectionPrefixes.PREFIX_ARROW_TITLE + task.id);
         arrow.style.float = 'right';
@@ -1702,6 +1771,7 @@ function SubTaskDivMainController() {
         var notesSection = TaskUtils.getNotesSection(task);
         var subTaskDiv = $(MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
 
+        // remove old section if needed
         if (subTaskDiv) {
             subTaskDiv.parentNode.removeChild(subTaskDiv);
         }
@@ -1715,6 +1785,10 @@ function SubTaskDivMainController() {
         }
     }
 
+    // Inserts subTasks div as a child to a task div
+    // object taskDiv - the parent section for a subTaskDiv
+    // object task - a task which is connected to a task Div
+    // array[] subTasks - sub tasks array
     var InsertSubTaskDiv = function(taskDiv, task, subTasks) {
         var subTasksDiv = document.createElement('div');
         subTasksDiv.setAttribute("id", MainSectionPrefixes.PREFIX_DIV_SUBTASK + task.id);
@@ -1722,13 +1796,10 @@ function SubTaskDivMainController() {
         taskDiv.appendChild(subTasksDiv);
     }
 
-    // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
-    // false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
     // Draws subTasks for a task
-    // object li - parent node (with task name)
+    // object li - parent node (subTasksDiv)
     // string[] subTasks - array of subTasks
     // string taskId - the Task id
-    // bool forMain - true, draw subTasks for main section ; false, draw subTasks for watch section
     var InsertSubTaskNodes = function(li, subTasks, taskId) {
         for (var k = 0; k< subTasks.length; k++) {
             if (subTasks[k].trim() == '') {
@@ -1740,7 +1811,7 @@ function SubTaskDivMainController() {
     }
 
     // Adds a subTask span and a checkbox to a parent task
-    // object li - parent node (with task name)
+    // object li - parent node (subTasksDiv)
     // string subTask - a name of a subTask
     // string taskId  - parent task`s id
     // int subTaskNum - subtask`s number
@@ -1798,6 +1869,8 @@ function SubTaskDivMainController() {
         }
     }
 
+    // Обработчик события "Изменение статуса подзадачи"
+    // object targ - sender
     var OnChangeSubTaskStatusCB = function(targ) {
         var taskId = targ.id.substring('ch_'.length);
         var spanId = MainSectionPrefixes.PREFIX_SPAN_TITLE + taskId;
@@ -1806,6 +1879,8 @@ function SubTaskDivMainController() {
         $(spanId).style.textDecoration = targ.checked ? 'line-through':'none';
     }
 
+    // Обработчик события "Клик на названии подзадачи"
+    // object e - sender
     var OnSubTaskSpanClick = function(e) {
         var targ;
         if (!e) var e = window.event;
@@ -1825,17 +1900,14 @@ function SubTaskDivMainController() {
 function SubTaskDivWatchController() {
     var parent = this;
     // Creates Sub Tasks Div section And Adds it to taskDiv section as a child
-    // object taskDiv - the parent div for a subTasksDiv
-    // task - the task which is connected to a task Div
+    // object divNotes - the parent div for a subTasksDiv
+    // object task - the task which is connected to a task Div
     // string[] subTasks - array of subTasks
-    // divNamePrefix - prefix for a SubTasks
-    // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
-    //       false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
-    this.InsertSubTaskDiv = function(taskDiv, task, subTasks) {
+    this.InsertSubTaskDiv = function(divNotes, task, subTasks) {
         var subTasksDiv = document.createElement('div');
         subTasksDiv.setAttribute("id", WatchSectionPrefixes.PREFIX_DIV_SUBTASK + getWatchTaskId(task));
         InsertSubTaskNodes(subTasksDiv, subTasks, getWatchTaskId(task));
-        taskDiv.appendChild(subTasksDiv);
+        divNotes.appendChild(subTasksDiv);
         setSubTaskAddVisibility();
     }
 
@@ -1848,7 +1920,7 @@ function SubTaskDivWatchController() {
         }
     }
 
-    // Make subTasks array from a sub Tasks Div
+    // Make subTasks array from a subTasksDiv
     // Returns string[] subTasks - array of subTasks
     this.getSubTasksArrFromWatchDiv = function() {
         var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + getWatchTaskId($('watch').task));
@@ -1868,20 +1940,17 @@ function SubTaskDivWatchController() {
         return subTasks;
     }
 
-    // bool forMain - true рисование в секции Main, там нажатие на чекбокс приводит к немедленному запросу на правку
-// false - рисование в секции Watch, там нажатие на чекбокс не приводит к запросу на редактирование
-// Draws subTasks for a task
-// object li - parent node (with task name)
-// string[] subTasks - array of subTasks
-// string taskId - the Task id
-// bool forMain - true, draw subTasks for main section ; false, draw subTasks for watch section
-    var InsertSubTaskNodes = function(li, subTasks, taskId) {
+    // Draws subTasks for a task
+    // object subTasksDiv - parent node (subTasksDiv)
+    // string[] subTasks - array of subTasks
+    // string taskId - the Task id
+    var InsertSubTaskNodes = function(subTasksDiv, subTasks, taskId) {
         for (var k = 0; k< subTasks.length; k++) {
             if (subTasks[k].trim() == '') {
                 continue;
             }
 
-            InsertSubTaskNode(li, subTasks[k], taskId, k);
+            InsertSubTaskNode(subTasksDiv, subTasks[k], taskId, k);
         }
     }
 
@@ -1920,15 +1989,15 @@ function SubTaskDivWatchController() {
     // object targ - "плюсик" (не используется)
     var InsertEmptySubTaskNode = function(targ) {
         var subTasks = parent.getSubTasksArrFromWatchDiv();
-        var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + /*$('watch').task.id*/ getWatchTaskId($('watch').task));
+        var subTasksDiv = $(WatchSectionPrefixes.PREFIX_DIV_SUBTASK + getWatchTaskId($('watch').task));
         var subTaskNum = subTasks.length;
 
-        InsertSubTaskNode(subTasksDiv , 'F', /*$('watch').task.id*/ getWatchTaskId($('watch').task), subTaskNum);
+        InsertSubTaskNode(subTasksDiv , 'F', getWatchTaskId($('watch').task), subTaskNum);
         setSubTaskAddVisibility();
     }
 
     // удаление сабтаска из секции divsubwatch
-// object targ - "крестик", на который нажали
+    // object targ - "крестик", на который нажали
     var DeleteSubTaskNode = function(targ) {
         // получить номер удаляемого сабтаска
         var subTaskNum = parseInt(targ.id.substring(WatchSectionPrefixes.PREFIX_A_SUBTASK_REMOVE.length).split('_')[1]);
@@ -1974,6 +2043,10 @@ function SubTaskDivWatchController() {
         $(WatchSectionPrefixes.PREFIX_A_SUBTASK_ADD + getWatchTaskId($('watch').task) + "_" + (subTasks.length - 1)).style.display = '';
     }
 
+    // создать чекбокс со статусом сабтаска
+    // string taskId - идентификатор задачи, которой принадлежит подзадача
+    // int subTaskNum - номер подзадачи
+    // возвращает object checkBox - созданный чекбокс, который нужно будет присоединить к родителю
     var createCheckBox = function(taskId, subTaskNum) {
         var checkBox = document.createElement("input");
         checkBox.type = 'checkbox';
@@ -1985,6 +2058,11 @@ function SubTaskDivWatchController() {
         return checkBox;
     }
 
+    // создать поле ввода с названием подзадачи
+    // string taskId - идентификатор задачи, которой принадлежит подзадача
+    // int subTaskNum - номер подзадачи
+    // string text - заголовок подзадачи
+    // возвращает object editBox - созданный editBox, который нужно будет присоединить к родителю
     var createEditBox = function(taskId, subTaskNum, text) {
         var editBox = document.createElement("input");
         editBox.type = 'text';
@@ -2002,6 +2080,10 @@ function SubTaskDivWatchController() {
         return editBox;
     }
 
+    // создать крестик, позволяющий удалить сабТаск
+    // string taskId - идентификатор задачи, которой принадлежит подзадача
+    // int subTaskNum - номер подзадачи
+    // возвращает object  a href - созданную ссылку, которую нужно будет присоединить к родителю
     var createCrossDeleteSubTask = function(taskId, subTaskNum) {
         var a = document.createElement('a');
         a.href =  '#';
@@ -2019,6 +2101,10 @@ function SubTaskDivWatchController() {
         return a;
     }
 
+    // создать плюсик, позволяющий удалить сабТаск
+    // string taskId - идентификатор задачи, которой принадлежит подзадача
+    // int subTaskNum - номер подзадачи
+    // возвращает object  a href - созданную ссылку, которую нужно будет присоединить к родителю
     var createPlusAddSubTask = function(taskId, subTaskNum) {
         var aplus = document.createElement('a');
         aplus.href =  '#';
@@ -2036,6 +2122,7 @@ function SubTaskDivWatchController() {
         return aplus;
     }
 
+    // получить id таска, присоединённого к секции Watch
     var getWatchTaskId = function(task) {
         if (task != undefined) {
             return task.id;
@@ -2045,20 +2132,41 @@ function SubTaskDivWatchController() {
     }
 }
 
+// мессадж бокс (располагающийся в секции message)
 function MyMessageBox() {
     var parent = this;
-    var onYes = null;
-    var onOk = null;
-    var onNo = null;
 
+    // обработчики нажатий на
+    var onYes = null; // button-answer-1
+    var onOk = null;  // button-answer-2
+    var onNo = null;  // button-answer-3
+
+    // показать мессадж бокс с ответами Да/Нет
+    // string question - вопрос
+    // function funYes - обработчик клика на "Да"
+    // function funNo - обработчик клика на "Нет"
     this.showYesNo = function(question, funYes, funNo) {
         show(question, getLangValue("msg_yes"), '', getLangValue("msg_no"), true, false, true, funYes, null, funNo);
     }
 
+    // показать мессадж бокс с OK
+    // string question - вопрос
+    // function funOK - обработчик нажатия на OK
     this.showOk = function(question, funOk) {
         show(question, '', getLangValue("msg_ok"), '', false, true, false, null, funOk, null);
     }
 
+    // показать мессадж бокс
+    // string question - вопрос
+    // string nameYes - текст на кнопке button-answer-1
+    // string nameOk - текст на кнопке button-answer-2
+    // string nameNo - текст на кнопке button-answer-3
+    // bool showYes - показать button-answer-1
+    // bool showOk - показать button-answer-2
+    // bool showNo - показать button-answer-3
+    // function funYes - обработчик клика на button-answer-1
+    // function funOk - обработчик клика на button-answer-2
+    // function funNo - обработчик клика на button-answer-3
      var show = function(question, nameYes, nameOk, nameNo, showYes, showOk, showNo, funYes, funOk, funNo) {
         $('div-msg-question').innerText = question;
 
@@ -2075,6 +2183,10 @@ function MyMessageBox() {
         showOneSection("message");
     }
 
+    // присоединяет к кнопкам новые обработчики событий и отсоединяет старые
+    // function funYes - обработчик клика на button-answer-1
+    // function funOk - обработчик клика на button-answer-2
+    // function funNo - обработчик клика на button-answer-3
     var addEventListeners = function(funYes, funOk, funNo) {
         if (onYes) {
             $('button-answer-1').removeEventListener('click', onYes);
