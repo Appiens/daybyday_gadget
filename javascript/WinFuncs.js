@@ -1,8 +1,6 @@
 var makePOSTRequest = null;
-
 var baseUrlImg = 'https://appiens.github.io/images/';
-
-var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
+var API_KEY = 'AIzaSyBEWiDJRXDzipZTm0pdwUK8pJ7FNEiObK8';
 var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
 var taskNodeController = new TaskNodeController();
