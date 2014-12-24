@@ -1,6 +1,6 @@
 var makePOSTRequest = null;
 var baseUrlImg = 'https://raw.githubusercontent.com/Appiens/daybyday_gadget/master/images/';
-var API_KEY = 'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';//'AIzaSyD60UyJs1CDmGQvog5uBQX1-kARqhU7fkk';
+var API_KEY = 'AIzaSyBEWiDJRXDzipZTm0pdwUK8pJ7FNEiObK8'; //'AIzaSyCuKllVMlv0ENk8Skg8_-IKM1Cs9GeL-NU';
 var isDrawingMainList = false;
 var taskListsLast = []; // последний полученный список таскЛистов
 var taskNodeController = new TaskNodeController();
